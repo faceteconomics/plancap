@@ -52,6 +52,12 @@ In scope:
 - The 2.5D storey-stack envelope engine and the three yield paths
   (volumetric, density, hybrid).
 - Summary, comparison and explanation functions.
+- **Scenario comparison (an explicit goal, user 20 Nov 2026).** Build two or
+  more scenarios, each a rulebook plus its map layers and parcels, where any
+  of those may differ (rules, zone extents, overlay or precinct extents, even
+  the parcels), and compare their capacity: how much, where, and why it
+  changed. The motivating case is a council weighing a plan change against
+  the operative plan, or several options against each other. See section 5A.
 - A plotting family with one consistent, publication-quality look.
 - CRAN-standard documentation, tests, and a pkgdown site; public GitHub repo.
 
@@ -98,7 +104,7 @@ What is ported, generalised:
 | `apply_zone_adjacency` | `resolve_adjacency()` | unchanged method (probe far side of midpoint) |
 | `build_envelope`, `apply_caps`, `enforce_stack_rules` | `build_envelopes()` | hemisphere-aware orientation rules; units parameter |
 | yield paths | `estimate_yield()` | conversion assumptions explicit and required |
-| `aggregate_results`, `diff_scenarios` | `summarise_capacity()`, `compare_capacity()` | much richer, see section 6 |
+| `aggregate_results`, `diff_scenarios` | `summarise_capacity()`, `compare_scenarios()` | much richer, see sections 5A and 6 |
 | explorer `site_rules_scene()` | `explain_site()`, `plot_site()` | static ggplot first, interactive optional |
 
 ---
@@ -330,6 +336,17 @@ reused across rule scenarios, because it does not depend on rule values
 (only on the zoning/overlay layers). That split is what made Auckland's
 re-runs fast.
 
+For scenarios (section 5A) the preparation is split in two, so a plan
+change that only redraws zones does not redo the expensive geometry:
+
+- **Parcel geometry** (steps 1 and 3, plus terrain and the morphology
+  helpers): depends only on parcels, roads, water and terrain.
+- **Plan geometry** (steps 2, 4 and 5): depends on the zoning, overlay and
+  precinct layers.
+
+Each part is stored with a hash of its inputs, and a scenario reuses any
+part whose inputs are unchanged.
+
 Performance rules baked in: no per-site loops with GEOS calls; STRtree
 joins; clip lookup geometry to the working extent; chunked runs with
 optional parallelism (`mirai` or `future`, Q10). Target: 50k sites in
@@ -370,6 +387,151 @@ useful summary and plot (which rule is doing the work).
 
 ---
 
+## 5A. Scenarios and plan-change comparison (explicit goal)
+
+### What a scenario is
+
+A **scenario** is everything that determines capacity: a rulebook, the map
+layers it refers to (zoning, overlays, precincts), the parcels, roads and
+water, and the run options. Two scenarios may differ in any of these:
+
+| What differs | Example | How it is handled |
+|---|---|---|
+| Rule values | Height in MRZ from 11 m to 16 m | Rulebook `extends:` the baseline's |
+| New or removed zones or rules | A new "Terraced Housing" zone | New zone keys; comparison by zone transition |
+| Zone extents | Rezoning a walkable catchment | A different zoning layer |
+| Overlay or precinct extents | A new flood hazard map; a precinct enlarged | Different overlay or precinct layers |
+| New overlays or qualifying matters | A heritage overlay added | Rulebook adds the overlay; scenario adds its layer |
+| Parcels | A structure plan's new lots; amalgamations; road widening | A different parcel layer; comparison by crosswalk or common geography |
+
+```r
+base <- scenario("Operative", rulebook = rb_operative,
+                 layers = list(parcels = parcels, roads = roads, zoning = zoning_op,
+                               height_areas = ha, flood_hazard = fh, precincts = pr))
+
+# A plan change starts from the baseline and says only what changes
+pc1 <- scenario_change(base, "PC1 as notified",
+                       rulebook = read_rulebook("pc1.yaml"),   # extends: operative.yaml
+                       layers = list(zoning = zoning_pc1))      # other layers inherited
+
+scen <- scenario_set(base, pc1, pc1_option_b)    # the first is the baseline
+res  <- run_scenarios(scen)                      # shares and reuses work
+cmp  <- compare_scenarios(res)                   # each against the baseline
+summary(cmp); plot_change_map(cmp); plot_attribution(cmp)
+```
+
+Scenarios can also be written as a **manifest file** (YAML: name, rulebook
+path, layer paths, which scenario it changes), so a council's comparison is
+one reproducible file: `read_scenarios("pc1-options.yaml")`.
+
+### Where it fits in the pipeline
+
+```
+inputs ──► A. parcel geometry ──► B. plan geometry ──► C. rule resolution ──► D. envelope + yield ──► E. results ──► F. comparison
+          (parcels, roads,        (zoning, overlay,     (rulebook: each        (per site)                          (two or more
+           water, terrain;         precinct layers:      site's effective                                           scenarios)
+           morphology)             zone split,           parameters)
+                                   adjacency, overlays)
+```
+
+Each step's output is keyed by a hash of its inputs. A scenario recomputes
+only the steps whose inputs changed:
+
+| Change | A | B | C | D |
+|---|---|---|---|---|
+| Rule values only | reuse | reuse | redo (affected zones) | redo (affected sites) |
+| Zoning or overlay extents | reuse | redo (affected sites) | redo (affected sites) | redo (affected sites) |
+| Parcels | redo (changed parcels) | redo (changed parcels) | redo | redo |
+
+**Incremental runs (affected sites only).** A site's result can change only
+if its parcel geometry changed, its zone changed, its overlay or area
+membership changed, the rules of its zone, overlays or areas changed (found
+by diffing the two rulebooks' rule tables), or a neighbour's zone changed
+where a rule depends on the zone across the boundary. Everything else is
+copied from the baseline. For a region-scale plan change that touches a
+tenth of sites this is roughly ten times faster. A test checks that the
+incremental run equals a full run exactly.
+
+### Comparing when the geography differs
+
+- **Same parcels:** a per-site difference, joined on site id.
+- **Different parcels:** three levels, all reported:
+  1. *Matched sites*: parcels whose geometry is unchanged (normalised
+     geometry hash, or the same id with at least 99% overlap) compare
+     directly.
+  2. *Crosswalk*: changed parcels are linked by area overlap (many to many),
+     and capacity is apportioned by area share, giving a change per
+     baseline parcel.
+  3. *Common geography*: the user's areas (suburbs, statistical areas), a
+     square or hex grid, or the extent of the change. Always valid, and the
+     totals reconcile.
+- **Different zone keys:** a **transition table** of land area and capacity
+  from each baseline zone to each scenario zone (MRZ → THAB, new zones,
+  removed zones). This is the natural way to read a rezoning.
+- **Land reconciliation:** total land per scenario, and how it differs (roads
+  vested, reserves created, parcels added or removed). Flag, don't drop:
+  sites present in only one scenario are listed, never silently left out.
+
+### Why did capacity change? (attribution)
+
+A plan change usually moves several things at once. `compare_scenarios()`
+splits the total change (and each area's change) into its **drivers**: rule
+values, zone extents, overlay and precinct extents, and parcels. It does
+this by running intermediate scenarios that switch one driver at a time:
+
+- **Sequential** (default; one extra run for each driver): apply the drivers
+  in a stated order. Cheap, but the split depends on the order.
+- **Shapley** (optional; 2^k runs for k drivers, so 16 at most): average
+  over every order, so the split does not depend on order. Practical because
+  incremental runs only recompute affected sites.
+
+For a rule-only change it also splits the change by individual rule (from
+the rule table diff), e.g. "+38% from the height increase, −6% from the new
+recession plane". The drivers always sum to the total change.
+
+### What a comparison returns
+
+A `cap_comparison` object:
+
+- totals for every scenario, with absolute and percentage change against
+  the baseline;
+- change by zone transition, by area or grid cell, and by height band;
+- site-level changes (sf) for matched sites and crosswalked parcels, each
+  with a **reason code**: `rezoned`, `rule_changed`, `overlay_added`,
+  `overlay_removed`, `area_changed`, `parcel_changed`, `neighbour_effect`;
+- the attribution table;
+- an input diff (`diff_inputs()`): the rule changes as a table, and the map
+  changes as polygons (land rezoned, overlay added or removed, parcels
+  changed);
+- reconciliation checks (`check_comparison()`).
+
+Summaries and plots built on it: `summary(cmp)`, `plot_comparison()`
+(dumbbell or bars by zone, area or height band), `plot_change_map()`
+(diverging colours on sites, grid or areas), `plot_transitions()`
+(zone-to-zone flows of land and capacity), `plot_attribution()`
+(waterfall of drivers), and `plot_height_profile(cmp)` (each scenario's
+floor area by storey, overlaid).
+
+More than two scenarios: each is compared with the baseline by default;
+`compare_scenarios(res, pairs = ...)` adds other pairs; a scenario-by-measure
+table summarises all of them.
+
+### Example data
+
+Exampleton gets a worked plan change, **"Exampleton PC1"**, built to exercise
+every kind of difference:
+
+- a rulebook that `extends:` the operative one (MDR height 12 → 16 m, a new
+  "Terraced Housing" zone);
+- a zoning layer upzoning the blocks within 400 m of the station;
+- an enlarged flood overlay;
+- one block re-subdivided into new lots.
+
+It is the example for the "Comparing plan changes" vignette and the gate
+test for stage 6.
+
+---
+
 ## 6. Summaries
 
 Design goal: one verb with a `by` argument, sensible defaults, tidy output,
@@ -399,8 +561,8 @@ Other summary functions:
 - `constraint_breakdown(cap)` — floor area lost to each rule, in
   sequence from a theoretical maximum (zoned land × height) down to enabled.
   Feeds the waterfall plot.
-- `compare_capacity(a, b, by = "zone")` — scenario differences, absolute and
-  %, with a reconciliation check (same site set).
+- `compare_scenarios()`: scenario differences, including where the zones,
+  overlays or parcels differ. See section 5A.
 - `sensitivity(sites, rb, rule = "MRZ$height", values = c(11, 14, 16))` —
   sweeps a rule and returns a tidy table.
 - `explain_site(cap, site_id)` — boundary-by-boundary table: class, length,
@@ -425,7 +587,10 @@ auto-state "Plan-enabled gross capacity; dwellings at X m² per dwelling".
 | `plot_distribution(cap, measure = "dwellings")` | Per-site distribution (ridgeline / histogram) by zone |
 | `plot_constraints(cap)` | Waterfall from theoretical max to enabled, by rule; or share of storeys bound by each rule, by zone |
 | `plot_capacity_map(cap, measure, grid = 250)` | Choropleth on sites, hex grid or user areas; basemap optional (`maptiles`) |
-| `plot_comparison(a, b, by = "zone")` | Dumbbell / diverging bars between scenarios |
+| `plot_comparison(cmp, by = "zone")` | Dumbbell or diverging bars between scenarios |
+| `plot_change_map(cmp)` | Where capacity rises and falls (diverging colours on sites, grid or areas) |
+| `plot_transitions(cmp)` | Zone-to-zone flows of land and capacity |
+| `plot_attribution(cmp)` | Waterfall of what drove the change (rules, zoning, overlays, parcels) |
 | `plot_sensitivity(sens)` | Line/step chart of a rule sweep |
 | `plot_cumulative(cap)` | Capacity curve: cumulative dwellings vs share of land, sites ranked |
 | `plot_site(cap, site_id, view = "plan" / "axo")` | Single site: parcel, setback strips, storey footprints in plan; axonometric stack (ggplot polygons, no 3D dependency) |
@@ -494,16 +659,20 @@ Everything optional is checked with `rlang::check_installed()`.
 |---|---|---|
 | 0 | Name, repo, skeleton (usethis), CI, licence, Exampleton data | CI green on 3 OSes |
 | 1 | Rulebook: schema, R constructors, YAML/JSON I/O, validation, print/rule_table | Auckland/CHC/WCC bundles convert and validate; round-trip tests |
-| 2 | Site preparation | Ported boundary/adjacency tests pass; Exampleton prepared |
-| 3 | Envelope engine | Hand-checked cases reproduce exactly (S039789 etc.); benchmark |
+| 2 | Site preparation, split into parcel geometry and plan geometry, each hashed; `scenario()` object | Ported boundary/adjacency tests pass; Exampleton prepared; a zoning-only change reuses the parcel geometry |
+| 3 | Envelope engine; accepts prepared parts; affected-site runs | Hand-checked cases reproduce exactly (S039789 etc.); benchmark |
 | 4 | Yield paths, overlays, areas, variants, conversion | A capacityengine region tile reproduces to the m² |
-| 5 | Summaries, compare, sensitivity, explain_site | Reconciliation checks; vignettes 1, 5, 6 draft |
-| 6 | Plots + theme design pass | Rendered gallery reviewed by you |
-| 7 | XLSX template entry, new-jurisdiction vignette, docs, pkgdown | A fresh jurisdiction entered from the template end to end |
-| 8 | Release: public repo, pkgdown live, (CRAN submission if Q8) | R CMD check 0/0/0; you sign off |
+| 5 | Summaries, sensitivity, explain_site | Reconciliation checks; vignettes 1, 5 draft |
+| 6 | **Scenarios and comparison**: `scenario_change()`, `scenario_set()`, manifests, `run_scenarios()`, `compare_scenarios()`, crosswalk, transitions, attribution, `diff_inputs()`; Exampleton PC1 | On Exampleton PC1: an incremental run equals a full run; drivers sum to the total change; land reconciles. On Auckland: operative vs PC120 matches capacityengine's difference on a tile. "Comparing plan changes" vignette drafted |
+| 7 | Plots (including comparison plots) and a theme design pass | Rendered gallery reviewed by you |
+| 8 | XLSX template entry, new-jurisdiction vignette, docs, pkgdown | A fresh jurisdiction entered from the template end to end |
+| 9 | Release: public repo, pkgdown live, (CRAN submission if Q8) | R CMD check 0/0/0; you sign off |
 
 The reproducibility gate at stage 4 is the main safeguard: the new package
-must match `capacityengine` on the same inputs before it is trusted.
+must match `capacityengine` on the same inputs before it is trusted. Stages
+2 and 3 are designed from the start for scenarios (hashed, reusable parts
+and affected-site runs), because adding that to a finished engine would mean
+rewriting it.
 
 ---
 
@@ -539,5 +708,10 @@ stage 6; the XLSX template into stage 1 (it shares the schema).
 | Q16 | Real extract | Wellington slice (~1,500 parcels with corner sites, rear lots, a stream and at least two zones), with the WCC rulebook; LINZ CC BY 4.0 + WCC attribution |
 | Q17 | Author | James Stewart (`aut`, `cre`, `cph`) |
 | Q18 | Auckland rulebook | Operative AUP only |
+| Q23 | Scenario comparison | An explicit project goal (section 5A); its own stage (6); stages 2 and 3 designed for it |
+| Q24 | Comparing different parcels | Default: common areas or grid (always reconcile) plus per-site change where parcels are unchanged; crosswalk available |
+| Q25 | Attribution | Sequential by default (one run per driver); Shapley optional |
+| Q26 | Scenario manifests | YAML manifest as well as R |
+| Q27 | Auckland PC120 | Converted as a test-only rulebook for the stage 6 gate; not shipped |
 
 All open questions are now settled; stage 0 can start.
