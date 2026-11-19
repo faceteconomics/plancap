@@ -1,0 +1,273 @@
+# Exampleton District Plan: the rulebook for plancap's synthetic town.
+#
+# Fictional. Every rule cites a made-up rule number in the style a real plan
+# would use, so the citations, the rule table and the reports look the way
+# they will for a real jurisdiction. It is written to use every kind of rule
+# the package handles at least once; see exampleton() for the map layers the
+# overlays and areas refer to.
+
+schema_version: "0.1"
+
+plan:
+  id: exampleton-dp-2026
+  name: Exampleton District Plan
+  jurisdiction: Exampleton
+  country: NZ
+  effective_date: "2026-01-01"
+  source: "Exampleton District Plan (fictional), operative 1 January 2026"
+  units: m
+  notes: "Synthetic plan for plancap's examples and tests."
+
+defaults:
+  storey_height: 3
+  min_floorplate: 30
+  level_reference: ceiling
+  large_site: {threshold: 10000, deduction: 0.25, method: divisor}
+
+morphology:
+  reserve_families: [OPEN_SPACE]
+
+conversion:
+  unit_mix:
+    - {name: one bedroom, size: 55, share: 0.3}
+    - {name: two bedroom, size: 80, share: 0.5}
+    - {name: three bedroom, size: 110, share: 0.2}
+  efficiency: 0.85
+  min_one_dwelling: true
+  source: "Assumed mix for the examples; 85% of gross floor area is in dwellings"
+
+ground:
+  mode: most_restrictive
+  overlap:
+    outdoor_living_counts_as_landscaping: true
+    landscaping_on_structure: false
+
+variant_choice: max
+
+zone_families:
+  RESIDENTIAL: [LDR, MDR, HDR]
+  CENTRE: [TC, MU]
+  OPEN_SPACE: [OS]
+
+zone_map:
+  TC: TC
+  MU: MU
+  HDR: HDR
+  MDR: MDR
+  LDR: LDR
+  IND: IND
+  OS: OS
+
+zones:
+  LDR:
+    label: Low Density Residential
+    method: hybrid                     # envelope and density both apply; the lesser wins
+    height: {value: 8, storeys: 2, source: "EDP LDR-S1"}
+    setbacks:
+      - {kind: yard, distance: 4, boundaries: [road], source: "EDP LDR-S3"}
+      - {kind: yard, distance: 1.5, boundaries: [side], source: "EDP LDR-S3"}
+      - {kind: yard, distance: 3, boundaries: [rear], source: "EDP LDR-S3"}
+      - {kind: yard, distance: 20, boundaries: [riparian], source: "EDP NATC-S1: 20 m from the bank of a river"}
+      - {kind: plane, angle_deg: 45, start_height: 2.5, boundaries: [side, rear], source: "EDP LDR-S2"}
+    ratios:
+      coverage_max: {value: 0.35, source: "EDP LDR-S4"}
+      landscaping_min: {value: 0.4, source: "EDP LDR-S5"}
+    density:
+      site_area_per_dwelling: 600
+      minor_dwellings_per_site: 1
+      source: "EDP LDR-S6, LDR-R3"
+    use: {residential: true, business: false, residential_share: 1}
+
+  MDR:
+    label: Medium Density Residential
+    method: volumetric
+    height: {value: 12, occupiable: 11, roof_allowance: 1, storeys: 3,
+             source: "EDP MDR-S1: 11 m, plus 1 m for a pitched roof"}
+    setbacks:
+      - {kind: yard, distance: 2.5, boundaries: [road], source: "EDP MDR-S3"}
+      - {kind: yard, distance: 1, boundaries: [side, rear], source: "EDP MDR-S3"}
+      - {kind: yard, distance: 20, boundaries: [riparian], source: "EDP NATC-S1"}
+      # Two alternative standards: the plane everywhere, or no plane within
+      # 20 m of the road (the "front of site" alternative). A site takes
+      # whichever enables more.
+      - {kind: plane, angle_deg: 60, start_height: 4, boundaries: [side, rear],
+         variant: standard, source: "EDP MDR-S2(a)"}
+      - {kind: plane, angle_deg: 60, start_height: 4, boundaries: [side, rear],
+         when: {beyond_frontage: 20}, variant: front_exemption,
+         source: "EDP MDR-S2(b): the plane does not apply within 20 m of the road"}
+    ratios:
+      coverage_max: {value: 0.5, source: "EDP MDR-S4"}
+      landscaping_min: {value: 0.2, source: "EDP MDR-S5"}
+    density: {min_dwelling_size: 35, source: "EDP MDR-S8"}
+    use: {residential: true, business: false, residential_share: 1}
+    variants:
+      standard: {label: "Recession plane on all side and rear boundaries", source: "EDP MDR-S2(a)"}
+      front_exemption: {label: "No plane within 20 m of the road", source: "EDP MDR-S2(b)"}
+
+  HDR:
+    label: High Density Residential
+    method: volumetric
+    height: {value: 22, storeys: 6, source: "EDP HDR-S1"}
+    setbacks:
+      - {kind: yard, distance: 1.5, boundaries: [road], source: "EDP HDR-S3"}
+      - {kind: yard, distance: 20, boundaries: [riparian], source: "EDP NATC-S1"}
+      - {kind: plane, angle_deg: 60, start_height: 8, boundaries: [side, rear],
+         when: {not_adjacent_zones: [LDR, MDR]}, source: "EDP HDR-S2(a)"}
+      - {kind: plane, angle_deg: 60, start_height: 4, boundaries: [side, rear],
+         when: {adjacent_zones: [LDR, MDR]}, source: "EDP HDR-S2(b): 4 m beside a lower density zone"}
+      # Outlook from upper floors: a quarter of the height, at least 2 m.
+      - {kind: proportional, ratio: 0.25, min: 2, boundaries: [rear], source: "EDP HDR-S6"}
+      - {kind: upper_level, distance: 3, above_height: 16, boundaries: [road], source: "EDP HDR-S7"}
+    ratios:
+      coverage_max: {value: 0.6, source: "EDP HDR-S4"}
+      landscaping_min: {value: 0.2, source: "EDP HDR-S5"}
+    form:
+      max_building_length: 30
+      building_separation:
+        bands:
+          by: height
+          bands:
+            - {min: 0, max: 12, value: 6}
+            - {min: 12, value: 10}
+      source: "EDP HDR-S8, HDR-S9"
+    density: {min_dwelling_size: 35, source: "EDP HDR-S10"}
+    use: {residential: true, business: false, residential_share: 1}
+
+  MU:
+    label: Mixed Use
+    method: volumetric
+    height: {from_overlay: centre_heights, source: "EDP MU-S1, Planning Map H"}
+    storey_height: 3.5
+    ground_floor_height: 4.5
+    setbacks:
+      - {kind: plane, angle_deg: 60, start_height: 4, boundaries: [side, rear],
+         when: {adjacent_zones: [RESIDENTIAL]}, source: "EDP MU-S2"}
+    ratios:
+      far_max: {value: 3, source: "EDP MU-S3"}
+    use:
+      residential: true
+      business: true
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - {min: 0, max: 1, value: 0}
+            - {min: 1, value: 0.8}
+      source: "EDP MU-R2: no dwellings at ground floor; 80% above is the council's assumed split"
+
+  TC:
+    label: Town Centre
+    method: volumetric
+    height: {from_overlay: centre_heights, source: "EDP TC-S1, Planning Map H"}
+    storey_height: 3.5
+    ground_floor_height: 4.5
+    setbacks:
+      - {kind: upper_level, distance: 3, above_height: 16, boundaries: [road], source: "EDP TC-S3"}
+      - {kind: plane, angle_deg: 60, start_height: 8, boundaries: [side, rear],
+         when: {adjacent_zones: [RESIDENTIAL]}, source: "EDP TC-S2"}
+    ratios:
+      far_max: {value: 4, source: "EDP TC-S4"}
+    use: {residential: true, business: true, residential_share: 0.5,
+          source: "Council assumption: half of centre floor area residential"}
+
+  IND:
+    label: Industrial
+    method: volumetric
+    height: {value: 15, storeys: 3, source: "EDP IND-S1"}
+    storey_height: 5
+    setbacks:
+      - {kind: yard, distance: 3, boundaries: [road], source: "EDP IND-S3"}
+      - {kind: plane, angle_deg: 45, start_height: 3, boundaries: [side, rear],
+         when: {adjacent_zones: [RESIDENTIAL]}, source: "EDP IND-S2"}
+    ratios:
+      coverage_max: {value: 0.8, source: "EDP IND-S4"}
+    use: {residential: false, business: true, residential_share: 0}
+
+  OS:
+    label: Open Space
+    method: none
+    source: "EDP OS chapter: no capacity for buildings beyond park facilities"
+
+overlays:
+  centre_heights:
+    label: Centre height areas
+    type: height
+    layer: height_areas
+    value_field: max_height_m
+    combine: replace
+    applies_to_zones: [TC, MU]
+    source: "EDP Planning Map H: 27 m in the centre, 18 m in its frame"
+  flood:
+    label: Stream flood plain
+    type: exclusion
+    layer: flood_hazard
+    removes: all
+    source: "EDP NH-R4: new buildings in the flood plain are non-complying"
+  heritage:
+    label: Heritage places
+    type: flag
+    layer: heritage
+    source: "EDP HH Schedule 1"
+  protected_trees:
+    label: Protected tree root zones
+    type: exclusion
+    layer: trees
+    filter: {status: [protected]}
+    buffer: protection_radius_m
+    removes: all
+    source: "EDP TREE-R2: no building within a protected tree's root zone"
+
+areas:
+  quarry:
+    label: Quarry Precinct
+    layer: precincts
+    filter: {precinct: [Quarry Precinct]}
+    combine: replace
+    parameters:
+      height: {value: 16, storeys: 5, source: "EDP QP-S1(a)"}
+    sub_area_field: sub_precinct
+    sub_areas:
+      B:
+        height: {value: 20, storeys: 6, source: "EDP QP-S1(b): Sub-precinct B"}
+    totals: {max_dwellings: 300}
+    source: "EDP Quarry Precinct"
+
+bonuses:
+  affordable_far:
+    label: Affordable housing floor area bonus
+    quantity: far
+    value: 1
+    combine: add
+    applies_to_zones: [TC]
+    condition: "At least 10% of dwellings are affordable housing"
+    source: "EDP TC-R12"
+  station_height:
+    label: Height bonus near the station
+    quantity: height
+    value: 6
+    combine: add
+    applies_to_zones: [HDR]
+    when: {distance_to: transit, max_distance: 400}
+    source: "EDP HDR-R14: 6 m additional height within 400 m of a rapid transit station"
+
+entitlements:
+  three_dwellings:
+    label: Three dwellings per site as of right
+    quantity: dwellings
+    value: 3
+    applies_to_zones: [MDR, HDR]
+    source: "Exampleton Housing Act (fictional), section 4"
+
+unmodelled_rules:
+  - rule: "Outlook space from principal living rooms"
+    zones: [MDR, HDR]
+    reason: "Depends on where windows are placed, which a blank-slate envelope does not know."
+    likely_effect: overstates
+  - rule: "Sunlight to the town square"
+    zones: [TC]
+    reason: "A shadow-hours test; the sunlight module is planned for a later version."
+    likely_effect: overstates
+  - rule: "Outdoor living space per dwelling"
+    zones: [MDR, HDR]
+    reason: "Counted only in the ground budget's full mode, which this rulebook does not use."
+    likely_effect: overstates

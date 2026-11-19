@@ -285,6 +285,11 @@ trees <- st_sf(
 # Keep every tree inside its lot
 inside <- lengths(st_within(trees$geometry, parcels$geometry[tree_lots])) > 0
 trees <- trees[inside, ]
+# Protection: a status a rule can filter on, and a root-zone radius of 12
+# trunk diameters (as AS 4970 uses), capped at 15 m.
+trees$status <- ifelse(trees$protected, "protected", "unprotected")
+trees$protection_radius_m <- pmin(round(12 * trees$dbh_m, 1), 15)
+trees <- trees[, c("tree_id", "dbh_m", "status", "protection_radius_m")]
 
 # ---- Existing buildings -----------------------------------------------------
 
@@ -334,7 +339,7 @@ stopifnot(all(st_is_valid(layers$parcels)), all(st_is_valid(layers$buildings)))
 
 dir.create("inst/extdata", recursive = TRUE, showWarnings = FALSE)
 gpkg <- "inst/extdata/exampleton.gpkg"
-if (file.exists(gpkg)) file.remove(gpkg)
+if (file.exists(gpkg)) invisible(file.remove(gpkg))
 for (nm in names(layers)) {
   st_write(layers[[nm]], gpkg, layer = nm, quiet = TRUE)
 }

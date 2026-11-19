@@ -1,0 +1,2301 @@
+# Christchurch District Plan (Christchurch)
+#
+# Converted from capacityengine's ccc-dp-2025.yaml on 2026-11-20.
+# A dated worked example, maintained by the package author: check the plan
+# itself before relying on any value. Values carry their rule citation where
+# the source bundle recorded one (validate_rulebook() lists those without).
+# Fields the conversion could not carry are listed in the unmodelled_rules
+# register and in data-raw/conversion/ in the package source.
+
+schema_version: '0.1'
+plan:
+  name: Christchurch District Plan
+  id: ccc-dp-2025
+  jurisdiction: Christchurch
+  country: NZ
+  effective_date: '2025-09-19'
+  units: m
+  hemisphere: south
+  source: Christchurch District Plan, ePlan text as updated 19 September 2025, read
+    26 October 2026
+  notes: Converted from the capacityengine bundle ccc-dp-2025.yaml by plancap data-raw/convert_capacityengine.R
+    on 2026-11-20. Precinct areas match a precinct_key column holding the normalised
+    precinct name.
+defaults:
+  storey_height: 3.0
+  min_floorplate: 30.0
+  level_reference: ceiling
+  no_limit_height: 216.0
+  large_site:
+    method: divisor
+    threshold: 10000.0
+    deduction: 0.25
+morphology:
+  reserve_families: OPEN_SPACE_ANY
+conversion:
+  dwelling_size: 120.0
+  efficiency: 0.8
+  min_one_dwelling: yes
+  min_one_dwelling_floor: 60.0
+  source: 'capacityengine conversion: 120 m2 a dwelling plus 0.2 circulation and 0.05
+    storage. 150 m2 consumed per dwelling, as for Auckland (PC120 report p50).'
+ground:
+  mode: most_restrictive
+variant_choice: max
+zone_families:
+  RES_ANY:
+    - RES_SUBURBAN
+    - RES_SUBURBAN_DT
+    - RES_MEDIUM_DENSITY
+    - RES_MRZ
+    - RES_HRZ
+    - RES_HILLS
+    - RES_BANKS_PENINSULA
+    - RES_LARGE_LOT
+    - RES_SMALL_SETTLEMENT
+    - RES_VISITOR_ACCOMMODATION
+    - RES_NEW_NEIGHBOURHOOD
+  RES_SUBURBAN_ANY:
+    - RES_SUBURBAN
+    - RES_SUBURBAN_DT
+  RES_LOWER_DENSITY:
+    - RES_SUBURBAN
+    - RES_SUBURBAN_DT
+    - RES_HILLS
+    - RES_LARGE_LOT
+    - RES_BANKS_PENINSULA
+    - RES_SMALL_SETTLEMENT
+    - RES_NEW_NEIGHBOURHOOD
+  RES_MEDIUM_ANY:
+    - RES_MRZ
+    - RES_MEDIUM_DENSITY
+  COMMERCIAL_ANY:
+    - BUS_CITY_CENTRE
+    - BUS_CC_MIXED_USE
+    - BUS_CC_MIXED_USE_SF
+    - BUS_TOWN_CENTRE
+    - BUS_LOCAL_CENTRE
+    - BUS_NEIGHBOURHOOD_CENTRE
+    - BUS_MIXED_USE
+    - BUS_LARGE_FORMAT_RETAIL
+    - BUS_COMMERCIAL_OFFICE
+    - BUS_BANKS_PENINSULA
+  CENTRE_ANY:
+    - BUS_CITY_CENTRE
+    - BUS_TOWN_CENTRE
+    - BUS_LOCAL_CENTRE
+    - BUS_NEIGHBOURHOOD_CENTRE
+  INDUSTRIAL_ANY:
+    - BUS_INDUSTRIAL_GENERAL
+    - BUS_INDUSTRIAL_HEAVY
+    - BUS_INDUSTRIAL_PARK
+  BUS_ANY:
+    - BUS_CITY_CENTRE
+    - BUS_CC_MIXED_USE
+    - BUS_CC_MIXED_USE_SF
+    - BUS_TOWN_CENTRE
+    - BUS_LOCAL_CENTRE
+    - BUS_NEIGHBOURHOOD_CENTRE
+    - BUS_MIXED_USE
+    - BUS_LARGE_FORMAT_RETAIL
+    - BUS_COMMERCIAL_OFFICE
+    - BUS_BANKS_PENINSULA
+    - BUS_INDUSTRIAL_GENERAL
+    - BUS_INDUSTRIAL_HEAVY
+    - BUS_INDUSTRIAL_PARK
+  OPEN_SPACE_ANY:
+    - OWM
+    - 'ON'
+    - OCP
+    - OMI
+    - OMF
+    - OC
+    - OCP or RuQ(T)
+    - ARP
+  RURAL_ANY:
+    - RuBP
+    - RuUF
+    - RuW
+    - RuPH
+    - RuQ
+    - RuQ or OCP(T)
+    - RuT
+  SPECIFIC_PURPOSE_ANY:
+    - PA
+    - SPA
+    - SPOA
+    - SPS
+    - SPR
+    - SPLP
+    - SPB
+    - SPC
+    - SPT
+    - SPLR
+    - SPH
+    - SPRa
+    - SPW
+    - SPST
+    - SPN
+  TRANSPORT: T
+zone_map:
+  RS: RES_SUBURBAN
+  RSDT: RES_SUBURBAN_DT
+  RMD: RES_MEDIUM_DENSITY
+  MRZ: RES_MRZ
+  HRZ: RES_HRZ
+  RH: RES_HILLS
+  RBP: RES_BANKS_PENINSULA
+  RLL: RES_LARGE_LOT
+  RSS: RES_SMALL_SETTLEMENT
+  RVA: RES_VISITOR_ACCOMMODATION
+  RNN: RES_NEW_NEIGHBOURHOOD
+  CCZ: BUS_CITY_CENTRE
+  CCMUZ: BUS_CC_MIXED_USE
+  CCMU(SF): BUS_CC_MIXED_USE_SF
+  TCZ: BUS_TOWN_CENTRE
+  LCZ: BUS_LOCAL_CENTRE
+  NCZ: BUS_NEIGHBOURHOOD_CENTRE
+  MUZ: BUS_MIXED_USE
+  LFRZ: BUS_LARGE_FORMAT_RETAIL
+  CO: BUS_COMMERCIAL_OFFICE
+  CBP: BUS_BANKS_PENINSULA
+  IG: BUS_INDUSTRIAL_GENERAL
+  IH: BUS_INDUSTRIAL_HEAVY
+  IP: BUS_INDUSTRIAL_PARK
+  OWM: OWM
+  'ON': 'ON'
+  OCP: OCP
+  OMI: OMI
+  OMF: OMF
+  OC: OC
+  OCP or RuQ(T): OCP or RuQ(T)
+  ARP: ARP
+  RuBP: RuBP
+  RuUF: RuUF
+  RuW: RuW
+  RuPH: RuPH
+  RuQ: RuQ
+  RuQ or OCP(T): RuQ or OCP(T)
+  RuT: RuT
+  PA: PA
+  SPA: SPA
+  SPOA: SPOA
+  SPS: SPS
+  SPR: SPR
+  SPLP: SPLP
+  SPB: SPB
+  SPC: SPC
+  SPT: SPT
+  SPLR: SPLR
+  SPH: SPH
+  SPRa: SPRa
+  SPW: SPW
+  SPST: SPST
+  SPN: SPN
+  T: T
+zones:
+  RES_SUBURBAN:
+    label: Residential Suburban Zone
+    method: density
+    height:
+      value: 8.0
+      storeys: 2.0
+      source: CDP 14.4.2.3(i)
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 4.5
+        boundaries: road
+        source: CDP 14.4.2.9(i)
+      - kind: yard
+        name: side
+        distance: 1.0
+        boundaries: side
+        source: CDP 14.4.2.7(i)
+      - kind: yard
+        name: rear
+        distance: 1.0
+        boundaries: rear
+        source: CDP 14.4.2.7(i)
+      - kind: plane
+        angle_deg: 39.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 39.0
+          south: 26.0
+          west: 39.0
+        boundaries:
+          - side
+          - rear
+        source: CDP 14.4.2.6, Appendix 14.16.2 Diagram A
+    ratios:
+      coverage_max:
+        value: 0.4
+    density:
+      large_site:
+        area_per_dwelling: 450.0
+      vacant_site_min_area: 450.0
+      minor_dwellings_per_site: 1.0
+      source: 'CDP 14.4.1.1 P2: a detached minor residential unit on a site holding
+        one residential unit; 5.5 m, single storey (14.4.2.3(ii))'
+    use:
+      residential: yes
+      business: no
+    notes: Multi-unit residential complexes are provided for only in the Density Transition
+      zone (14.4.1.1 P4), so this zone counts one unit per 450 m2. P10-P12 (conversion
+      or replacement of one unit with two) are conditional on existing units and are
+      not modelled.
+  RES_SUBURBAN_DT:
+    label: Residential Suburban Density Transition Zone
+    method: volumetric
+    height:
+      value: 8.0
+      storeys: 2.0
+      source: CDP 14.4.2.3(i)
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 4.5
+        boundaries: road
+        source: CDP 14.4.2.9(i)
+      - kind: yard
+        name: side
+        distance: 1.0
+        boundaries: side
+        source: CDP 14.4.2.7(i)
+      - kind: yard
+        name: rear
+        distance: 1.0
+        boundaries: rear
+        source: CDP 14.4.2.7(i)
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 45.0
+          south: 30.0
+          west: 45.0
+        boundaries:
+          - side
+          - rear
+        source: CDP 14.4.2.6, Appendix 14.16.2 Diagram B
+    ratios:
+      coverage_max:
+        value: 0.45
+      landscaping_min:
+        value: 0.2
+    density:
+      large_site:
+        area_per_dwelling: 330.0
+      vacant_site_min_area: 330.0
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: no
+      residential_share: 1.0
+    notes: Volumetric because multi-unit residential complexes are permitted to four
+      units (14.4.1.1 P4) and restricted discretionary above (RD8), with no minimum
+      net site area (14.4.2.1(iv)); the 330 m2 minimum governs only single units on
+      their own sites.
+  RES_MEDIUM_DENSITY:
+    label: Residential Medium Density Zone (chapter 14.5, outside Urban Intensification
+      Areas)
+    method: volumetric
+    height:
+      value: 14.0
+      storeys: 4.0
+      source: CDP 14.5.2.3(i) 11 m and 3 storeys; RD14 to 14 m, NC1 beyond
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 2.0
+        boundaries: road
+        source: CDP 14.5.2.9(i)
+      - kind: yard
+        name: side
+        distance: 1.0
+        boundaries: side
+        source: CDP 14.5.2.7(i)
+      - kind: yard
+        name: rear
+        distance: 1.0
+        boundaries: rear
+        source: CDP 14.5.2.7(i)
+      - kind: plane
+        angle_deg: 50.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 50.0
+          south: 35.0
+          west: 50.0
+        boundaries:
+          - side
+          - rear
+        source: CDP 14.5.2.6, Appendix 14.16.2 Diagram C
+    ratios:
+      coverage_max:
+        value: 0.5
+      landscaping_min:
+        value: 0.2
+    density:
+      large_site:
+        area_per_dwelling: 200.0
+      vacant_site_min_area: 200.0
+    use:
+      residential: yes
+      business: no
+      residential_share: 1.0
+    notes: No site density standard (14.5.2.1).
+  RES_HILLS:
+    label: Residential Hills Zone
+    method: density
+    height:
+      value: 9.0
+      storeys: 2.0
+      source: CDP 14.7.2.2(i) 8 m; RD11 to 9 m
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 4.0
+        boundaries: road
+        source: CDP 14.7.2.8
+      - kind: yard
+        name: side
+        distance: 1.8
+        boundaries: side
+        source: CDP 14.7.2.5(i)
+      - kind: yard
+        name: rear
+        distance: 1.8
+        boundaries: rear
+        source: CDP 14.7.2.5(i)
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 45.0
+          south: 30.0
+          west: 45.0
+        boundaries:
+          - side
+          - rear
+        source: CDP 14.7.2.4, Appendix 14.16.2 Diagram B
+    ratios:
+      coverage_max:
+        value: 0.45
+    density:
+      large_site:
+        area_per_dwelling: 585.0
+      vacant_site_min_area: 585.0
+      minor_dwellings_per_site: 1.0
+      source: CDP 14.7.1.1; 5.5 m, single storey (14.7.2.2(ii))
+    use:
+      residential: yes
+      business: no
+  RES_BANKS_PENINSULA:
+    label: Residential Banks Peninsula Zone
+    method: density
+    height:
+      value: 7.0
+      storeys: 2.0
+      source: CDP 14.8.2.2
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 3.0
+        boundaries: road
+        source: CDP 14.8.2.6(ii)
+      - kind: yard
+        name: side
+        distance: 1.5
+        boundaries: side
+        source: CDP 14.8.2.4(i), the lesser of 1.5 m and 2 m
+      - kind: yard
+        name: rear
+        distance: 2.0
+        boundaries: rear
+        source: CDP 14.8.2.4(ii)
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 2.0
+        boundaries:
+          - side
+          - rear
+        source: CDP 14.8.2.5
+    ratios:
+      coverage_max:
+        value: 0.35
+    density:
+      large_site:
+        area_per_dwelling: 400.0
+      vacant_site_min_area: 400.0
+    use:
+      residential: yes
+      business: no
+  RES_LARGE_LOT:
+    label: Residential Large Lot Zone
+    method: density
+    height:
+      value: 9.0
+      storeys: 2.0
+      source: CDP 14.9.2.2(i) 8 m; RD9 to 9 m
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 5.0
+        boundaries: road
+        source: CDP 14.9.2.6(ii)
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        source: CDP 14.9.2.5(i)
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        source: CDP 14.9.2.5(i)
+      - kind: plane
+        angle_deg: 39.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 39.0
+          south: 23.0
+          west: 39.0
+        boundaries:
+          - side
+          - rear
+        source: CDP 14.9.2.4, Appendix 14.16.2 Diagram F
+    ratios:
+      coverage_max:
+        value: 0.5
+    form:
+      max_floorplate: 330.0
+    density:
+      large_site:
+        area_per_dwelling: 1350.0
+      vacant_site_min_area: 1350.0
+      minor_dwellings_per_site: 1.0
+      source: CDP 14.9.1.1; 5.5 m, single storey (14.9.2.2(ii))
+    use:
+      residential: yes
+      business: no
+  RES_SMALL_SETTLEMENT:
+    label: Residential Small Settlement Zone
+    method: density
+    height:
+      value: 9.0
+      storeys: 2.0
+      source: CDP 14.10.2.2(i) 8 m; RD10 to 9 m
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 4.5
+        boundaries: road
+        source: CDP 14.10.2.6(ii)
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        source: CDP 14.10.2.5(i)
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        source: CDP 14.10.2.5(i)
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 2.0
+        boundaries:
+          - side
+          - rear
+        source: CDP 14.10.2.4
+    ratios:
+      coverage_max:
+        value: 0.25
+    form:
+      max_floorplate: 250.0
+    density:
+      large_site:
+        area_per_dwelling: 1000.0
+      vacant_site_min_area: 1000.0
+    use:
+      residential: yes
+      business: no
+  RES_VISITOR_ACCOMMODATION:
+    label: Residential Visitor Accommodation Zone (outside Urban Intensification Areas)
+    method: volumetric
+    height:
+      value: 11.0
+      storeys: 3.0
+      source: CDP 14.11.2.3(iii), Group B; Group A 9 m, or 11 m with a roof pitch
+        over 22 degrees
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 4.5
+        boundaries: road
+        source: CDP 14.11.2.4
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        source: CDP 14.11.2.5
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        source: CDP 14.11.2.5
+      - kind: plane
+        angle_deg: 50.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 50.0
+          south: 35.0
+          west: 50.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 14.11.2.6(ii), Group B: Appendix 14.16.2 Diagram C where the
+          boundary adjoins a residential zone'
+    ratios:
+      coverage_max:
+        value: 0.45
+    density:
+      large_site:
+        area_per_dwelling: 200.0
+    use:
+      residential: yes
+      business: no
+      residential_share: 1.0
+    notes: Visitor accommodation is the zone's purpose (14.11.1.1 P1); any other activity
+      takes the rules of the alternative zone listed per site in Appendix 14.16.11
+      (P2). Modelled as residential under the Group B envelope, a simplification on
+      19 ha. Sites inside an Urban Intensification Area are under 14A.9 instead.
+  RES_NEW_NEIGHBOURHOOD:
+    label: Residential New Neighbourhood Zone
+    method: volumetric
+    height:
+      value: 8.0
+      storeys: 2.0
+      source: CDP 14.12.2.1(i); 11 m for comprehensive residential development on
+        sites of 6,000 m2 or more (ii), not modelled
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 4.0
+        boundaries: road
+        source: CDP 14.12.2.11
+      - kind: yard
+        name: side
+        distance: 1.0
+        boundaries: side
+        source: CDP 14.12.2.5(i)
+      - kind: yard
+        name: rear
+        distance: 1.0
+        boundaries: rear
+        source: CDP 14.12.2.5(i)
+      - kind: plane
+        angle_deg: 50.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 50.0
+          south: 35.0
+          west: 50.0
+        boundaries:
+          - side
+          - rear
+        source: CDP 14.12.2.4, Appendix 14.16.2 Diagram C
+    ratios:
+      coverage_max:
+        bands:
+          by: site_area
+          bands:
+            - min: 0.0
+              max: 300.0
+              value: 0.45
+            - min: 300.0
+              max: 6000.0
+              value: 0.4
+            - min: 6000.0
+              value: 0.5
+    density:
+      large_site:
+        area_per_dwelling: 300.0
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: no
+      residential_share: 1.0
+    notes: Development must accord with the relevant outline development plan (14.12.2.16),
+      which sets roads, reserves and density areas (Prestons, Wigram, Yaldhurst heights
+      of 9 to 13 m by density area). Those plans are not mapped as features, so the
+      zone's general envelope applies. The 50 per cent coverage band is for comprehensive
+      residential development on a 6,000 m2 site (14.12.2.17).
+  RES_MRZ:
+    label: Medium Density Residential Zone (14A)
+    method: volumetric
+    height:
+      value: 12.0
+      occupiable: 11.0
+      roof_allowance: 1.0
+      storeys: 3.0
+      source: 'CDP 14A.5.2.3(i): 11 m, plus 1 m for 50% of the roof where it slopes
+        15 degrees or more; 12 m in the Local Centre Intensification Precinct (vii)'
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 1.5
+        boundaries: road
+        source: CDP 14A.5.2.7(i)
+      - kind: yard
+        name: side
+        distance: 1.0
+        boundaries: side
+        source: CDP 14A.5.2.7(i)
+      - kind: yard
+        name: rear
+        distance: 1.0
+        boundaries: rear
+        source: CDP 14A.5.2.7(i)
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        source: CDP 14A.5.2.6, Appendix 14A.12.2 Diagram D
+    ratios:
+      coverage_max:
+        value: 0.5
+      landscaping_min:
+        value: 0.2
+    density:
+      large_site:
+        area_per_dwelling: 200.0
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: no
+      residential_share: 1.0
+  RES_HRZ:
+    label: High Density Residential Zone (14A)
+    method: volumetric
+    height:
+      value: 14.0
+      storeys: 4.0
+      source: CDP 14A.6.2.1(a)(i); 39 m in the Central City Residential Precinct,
+        22 m elsewhere in the Central City Walking Catchment (overlays)
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 1.5
+        boundaries: road
+        source: CDP 14A.6.2.3
+      - kind: yard
+        name: side
+        distance: 1.0
+        boundaries: side
+        source: CDP 14A.6.2.3
+      - kind: yard
+        name: rear
+        distance: 1.0
+        boundaries: rear
+        source: CDP 14A.6.2.3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        max_setback_above:
+          north: 6.0
+          east: 7.0
+          south: 8.0
+          west: 7.0
+          height: 12.0
+        boundaries:
+          - side
+          - rear
+        when:
+          beyond_frontage: 20.0
+        source: CDP 14A.6.2.2(a)-(b), Diagram D; above 12 m the Diagram G setbacks
+          instead
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        max_setback_above:
+          north: 6.0
+          east: 7.0
+          south: 8.0
+          west: 7.0
+          height: 12.0
+        boundaries:
+          - side
+          - rear
+        when:
+          within_frontage: 20.0
+          adjacent_zones:
+            - RES_ANY
+            - OPEN_SPACE_ANY
+          not_adjacent_zones: RES_HRZ
+        source: CDP 14A.6.2.2(c)(iv), the exception to the front-portion exemption
+    ratios:
+      coverage_max:
+        bands:
+          by: site_area
+          bands:
+            - min: 0.0
+              max: 625.0
+              value: 0.5
+            - min: 625.0
+              value: 0.6
+      landscaping_min:
+        value: 0.2
+    density:
+      large_site:
+        area_per_dwelling: 200.0
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: no
+      residential_share: 1.0
+  BUS_TOWN_CENTRE:
+    label: Town Centre Zone
+    method: volumetric
+    height:
+      value: 22.0
+      storeys: 6.0
+      source: CDP 15.4.2.2(i); 32 m at Riccarton, Hornby and Papanui (overlay town_centre_32m)
+    setbacks:
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 15.4.2.4 and equivalents: 3 m from the internal boundary with
+          a residential zone'
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.4.2.4 and equivalents
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        max_setback_above:
+          north: 6.0
+          east: 7.0
+          south: 8.0
+          west: 7.0
+          height: 12.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 15.4.2.5 and equivalents: Appendix 14A.12.2 Diagram D from 4
+          m against a residential zone; above 12 m the 6/8/7 m setback instead; above
+          12 m: Diagram G orientation'
+    form:
+      tower_above_height: 20.0
+      max_tower_dimension: 40.0
+      tower_separation: 18.0
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 0.5
+      source: CDP 15.4.1.1 P21 a. (located above ground level) for the ground floor;
+        the upper-floor share is an assumption the plan does not state
+  BUS_LOCAL_CENTRE:
+    label: Local Centre Zone
+    method: volumetric
+    height:
+      value: 14.0
+      storeys: 4.0
+      source: CDP 15.5.2.2(i); 22 m in a Local Centre (Large) (overlay local_centre_large_22m)
+    setbacks:
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 15.4.2.4 and equivalents: 3 m from the internal boundary with
+          a residential zone'
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.4.2.4 and equivalents
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        max_setback_above:
+          north: 6.0
+          east: 7.0
+          south: 8.0
+          west: 7.0
+          height: 12.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 15.4.2.5 and equivalents: Appendix 14A.12.2 Diagram D from 4
+          m against a residential zone; above 12 m the 6/8/7 m setback instead; above
+          12 m: Diagram G orientation'
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 0.5
+      source: CDP 15.5.1.1 P21 a. (above ground level); the upper-floor share is an
+        assumption
+  BUS_NEIGHBOURHOOD_CENTRE:
+    label: Neighbourhood Centre Zone
+    method: volumetric
+    height:
+      value: 14.0
+      storeys: 4.0
+      source: CDP 15.6.2.1(i); in the Central City 20 m east of Barbadoes Street and
+        32 m west (ii), not modelled
+    setbacks:
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 15.4.2.4 and equivalents: 3 m from the internal boundary with
+          a residential zone'
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.4.2.4 and equivalents
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        max_setback_above:
+          north: 6.0
+          east: 7.0
+          south: 8.0
+          west: 7.0
+          height: 12.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 15.4.2.5 and equivalents: Appendix 14A.12.2 Diagram D from 4
+          m against a residential zone; above 12 m the 6/8/7 m setback instead; above
+          12 m: Diagram G orientation'
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 0.5
+      source: CDP 15.6.1.1 P19 (above ground level or to the rear); the upper-floor
+        share is an assumption
+  BUS_BANKS_PENINSULA:
+    label: Commercial Banks Peninsula Zone
+    method: volumetric
+    height:
+      value: 8.0
+      storeys: 2.0
+      source: CDP 15.7.2.1(ii); 12 m in Lyttelton (i), overlay lyttelton_commercial_12m
+    setbacks:
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.7.2.4
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.7.2.4
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 2.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.7.2.5
+    ratios:
+      coverage_max:
+        value: 0.65
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 0.5
+      source: CDP 15.7.1.1 P17 (above ground floor or behind a commercial activity);
+        the upper-floor share is an assumption
+  BUS_LARGE_FORMAT_RETAIL:
+    label: Large Format Retail Zone
+    method: volumetric
+    height:
+      value: 15.0
+      storeys: 4.0
+      source: CDP 15.8.2.1; 12 m at the Northern Homebase Centre, not modelled
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 3.0
+        boundaries: road
+        source: CDP 15.8.2.2(i)
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones:
+            - RES_ANY
+            - OPEN_SPACE_ANY
+        source: CDP 15.8.2.3
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones:
+            - RES_ANY
+            - OPEN_SPACE_ANY
+        source: CDP 15.8.2.3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        max_setback_above:
+          north: 6.0
+          east: 7.0
+          south: 8.0
+          west: 7.0
+          height: 12.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 15.4.2.5 and equivalents: Appendix 14A.12.2 Diagram D from 4
+          m against a residential zone; above 12 m the 6/8/7 m setback instead; above
+          12 m: Diagram G orientation'
+    use:
+      residential: no
+      business: yes
+      residential_share: 0.0
+    notes: No residential activity is provided for in the zone (15.8.1).
+  BUS_COMMERCIAL_OFFICE:
+    label: Commercial Office Zone
+    method: volumetric
+    height:
+      value: 15.0
+      storeys: 4.0
+      source: CDP 15.9.2.1
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 3.0
+        boundaries: road
+        source: CDP 15.9.2.2
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.9.2.3
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.9.2.3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        max_setback_above:
+          north: 6.0
+          east: 7.0
+          south: 8.0
+          west: 7.0
+          height: 12.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 15.4.2.5 and equivalents: Appendix 14A.12.2 Diagram D from 4
+          m against a residential zone; above 12 m the 6/8/7 m setback instead; above
+          12 m: Diagram G orientation'
+    use:
+      residential: no
+      business: yes
+      residential_share: 0.0
+    notes: No residential activity is provided for in the zone (15.9.1).
+  BUS_MIXED_USE:
+    label: Mixed Use Zone
+    method: volumetric
+    height:
+      value: 15.0
+      storeys: 4.0
+      source: CDP 15.10.2.1; 36 m at 25 Deans Avenue, not modelled
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 3.0
+        boundaries: road
+        source: CDP 15.10.2.2(i)
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.10.2.3
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.10.2.3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        max_setback_above:
+          north: 6.0
+          east: 7.0
+          south: 8.0
+          west: 7.0
+          height: 12.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 15.4.2.5 and equivalents: Appendix 14A.12.2 Diagram D from 4
+          m against a residential zone; above 12 m the 6/8/7 m setback instead; above
+          12 m: Diagram G orientation'
+    use:
+      residential: no
+      business: yes
+      residential_share: 0.0
+    notes: Residential activity is permitted only in the Mixed Use Zone at Addington,
+      Mandeville Street and New Brighton (15.10.1.1 P27, Appendix 15.15.10), above
+      ground floor or to the rear. Those areas are not mapped as features, so the
+      zone is counted as business floorspace only; an understatement there.
+  BUS_CITY_CENTRE:
+    label: City Centre Zone
+    method: volumetric
+    storey_height: 3.6
+    height:
+      value: 68.400000000000006
+      storeys: 19.0
+      source: No general limit (CDP 15.11.2.11); council assumption of 19 storeys
+        (3 Sep 2025, Attachment L), at 3.6 m
+    setbacks:
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.11.2.10(i)
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.11.2.10(i)
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        max_setback_above:
+          north: 6.0
+          east: 7.0
+          south: 8.0
+          west: 7.0
+          height: 12.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.11.2.9
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 21.0
+        vertical_above: 28.0
+        boundaries: road
+        source: CDP 15.11.2.12 road wall 21 m and 15.11.2.3, 45 degrees from it to
+          28 m; the 30 m corner exemption is not modelled
+      - kind: upper_level
+        distance: 6.0
+        above_height: 45.0
+        boundaries:
+          - side
+          - rear
+        source: 'CDP 15.11.2.14: 6 m or 10% of the building''s height, the lesser'
+    form:
+      max_tower_floorplate: 1200.0
+      tower_above_height: 45.0
+      max_tower_dimension: 40.0
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share: 0.5
+      source: CDP 15.11.1.1 P13 bars ground floors within 10 m of a road only in active
+        frontage areas; the share is an assumption
+  BUS_CC_MIXED_USE:
+    label: Central City Mixed Use Zone
+    method: volumetric
+    storey_height: 3.6
+    height:
+      value: 32.0
+      source: 'CDP 15.12.2.2: 32 m unless the Central City Maximum Building Height
+        map says otherwise; base 17 m'
+    setbacks:
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.12.2.7(i)
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.12.2.7(i)
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 15.12.2.6, against a residential zone
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 3.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: OPEN_SPACE_ANY
+        source: CDP 15.12.2.6, from 3 m against Open Space Community Parks, Water
+          and Margins and the Avon River Precinct (applied against every open space
+          zone)
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 17.0
+        boundaries: road
+        source: 'CDP 15.12.2.10: 45 degrees from the 17 m building base, into the
+          site'
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share: 0.5
+      source: CDP 15.12.1.1 P16, no ground floor restriction; the share is an assumption
+  BUS_CC_MIXED_USE_SF:
+    label: Central City Mixed Use Zone (South Frame)
+    method: volumetric
+    height:
+      value: 21.0
+      storeys: 6.0
+      source: 'CDP 15.13.2.1: 21 m unless the Central City Maximum Building Height
+        map says otherwise; base 17 m'
+    setbacks:
+      - kind: plane
+        angle_deg: 33.0
+        start_height: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: OPEN_SPACE_ANY
+          facing:
+            - 270.0
+            - 90.0
+        source: 'CDP 15.13.2.3: 33 degrees from 8 m where the site adjoins the northern
+          boundary of an Open Space Community Parks Zone'
+      - kind: upper_level
+        distance: 4.0
+        above_height: 17.0
+        boundaries:
+          - side
+          - rear
+        source: 'CDP 15.13.2.10: towers 4 m from internal boundaries'
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share: 0.5
+      source: CDP 15.13.1.1 P13, no ground floor restriction; the share is an assumption
+  BUS_INDUSTRIAL_GENERAL:
+    label: Industrial General Zone
+    method: volumetric
+    storey_height: 4.0
+    height:
+      value: 15.0
+      storeys: 3.0
+      source: No general limit (CDP 16.4.2.1); 15 m assumed, the plan's own industrial
+        height (16.6.2.1)
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 1.5
+        boundaries: road
+        source: CDP 16.4.2.2(i); 3 m on arterial roads or opposite a residential zone
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 16.4.2.3
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 16.4.2.3
+      - kind: plane
+        angle_deg: 39.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 39.0
+          south: 26.0
+          west: 39.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RES_SUBURBAN
+            - RES_HILLS
+            - RES_LARGE_LOT
+            - RES_BANKS_PENINSULA
+            - RES_SMALL_SETTLEMENT
+            - RES_NEW_NEIGHBOURHOOD
+            - RES_VISITOR_ACCOMMODATION
+        source: CDP 16.4.2.4(a), Appendix 16.8.11 Diagram A against Residential Suburban
+          (applied against the other lower density zones too)
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 45.0
+          south: 30.0
+          west: 45.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_SUBURBAN_DT
+        source: CDP 16.4.2.4(a), Appendix 16.8.11 Diagram B
+      - kind: plane
+        angle_deg: 50.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 50.0
+          south: 35.0
+          west: 50.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RES_MEDIUM_DENSITY
+            - RES_MRZ
+            - RES_HRZ
+        source: CDP 16.4.2.4(a), Appendix 16.8.11 Diagram C against Residential Medium
+          Density (applied against MRZ and HRZ, which the appendix predates)
+      - kind: upper_level
+        distance: 20.0
+        above_height: 15.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: 'CDP 16.4.2.1: 15 m within 20 m of a residential zone'
+    use:
+      residential: no
+      business: yes
+      residential_share: 0.0
+  BUS_INDUSTRIAL_HEAVY:
+    label: Industrial Heavy Zone
+    method: volumetric
+    storey_height: 4.0
+    height:
+      value: 15.0
+      storeys: 3.0
+      source: No general limit (CDP 16.5.2.1); 15 m assumed, as for Industrial General
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 1.5
+        boundaries: road
+        source: CDP 16.4.2.2(i); 3 m on arterial roads or opposite a residential zone
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 16.4.2.3
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 16.4.2.3
+      - kind: plane
+        angle_deg: 39.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 39.0
+          south: 26.0
+          west: 39.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RES_SUBURBAN
+            - RES_HILLS
+            - RES_LARGE_LOT
+            - RES_BANKS_PENINSULA
+            - RES_SMALL_SETTLEMENT
+            - RES_NEW_NEIGHBOURHOOD
+            - RES_VISITOR_ACCOMMODATION
+        source: CDP 16.4.2.4(a), Appendix 16.8.11 Diagram A against Residential Suburban
+          (applied against the other lower density zones too)
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 45.0
+          south: 30.0
+          west: 45.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_SUBURBAN_DT
+        source: CDP 16.4.2.4(a), Appendix 16.8.11 Diagram B
+      - kind: plane
+        angle_deg: 50.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 50.0
+          south: 35.0
+          west: 50.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RES_MEDIUM_DENSITY
+            - RES_MRZ
+            - RES_HRZ
+        source: CDP 16.4.2.4(a), Appendix 16.8.11 Diagram C against Residential Medium
+          Density (applied against MRZ and HRZ, which the appendix predates)
+      - kind: upper_level
+        distance: 20.0
+        above_height: 15.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RES_ANY
+            - RURAL_ANY
+        source: 'CDP 16.5.2.1: 15 m within 20 m of a residential or rural zone'
+    use:
+      residential: no
+      business: yes
+      residential_share: 0.0
+  BUS_INDUSTRIAL_PARK:
+    label: Industrial Park Zone
+    method: volumetric
+    storey_height: 4.0
+    height:
+      value: 15.0
+      storeys: 3.0
+      source: CDP 16.6.2.1(i)
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 6.0
+        boundaries: road
+        source: CDP 16.6.2.3(i)
+      - kind: yard
+        name: side
+        distance: 6.0
+        boundaries: side
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 16.6.2.4
+      - kind: yard
+        name: rear
+        distance: 6.0
+        boundaries: rear
+        when:
+          adjacent_zones: RES_ANY
+        source: CDP 16.6.2.4
+      - kind: plane
+        angle_deg: 39.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 39.0
+          south: 26.0
+          west: 39.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RES_SUBURBAN
+            - RES_HILLS
+            - RES_LARGE_LOT
+            - RES_BANKS_PENINSULA
+            - RES_SMALL_SETTLEMENT
+            - RES_NEW_NEIGHBOURHOOD
+            - RES_VISITOR_ACCOMMODATION
+        source: CDP 16.4.2.4(a), Appendix 16.8.11 Diagram A against Residential Suburban
+          (applied against the other lower density zones too)
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 45.0
+          south: 30.0
+          west: 45.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_SUBURBAN_DT
+        source: CDP 16.4.2.4(a), Appendix 16.8.11 Diagram B
+      - kind: plane
+        angle_deg: 50.0
+        start_height: 2.3
+        angle_by_orientation:
+          north: 55.0
+          east: 50.0
+          south: 35.0
+          west: 50.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RES_MEDIUM_DENSITY
+            - RES_MRZ
+            - RES_HRZ
+        source: CDP 16.4.2.4(a), Appendix 16.8.11 Diagram C against Residential Medium
+          Density (applied against MRZ and HRZ, which the appendix predates)
+    ratios:
+      coverage_max:
+        value: 0.5
+    use:
+      residential: no
+      business: yes
+      residential_share: 0.0
+  OWM:
+    label: Open Space Water and Margins
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  'ON':
+    label: Open Space Natural
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  OCP:
+    label: Open Space Community Parks
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  OMI:
+    label: Open Space McLeans Island
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  OMF:
+    label: Open Space Metropolitan Facilities
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  OC:
+    label: Open Space Coastal
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  OCP or RuQ(T):
+    label: Open Space Community Parks or Rural Quarry (Templeton)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  ARP:
+    label: Avon River Precinct (Te Papa Otakaro)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  RuBP:
+    label: Rural Banks Peninsula
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  RuUF:
+    label: Rural Urban Fringe
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  RuW:
+    label: Rural Waimakariri
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  RuPH:
+    label: Rural Port Hills
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  RuQ:
+    label: Rural Quarry
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  RuQ or OCP(T):
+    label: Rural Quarry or Open Space Community Parks (Templeton)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  RuT:
+    label: Rural Templeton
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  PA:
+    label: Papakainga Kainga Nohoanga
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPA:
+    label: Specific Purpose (Airport)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPOA:
+    label: Specific Purpose (Otakaro Avon River Corridor)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPS:
+    label: Specific Purpose (School)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPR:
+    label: Specific Purpose (Golf Resort)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPLP:
+    label: Specific Purpose (Lyttelton Port)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPB:
+    label: Specific Purpose (Burwood Landfill & Resource Recovery Park)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPC:
+    label: Specific Purpose (Cemetery)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPT:
+    label: Specific Purpose (Tertiary Education)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPLR:
+    label: Specific Purpose (Flat Land Recovery)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPH:
+    label: Specific Purpose (Hospital)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPRa:
+    label: Specific Purpose (Ruapuna Motorsport)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPW:
+    label: Specific Purpose (Defence Wigram)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPST:
+    label: Specific Purpose (Styx Mill Road Transfer Station)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SPN:
+    label: Specific Purpose (Nga Hau e Wha)
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  T:
+    label: Transport
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+overlays:
+  town_centre_32m:
+    type: parameters
+    layer: ccc_commercial_centre
+    combine: replace
+    filter:
+      Name:
+        - Riccarton
+        - Hornby
+        - Papanui/Northlands
+    applies_to_zones: BUS_TOWN_CENTRE
+    parameters:
+      height:
+        value: 32.0
+        storeys: 9.0
+        source: 'CDP 15.4.2.2(ii): Town Centres at Riccarton, Hornby and Papanui'
+    enabled: yes
+    precedence: 50.0
+    source: CDP 15.4.2.2(ii)
+  local_centre_large_22m:
+    type: parameters
+    layer: ccc_commercial_centre
+    combine: replace
+    filter:
+      Name:
+        - Bush Inn-Church Corner
+        - Merivale
+        - Sydenham
+        - Ferrymead
+    applies_to_zones: BUS_LOCAL_CENTRE
+    parameters:
+      height:
+        value: 22.0
+        storeys: 6.0
+        source: CDP 15.5.2.2(ii)
+    enabled: yes
+    precedence: 50.0
+    source: CDP 15.5.2.2(ii), Table 15.1 Local Centres (Large)
+  lyttelton_commercial_12m:
+    type: parameters
+    layer: ccc_commercial_centre
+    combine: replace
+    filter:
+      Name:
+        - Lyttelton
+        - Lyttelton-Stourbridge
+        - Lyttelton-Lincoln
+    applies_to_zones: BUS_BANKS_PENINSULA
+    parameters:
+      height:
+        value: 12.0
+        storeys: 3.0
+        source: 'CDP 15.7.2.1(i): Lyttelton'
+    enabled: yes
+    precedence: 50.0
+    source: CDP 15.7.2.1(i)
+  central_city_max_height:
+    type: height
+    layer: ccc_cbd_height
+    combine: replace
+    value_field: Limit
+    applies_to_zones:
+      - BUS_CITY_CENTRE
+      - BUS_CC_MIXED_USE
+      - BUS_CC_MIXED_USE_SF
+    enabled: yes
+    precedence: 70.0
+    source: CDP 15.12.2.2, 15.13.2.1; Central City Maximum Building Height planning
+      map (DistrictPlanB/34)
+  new_regent_street_8m:
+    type: height
+    value: 8.0
+    layer: ccc_qualifying_matter
+    combine: replace
+    filter:
+      Name: New Regent Street Height
+    applies_to_zones: BUS_CITY_CENTRE
+    enabled: yes
+    precedence: 80.0
+    source: CDP 15.11.2.11(ii)
+  arts_centre_16m:
+    type: height
+    value: 16.0
+    layer: ccc_qualifying_matter
+    combine: replace
+    filter:
+      Name: Arts Centre Height
+    applies_to_zones: BUS_CITY_CENTRE
+    enabled: yes
+    precedence: 80.0
+    source: CDP 15.11.2.11(iii)
+  port_height:
+    type: height
+    layer: ccc_port_height
+    combine: cap
+    value_field: HeightLimit
+    enabled: yes
+    precedence: 60.0
+    source: CDP Lyttelton Port Height Restriction (DistrictPlan/57)
+  rmd_lower_height_8m:
+    type: parameters
+    layer: ccc_residential_density
+    combine: replace
+    filter:
+      Category: Residential Medium Density Lower Height Limit Overlay
+    applies_to_zones: RES_MEDIUM_DENSITY
+    parameters:
+      height:
+        value: 8.0
+        storeys: 2.0
+        source: CDP 14.5.2.3(ii); 11 m on sites of 1,500 m2 or more, not modelled
+    enabled: yes
+    precedence: 50.0
+    source: CDP 14.5.2.3(ii)
+  mrz_higher_height_deans_avenue:
+    type: parameters
+    layer: ccc_residential_density
+    combine: replace
+    filter:
+      DPResidentialDensityID: 41.0
+    applies_to_zones: RES_MRZ
+    parameters:
+      height:
+        value: 36.0
+        storeys: 10.0
+        source: 'CDP 14A.5.2.3(ii): Residential Medium Density Higher Height Limit
+          Overlay at Deans Avenue'
+    enabled: yes
+    precedence: 55.0
+    source: CDP 14A.5.2.3(ii)
+  mrz_higher_height_carlton_mill:
+    type: parameters
+    layer: ccc_residential_density
+    combine: replace
+    filter:
+      DPResidentialDensityID:
+        - 39.0
+        - 76.0
+    applies_to_zones: RES_MRZ
+    parameters:
+      height:
+        value: 30.0
+        storeys: 8.0
+        source: 'CDP 14A.5.2.3(iii): Residential Medium Density Higher Height Limit
+          Overlay at Carlton Mill Road'
+    enabled: yes
+    precedence: 55.0
+    source: CDP 14A.5.2.3(iii)
+  rmd_higher_height_north_beach:
+    type: parameters
+    layer: ccc_residential_density
+    combine: replace
+    filter:
+      DPResidentialDensityID: 40.0
+    applies_to_zones: RES_MEDIUM_DENSITY
+    parameters:
+      height:
+        value: 14.0
+        storeys: 4.0
+        source: 'CDP 14.5.2.3(ix): 14 m at North Beach; at most 5 storeys (x)'
+      setbacks:
+        - kind: plane
+          angle_deg: 55.0
+          start_height: 2.3
+          angle_by_orientation:
+            north: 60.0
+            east: 55.0
+            south: 42.5
+            west: 55.0
+          boundaries:
+            - side
+            - rear
+          source: 'CDP 14.5.2.6: Appendix 14.16.2 Diagram D in the Higher Height Limit
+            Overlay (Diagram E above 11 m, not modelled)'
+      replaces_setbacks: plane
+    enabled: yes
+    precedence: 55.0
+    source: CDP 14.5.2.3(ix)-(x)
+  rmd_higher_height_new_brighton:
+    type: parameters
+    layer: ccc_residential_density
+    combine: replace
+    filter:
+      DPResidentialDensityID:
+        - 95.0
+        - 226.0
+    applies_to_zones: RES_MEDIUM_DENSITY
+    parameters:
+      height:
+        value: 20.0
+        storeys: 5.0
+        source: 'CDP 14.5.2.3(ix): 20 m in Central New Brighton; at most 5 storeys
+          (x)'
+      setbacks:
+        - kind: plane
+          angle_deg: 55.0
+          start_height: 2.3
+          angle_by_orientation:
+            north: 60.0
+            east: 55.0
+            south: 42.5
+            west: 55.0
+          boundaries:
+            - side
+            - rear
+          source: 'CDP 14.5.2.6: Appendix 14.16.2 Diagram D in the Higher Height Limit
+            Overlay (Diagram E above 11 m, not modelled)'
+      replaces_setbacks: plane
+    enabled: yes
+    precedence: 55.0
+    source: CDP 14.5.2.3(ix)-(x)
+  local_centre_intensification_precinct:
+    type: parameters
+    layer: ccc_precinct
+    combine: replace
+    filter:
+      Code: LCIP
+    applies_to_zones: RES_MRZ
+    parameters:
+      height:
+        value: 12.0
+        storeys: 3.0
+        source: CDP 14A.5.2.3(vii)
+      setbacks:
+        - kind: plane
+          angle_deg: 60.0
+          start_height: 4.0
+          boundaries:
+            - side
+            - rear
+          when:
+            beyond_frontage: 20.0
+          source: CDP 14A.5.2.6, Diagram D, beyond the front 20 m
+        - kind: plane
+          angle_deg: 60.0
+          start_height: 4.0
+          boundaries:
+            - side
+            - rear
+          when:
+            within_frontage: 20.0
+            adjacent_zones:
+              - RES_ANY
+              - OPEN_SPACE_ANY
+            not_adjacent_zones: RES_HRZ
+          source: 'CDP 14A.5.2.6(b)(v): the front-portion exemption does not apply
+            against a residential zone outside the precinct (other than HRZ) or open
+            space; applied against every non-HRZ residential neighbour'
+      replaces_setbacks: plane
+    enabled: yes
+    precedence: 50.0
+    source: CDP 14A.5.2.3(vii), 14A.5.2.6(b)(v)
+  central_city_residential_precinct:
+    type: parameters
+    layer: ccc_precinct
+    combine: replace
+    filter:
+      Code: CCRP
+    applies_to_zones: RES_HRZ
+    parameters:
+      height:
+        value: 39.0
+        storeys: 12.0
+        source: CDP 14A.6.2.1(a)(ii)
+      setbacks:
+        - kind: plane
+          angle_deg: 60.0
+          start_height: 4.0
+          max_setback_above:
+            north: 6.0
+            east: 7.0
+            south: 8.0
+            west: 7.0
+            height: 12.0
+          boundaries:
+            - side
+            - rear
+          source: CDP 14A.6.2.2(a)-(b); the front-portion exemption is for buildings
+            to 14 m only
+        - kind: upper_level
+          distance: 4.0
+          above_height: 14.0
+          boundaries: road
+          source: CDP 14A.6.2.1(b)(i)
+      replaces_setbacks:
+        - plane
+        - upper_level
+    enabled: yes
+    precedence: 60.0
+    source: CDP 14A.6.2.1(a)(ii)
+  central_city_walking_catchment:
+    type: parameters
+    layer: ccc_central_city_walking
+    combine: replace
+    applies_to_zones: RES_HRZ
+    parameters:
+      height:
+        value: 22.0
+        storeys: 6.0
+        source: CDP 14A.6.2.1(a)(iii)
+      setbacks:
+        - kind: plane
+          angle_deg: 60.0
+          start_height: 4.0
+          max_setback_above:
+            north: 6.0
+            east: 7.0
+            south: 8.0
+            west: 7.0
+            height: 12.0
+          boundaries:
+            - side
+            - rear
+          source: CDP 14A.6.2.2(a)-(b)
+        - kind: upper_level
+          distance: 4.0
+          above_height: 14.0
+          boundaries: road
+          source: CDP 14A.6.2.1(b)(i)
+      replaces_setbacks:
+        - plane
+        - upper_level
+    enabled: yes
+    precedence: 55.0
+    source: CDP 14A.6.2.1(a)(iii); the Central City Residential Precinct (precedence
+      60) wins where both apply
+  character_area:
+    type: parameters
+    layer: ccc_residential_character
+    combine: replace
+    filter:
+      CharacterName:
+        - Beckenham Loop
+        - Cashmere
+        - Clifton
+        - Dudley
+        - Englefield
+        - Esplanade
+        - Francis
+        - Heaton
+        - Malvern
+        - Massey
+        - Severn
+        - Tainui
+        - Akaroa
+    applies_to_zones:
+      - RES_MRZ
+      - RES_SUBURBAN
+    parameters:
+      method: density
+      density:
+        large_site:
+          area_per_dwelling: 600.0
+        vacant_site_min_area: 600.0
+    enabled: yes
+    precedence: 60.0
+    source: CDP 14A.5.3.2.6(b); 8.6.1 Table 1 a.
+  character_area_lyttelton:
+    type: parameters
+    layer: ccc_residential_character
+    combine: replace
+    filter:
+      CharacterName: Lyttelton
+    applies_to_zones: RES_MRZ
+    parameters:
+      method: density
+      ratios:
+        coverage_max:
+          value: 0.6
+      density:
+        large_site:
+          area_per_dwelling: 250.0
+        vacant_site_min_area: 250.0
+    enabled: yes
+    precedence: 60.0
+    source: CDP 14A.5.3.2.6(a), 14A.5.3.2.7, 14A.5.3.2.8
+  hills_density_850:
+    type: parameters
+    layer: ccc_residential_density
+    combine: replace
+    filter:
+      Category: Residential Hills Density Overlay
+    applies_to_zones: RES_HILLS
+    parameters:
+      density:
+        large_site:
+          area_per_dwelling: 765.0
+        vacant_site_min_area: 765.0
+    enabled: yes
+    precedence: 50.0
+    source: 'CDP 14.7.2.1(ii): Moncks Spur/Mt Pleasant, Shalamar Drive, Upper Kennedys
+      Bush; RD1 to 10% less'
+  large_lot_density_3000:
+    type: parameters
+    layer: ccc_residential_density
+    combine: replace
+    filter:
+      Category: Residential Large Lot Density Overlay
+      Location: Unspecified
+    applies_to_zones: RES_LARGE_LOT
+    parameters:
+      density:
+        large_site:
+          area_per_dwelling: 2700.0
+        vacant_site_min_area: 2700.0
+    enabled: yes
+    precedence: 50.0
+    source: CDP 14.9.2.1(ii); RD2 to 10% less
+  akaroa_hillslopes_5000:
+    type: parameters
+    layer: ccc_residential_density
+    combine: replace
+    filter:
+      Location: Akaroa Hillslopes
+    applies_to_zones: RES_LARGE_LOT
+    parameters:
+      ratios:
+        coverage_max:
+          value: 0.2
+      form:
+        max_floorplate: 275.0
+      density:
+        large_site:
+          area_per_dwelling: 4500.0
+        vacant_site_min_area: 4500.0
+    enabled: yes
+    precedence: 55.0
+    source: CDP 14.9.2.1(iii), 14.9.2.3(ii); RD2 and RD10 bands
+  diamond_harbour_600:
+    type: parameters
+    layer: ccc_residential_density
+    combine: replace
+    filter:
+      Category: Diamond Harbour Density Overlay
+    applies_to_zones: RES_BANKS_PENINSULA
+    parameters:
+      density:
+        large_site:
+          area_per_dwelling: 600.0
+        vacant_site_min_area: 600.0
+    enabled: yes
+    precedence: 50.0
+    source: CDP 14.8.2.1(ii)
+  airspace_christchurch_airport:
+    type: height_surface
+    layer: airspace_christchurch
+    combine: cap
+    enabled: yes
+    precedence: 100.0
+    source: CDP 6.7.4.4; 6.7.4.1.6 PR1 (penetration prohibited)
+    notes: |-
+      A hard cap: any building penetrating the surfaces is prohibited. Not modelled: Defence Wigram's helipad surfaces (6.7.5.2), two fans of 1,225 m.
+       Extent layer in capacityengine: airport_surface_extent.
+  heritage_item:
+    type: flag
+    layer: ccc_heritage_item
+    enabled: yes
+    precedence: 10.0
+    source: CDP 9.3
+  heritage_setting:
+    type: flag
+    layer: ccc_heritage_setting
+    enabled: yes
+    precedence: 10.0
+    source: CDP 9.3
+  airport_noise:
+    type: flag
+    layer: ccc_airport_noise
+    enabled: yes
+    precedence: 10.0
+    source: CDP 6.1, Appendix 14.16.4
+  flood_hazard_high:
+    type: flag
+    layer: ccc_flood_hazard_high
+    enabled: yes
+    precedence: 10.0
+    source: CDP 5.4.1
+  flood_management:
+    type: flag
+    layer: ccc_flood_management
+    enabled: yes
+    precedence: 10.0
+    source: 'CDP 5.4.1: minimum floor levels'
+  slope_hazard:
+    type: flag
+    layer: ccc_slope_hazard
+    enabled: yes
+    precedence: 10.0
+    source: CDP 5.6
+  tsunami:
+    type: flag
+    layer: ccc_tsunami
+    enabled: yes
+    precedence: 10.0
+    source: CDP 5.5
+  qualifying_matter:
+    type: flag
+    layer: ccc_qualifying_matter
+    enabled: yes
+    precedence: 10.0
+    source: CDP 6.1A
+  airport_protection:
+    type: flag
+    layer: ccc_airport_protection
+    enabled: yes
+    precedence: 10.0
+    source: CDP 6.7; the surfaces themselves are airspace_christchurch_airport
+unmodelled_rules:
+  - zones:
+      - RES_SUBURBAN
+      - RES_SUBURBAN_DT
+      - RES_MEDIUM_DENSITY
+      - RES_HILLS
+      - RES_BANKS_PENINSULA
+      - RES_MRZ
+      - RES_HRZ
+      - BUS_TOWN_CENTRE
+      - BUS_LOCAL_CENTRE
+      - BUS_NEIGHBOURHOOD_CENTRE
+    rule: Restricted discretionary breaches with no stated limit
+    reason: 'User decision, 26 October 2026: restricted discretionary is part of capacity.
+      Most breaches of height, recession planes, setbacks and coverage are restricted
+      discretionary with no cap (e.g. 14.4.1.3 RD19, RD20, RD25, RD26; 14A.5.1.3 RD12-RD15;
+      15.4.1.3 RD3-RD7), so there is no number to apply and the stated standard is
+      used. Bounded bands are applied (see each zone).'
+    likely_effect: understates
+  - zones:
+      - RES_MRZ
+      - RES_HRZ
+    rule: 'Chapter 14B pathway: pre-PC14 zone rules over the Residential Overlay'
+    reason: An applicant may choose the former zone's rules instead of 14A (14.3).
+      The former zones enable less than MRZ and HRZ almost everywhere, so the pathway
+      rarely adds capacity; not modelled.
+    likely_effect: understates
+  - zones:
+      - RES_SUBURBAN
+      - RES_SUBURBAN_DT
+      - RES_MEDIUM_DENSITY
+      - RES_VISITOR_ACCOMMODATION
+    rule: Chapter 14A rules for Residential Suburban, Density Transition, Medium Density
+      and Visitor Accommodation inside an Urban Intensification Area
+    reason: About 40 ha of these zones lie inside the Policy 3 Area, where 14A.4,
+      14A.8 and 14A.9 apply instead of chapter 14. Chapter 14's rules are used throughout.
+    likely_effect: unknown
+  - zones:
+      - RES_HRZ
+      - RES_MRZ
+    rule: Height in relation to boundary exemption for the front 20 m or 60% of site
+      depth, whichever is lesser
+    reason: 14A.6.2.2(c)(iv) and 14A.5.2.6(b)(v) exempt the front part of a side boundary
+      for three or more units. Encoded at 20 m; on sites shallower than 33 m the 60%
+      depth is the lesser and the exemption is overstated.
+    likely_effect: overstates
+  - zones: RES_NEW_NEIGHBOURHOOD
+    rule: Residential New Neighbourhood outline development plans
+    reason: Heights of 9 to 13 m by density area (Prestons, Wigram, Yaldhurst) and
+      the plans' roads and reserves are not modelled; the zone's 8 m and general standards
+      apply.
+    likely_effect: understates
+  - zones: BUS_MIXED_USE
+    rule: Mixed Use Zone residential activity at Addington, Mandeville Street and
+      New Brighton
+    reason: Permitted only in the areas of Appendix 15.15.10, which are not mapped
+      as features; the zone is counted as business floorspace only.
+    likely_effect: understates
+  - zones: BUS_NEIGHBOURHOOD_CENTRE
+    rule: Neighbourhood Centre heights in the Central City (20 m and 32 m)
+    reason: 15.6.2.1(ii); the zone's 14 m is used everywhere.
+    likely_effect: understates
+  - rule: Rail corridor setback of 4 m
+    reason: No boundary class for a rail corridor; not applied.
+    likely_effect: overstates
+  - rule: Defence Wigram helipad surfaces and radio communication pathways
+    reason: Christchurch Airport's surfaces are modelled (airspace_christchurch_airport).
+      Wigram's two narrow helipad fans (6.7.5.2) and the radio communication pathways
+      (6.12; the layer is published empty) are not.
+    likely_effect: overstates
+  - rule: Hazard and heritage qualifying matters
+    reason: Flood, slope, tsunami and coastal hazard areas, heritage items and settings
+      are flagged; their rules are largely activity status or design matters rather
+      than numbers. Slope hazard areas where building is non-complying or prohibited
+      are therefore overstated.
+    likely_effect: overstates
+  - zones:
+      - RES_MRZ
+      - RES_HRZ
+    rule: Building length, outlook space, outdoor living space and separation standards
+    reason: '14A.5.2.17 and 14A.6.2.17 (30 m elevations), 14A.6.2.5 (10 m between
+      units above 12 m), outlook and outdoor living spaces: layout standards the envelope
+      does not represent.'
+    likely_effect: overstates
+

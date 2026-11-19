@@ -1,0 +1,1255 @@
+# Wellington City District Plan 2024 (Wellington)
+#
+# Converted from capacityengine's wcc-dp-2024.yaml on 2026-11-20.
+# A dated worked example, maintained by the package author: check the plan
+# itself before relying on any value. Values carry their rule citation where
+# the source bundle recorded one (validate_rulebook() lists those without).
+# Fields the conversion could not carry are listed in the unmodelled_rules
+# register and in data-raw/conversion/ in the package source.
+
+schema_version: '0.1'
+plan:
+  name: Wellington City District Plan 2024
+  id: wcc-dp-2024
+  jurisdiction: Wellington
+  country: NZ
+  effective_date: '2026-10-16'
+  units: m
+  hemisphere: south
+  source: Wellington City 2024 District Plan, ePlan revision 154 (16 October 2026),
+    read 29 October 2026
+  notes: Converted from the capacityengine bundle wcc-dp-2024.yaml by plancap data-raw/convert_capacityengine.R
+    on 2026-11-20. Precinct areas match a precinct_key column holding the normalised
+    precinct name.
+defaults:
+  storey_height: 3.0
+  min_floorplate: 30.0
+  level_reference: ceiling
+  no_limit_height: 216.0
+  large_site:
+    method: divisor
+    threshold: 10000.0
+    deduction: 0.25
+morphology:
+  reserve_families: OPEN_SPACE_ANY
+conversion:
+  dwelling_size: 120.0
+  efficiency: 0.8
+  min_one_dwelling: yes
+  min_one_dwelling_floor: 60.0
+  source: 'capacityengine conversion: 120 m2 a dwelling plus 0.2 circulation and 0.05
+    storage. 150 m2 consumed per dwelling, as for Auckland (PC120 report p50) and
+    Christchurch.'
+ground:
+  mode: most_restrictive
+variant_choice: max
+zone_families:
+  RES_ANY:
+    - RES_MRZ
+    - RES_MRZ14
+    - RES_HRZ
+    - RES_LARGE_LOT
+  RES_MRZ_ANY:
+    - RES_MRZ
+    - RES_MRZ14
+  CENTRE_ANY:
+    - BUS_CITY_CENTRE
+    - BUS_METRO_CENTRE
+    - BUS_LOCAL_CENTRE
+    - BUS_NEIGHBOURHOOD_CENTRE
+  COMMERCIAL_ANY:
+    - BUS_CITY_CENTRE
+    - BUS_METRO_CENTRE
+    - BUS_LOCAL_CENTRE
+    - BUS_NEIGHBOURHOOD_CENTRE
+    - BUS_MIXED_USE
+  BUS_ANY:
+    - BUS_CITY_CENTRE
+    - BUS_METRO_CENTRE
+    - BUS_LOCAL_CENTRE
+    - BUS_NEIGHBOURHOOD_CENTRE
+    - BUS_MIXED_USE
+    - BUS_INDUSTRIAL
+  OPEN_SPACE_ANY:
+    - NOSZ
+    - OSZ
+    - SARZ
+  RURAL_ANY: GRUZ
+  SPECIFIC_PURPOSE_ANY:
+    - WTBZ
+    - AIRPZ
+    - QUARZ
+    - PORTZ
+    - CORZ
+    - TEDZ
+    - WFZ
+    - HOSZ
+    - STADZ
+  TOWN_BELT: WTBZ
+zone_map:
+  MRZ: RES_MRZ
+  MRZ14: RES_MRZ14
+  HRZ: RES_HRZ
+  LLRZ: RES_LARGE_LOT
+  CCZ: BUS_CITY_CENTRE
+  MCZ: BUS_METRO_CENTRE
+  LCZ: BUS_LOCAL_CENTRE
+  NCZ: BUS_NEIGHBOURHOOD_CENTRE
+  MUZ: BUS_MIXED_USE
+  GIZ: BUS_INDUSTRIAL
+  GRUZ: GRUZ
+  NOSZ: NOSZ
+  OSZ: OSZ
+  SARZ: SARZ
+  WTBZ: WTBZ
+  AIRPZ: AIRPZ
+  QUARZ: QUARZ
+  PORTZ: PORTZ
+  CORZ: CORZ
+  TEDZ: TEDZ
+  WFZ: WFZ
+  HOSZ: HOSZ
+  STADZ: STADZ
+zones:
+  RES_MRZ:
+    label: Medium Density Residential Zone, Height Area 1
+    method: volumetric
+    height:
+      value: 12.0
+      occupiable: 11.0
+      roof_allowance: 1.0
+      storeys: 3.0
+      source: 'WDP MRZ-S2.1.a (Height Area 1): 11 m, plus 1 m for 50% of the roof
+        where it slopes 15 degrees or more'
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 1.5
+        boundaries: road
+        source: WDP MRZ-S4, multi-unit housing
+      - kind: yard
+        name: side
+        distance: 1.0
+        boundaries: side
+        source: WDP MRZ-S4, multi-unit housing
+      - kind: yard
+        name: rear
+        distance: 1.0
+        boundaries: rear
+        source: WDP MRZ-S4, multi-unit housing (excluded on corner sites, not modelled)
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: yard
+        name: coastal
+        distance: 10.0
+        boundaries: coastal
+        source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+          area; new buildings discretionary outside the Airport, Port, Stadium, Waterfront
+          and City Centre zones'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        source: 'WDP MRZ-S3.1: 60 degrees from 4 m on all boundaries but a road where
+          MRZ-S2.1.a applies'
+    density:
+      large_site:
+        area_per_dwelling: 200.0
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: no
+      residential_share: 1.0
+  RES_MRZ14:
+    label: Medium Density Residential Zone, Height Area 2
+    method: volumetric
+    height:
+      value: 14.0
+      storeys: 4.0
+      source: 'WDP MRZ-S2 (Height Area 2): 14 m for multi-unit housing'
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 1.5
+        boundaries: road
+        source: WDP MRZ-S4, multi-unit housing
+      - kind: yard
+        name: side
+        distance: 1.0
+        boundaries: side
+        source: WDP MRZ-S4, multi-unit housing
+      - kind: yard
+        name: rear
+        distance: 1.0
+        boundaries: rear
+        source: WDP MRZ-S4, multi-unit housing
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: yard
+        name: coastal
+        distance: 10.0
+        boundaries: coastal
+        source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+          area; new buildings discretionary outside the Airport, Port, Stadium, Waterfront
+          and City Centre zones'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        source: 'WDP MRZ-S3.1: 60 degrees from 4 m on all boundaries but a road where
+          MRZ-S2.1.a (multi-unit housing) applies, in either height area; the 5 m
+          of MRZ-S3.2 is for other buildings (S2.1.b)'
+    density:
+      large_site:
+        area_per_dwelling: 200.0
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: no
+      residential_share: 1.0
+  RES_HRZ:
+    label: High Density Residential Zone
+    method: volumetric
+    height:
+      value: 22.0
+      storeys: 6.0
+      source: 'WDP HRZ-S2: 22 m for multi-unit housing (six storeys)'
+    setbacks:
+      - kind: yard
+        name: privacy_rear
+        distance: 2.0
+        from_storey: 2.0
+        boundaries: rear
+        source: 'WDP HRZ-S14: windows and outdoor living space above ground level
+          2 m from any boundary but a road'
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: yard
+        name: coastal
+        distance: 10.0
+        boundaries: coastal
+        source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+          area; new buildings discretionary outside the Airport, Port, Stadium, Waterfront
+          and City Centre zones'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          not_adjacent_zones:
+            - RES_MRZ
+            - RES_MRZ14
+            - TOWN_BELT
+        source: 'WDP HRZ-S3.2: 60 degrees from 8 m where HRZ-S2 applies'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RES_MRZ
+            - RES_MRZ14
+            - TOWN_BELT
+        source: 'WDP HRZ-S3.3: 60 degrees from 5 m on a boundary with MRZ or the Town
+          Belt (and heritage areas, heritage building sites, character precincts and
+          schools, not modelled)'
+    form:
+      max_building_length: 20.0
+      building_separation: 10.0
+    density:
+      large_site:
+        area_per_dwelling: 200.0
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: no
+      residential_share: 1.0
+  RES_LARGE_LOT:
+    label: Large Lot Residential Zone
+    method: density
+    height:
+      value: 9.0
+      occupiable: 8.0
+      roof_allowance: 1.0
+      storeys: 2.0
+      source: 'WDP LLRZ-S3: 8 m, plus 1 m for a roof of 15 degrees or more'
+    setbacks:
+      - kind: yard
+        name: front
+        distance: 5.0
+        boundaries: road
+        source: WDP LLRZ-S6
+      - kind: yard
+        name: side
+        distance: 3.0
+        boundaries: side
+        source: WDP LLRZ-S6
+      - kind: yard
+        name: rear
+        distance: 3.0
+        boundaries: rear
+        source: WDP LLRZ-S6
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: yard
+        name: coastal
+        distance: 10.0
+        boundaries: coastal
+        source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+          area; new buildings discretionary outside the Airport, Port, Stadium, Waterfront
+          and City Centre zones'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 2.5
+        boundaries:
+          - road
+          - side
+          - rear
+        source: 'WDP LLRZ-S4: 45 degrees from 2.5 m from all boundaries'
+    ratios:
+      coverage_max:
+        value: 0.35
+    form:
+      max_floorplate: 600.0
+    density:
+      large_site:
+        area_per_dwelling: 3500.0
+      vacant_site_min_area: 3500.0
+      minor_dwellings_per_site: 1.0
+      source: 'WDP LLRZ-S1, LLRZ-S2: one minor residential unit of up to 80 m2'
+    use:
+      residential: yes
+      business: no
+  BUS_CITY_CENTRE:
+    label: City Centre Zone
+    method: volumetric
+    storey_height: 3.5
+    height:
+      value: 95.0
+      source: 'WDP CCZ-S1: thresholds 27 to 93 m above ground by area (height_control);
+        Height Control Area 6, 75 to 95 m above sea level (ccz_cbd_west_msl)'
+    setbacks:
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 19.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_ANY
+        source: 'WDP CCZ-S16: 60 degrees from 19 m on boundaries with a residentially
+          zoned site'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ
+        source: 'WDP CCZ-S3: 60 degrees from 8 m beside a character precinct or residentially
+          zoned heritage area; applied against MRZ, which is where the City Centre
+          meets them'
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share: 0.6
+      source: '2023 HBA (Property Economics, September 2023, Appendix 3), LGWM split:
+        City Centre 60%; Te Aro 75%, Thorndon 50%, Mt Cook 80%, Mt Victoria 98% (overlays
+        ccz_*)'
+  BUS_METRO_CENTRE:
+    label: Metropolitan Centre Zone
+    method: volumetric
+    storey_height: 3.5
+    height:
+      from_overlay: height_control
+    setbacks:
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: yard
+        name: coastal
+        distance: 10.0
+        boundaries: coastal
+        source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+          area; new buildings discretionary outside the Airport, Port, Stadium, Waterfront
+          and City Centre zones'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ
+        source: 'WDP MCZ-S4, LCZ-S3, NCZ-S3, MUZ-S3, GIZ-S3: beside MRZ with an 11
+          m limit'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ14
+        source: beside MRZ with a 14 m limit
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_HRZ
+        source: beside HRZ
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: OPEN_SPACE_ANY
+        source: beside an open space zone
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share: 0.2
+      source: 'Council split, 2023 HBA Appendix 3: Metropolitan Centre 20%'
+  BUS_LOCAL_CENTRE:
+    label: Local Centre Zone
+    method: volumetric
+    storey_height: 3.5
+    height:
+      from_overlay: height_control
+    setbacks:
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: yard
+        name: coastal
+        distance: 10.0
+        boundaries: coastal
+        source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+          area; new buildings discretionary outside the Airport, Port, Stadium, Waterfront
+          and City Centre zones'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ
+        source: 'WDP MCZ-S4, LCZ-S3, NCZ-S3, MUZ-S3, GIZ-S3: beside MRZ with an 11
+          m limit'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ14
+        source: beside MRZ with a 14 m limit
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_HRZ
+        source: beside HRZ
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: OPEN_SPACE_ANY
+        source: beside an open space zone
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share: 0.3
+      source: 'Council split, 2023 HBA Appendix 3: Local Centre 30%'
+  BUS_NEIGHBOURHOOD_CENTRE:
+    label: Neighbourhood Centre Zone
+    method: volumetric
+    storey_height: 3.5
+    height:
+      from_overlay: height_control
+    setbacks:
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: yard
+        name: coastal
+        distance: 10.0
+        boundaries: coastal
+        source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+          area; new buildings discretionary outside the Airport, Port, Stadium, Waterfront
+          and City Centre zones'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ
+        source: 'WDP MCZ-S4, LCZ-S3, NCZ-S3, MUZ-S3, GIZ-S3: beside MRZ with an 11
+          m limit'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ14
+        source: beside MRZ with a 14 m limit
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_HRZ
+        source: beside HRZ
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: OPEN_SPACE_ANY
+        source: beside an open space zone
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share: 0.3
+      source: 'Council split, 2023 HBA Appendix 3: Neighbourhood Centre 30%'
+  BUS_MIXED_USE:
+    label: Mixed Use Zone
+    method: volumetric
+    storey_height: 3.5
+    height:
+      from_overlay: height_control
+    setbacks:
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: yard
+        name: coastal
+        distance: 10.0
+        boundaries: coastal
+        source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+          area; new buildings discretionary outside the Airport, Port, Stadium, Waterfront
+          and City Centre zones'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ
+        source: WDP MUZ-S3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ14
+        source: WDP MUZ-S3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_HRZ
+        source: WDP MUZ-S3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: OPEN_SPACE_ANY
+        source: WDP MUZ-S3 (and beside heritage and Maori sites and notable trees,
+          not modelled)
+    density:
+      min_dwelling_size: 35.0
+    use:
+      residential: yes
+      business: yes
+      residential_share: 0.4
+      source: 'Council split, 2023 HBA Appendix 3: Mixed Use 40%'
+  BUS_INDUSTRIAL:
+    label: General Industrial Zone
+    method: volumetric
+    storey_height: 4.0
+    height:
+      from_overlay: height_control
+    setbacks:
+      - kind: yard
+        name: riparian
+        distance: 10.0
+        boundaries: riparian
+        source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a river
+          (not piped); building in it restricted discretionary with no limit, or discretionary
+          in the coastal environment'
+      - kind: yard
+        name: coastal
+        distance: 10.0
+        boundaries: coastal
+        source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+          area; new buildings discretionary outside the Airport, Port, Stadium, Waterfront
+          and City Centre zones'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ
+        source: WDP GIZ-S3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_MRZ14
+        source: WDP GIZ-S3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RES_HRZ
+        source: WDP GIZ-S3
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: OPEN_SPACE_ANY
+        source: WDP GIZ-S3
+    use:
+      residential: no
+      business: yes
+      residential_share: 0.0
+  GRUZ:
+    label: General Rural Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  NOSZ:
+    label: Natural Open Space Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  OSZ:
+    label: Open Space Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  SARZ:
+    label: Sport and Active Recreation Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  WTBZ:
+    label: Special Purpose Wellington Town Belt Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  AIRPZ:
+    label: Special Purpose Airport Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  QUARZ:
+    label: Special Purpose Quarry Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  PORTZ:
+    label: Special Purpose Port Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  CORZ:
+    label: Special Purpose Corrections Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  TEDZ:
+    label: Special Purpose Tertiary Education Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  WFZ:
+    label: Special Purpose Waterfront Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  HOSZ:
+    label: Special Purpose Hospital Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+  STADZ:
+    label: Special Purpose Stadium Zone
+    method: none
+    source: Not modelled in capacityengine (no capacity)
+overlays:
+  height_control:
+    type: height
+    layer: wcc_height_modelled
+    combine: replace
+    value_field: height_m
+    enabled: yes
+    precedence: 50.0
+    source: WDP CCZ-S1, MCZ-S1, LCZ-S1, NCZ-S1, MUZ-S2, GIZ-S2, HH-S1, MRZ-PREC03-S3;
+      WIAL1 Figure 1
+  ccz_cbd_west_msl:
+    type: height_surface
+    layer: wcc_ccz_msl
+    combine: cap
+    applies_to_zones: BUS_CITY_CENTRE
+    enabled: yes
+    precedence: 60.0
+    source: 'WDP CCZ-S1, Height Control Area 6 (CBD West): 75, 85, 90 and 95 m above
+      mean sea level (NZVD2016)'
+    notes: 'Extent layer in capacityengine: wcc_ccz_msl.'
+  airspace_wial:
+    type: height_surface
+    layer: wial_ols
+    combine: cap
+    floor_value: 8.0
+    enabled: yes
+    precedence: 100.0
+    source: 'WDP designation WIAL1, Conditions 1 (Obstacle Limitation Surfaces), 1-4:
+      8 m above existing ground where a surface is penetrated'
+    notes: |-
+      Decision 6. Figure 1 properties are left out of the extent; their own heights are in height_control. Shielding by existing immovable objects is not modelled. A run without this overlay and airspace_wial_outer is reported apart.
+       Extent layer in capacityengine: wial_ols_extent.
+  airspace_wial_outer:
+    type: height_surface
+    layer: wial_ols_outer
+    combine: cap
+    floor_value: 30.0
+    enabled: yes
+    precedence: 100.0
+    source: 'WDP designation WIAL1, Conditions 1, 5: outer horizontal surface 162
+      m above sea level; 30 m above existing ground where penetrated'
+    notes: 'Extent layer in capacityengine: wial_ols_outer_extent.'
+  viewshaft_ccz:
+    type: height_surface
+    layer: wcc_viewshaft
+    combine: cap
+    applies_to_zones: BUS_CITY_CENTRE
+    enabled: yes
+    precedence: 90.0
+    source: WDP VIEW-R2.1, SCHED5 (intrusion restricted discretionary with no limit,
+      VIEW-R2.2)
+    notes: 'Extent layer in capacityengine: wcc_viewshaft_ccz.'
+  viewshaft_mrz:
+    type: height_surface
+    layer: wcc_viewshaft
+    combine: cap
+    floor_value: 11.0
+    applies_to_zones:
+      - RES_MRZ
+      - RES_MRZ14
+    enabled: yes
+    precedence: 90.0
+    source: 'WDP VIEW-R2.1: in MRZ outside the Oriental Bay Height Precinct, any building
+      to 11 m'
+    notes: 'Extent layer in capacityengine: wcc_viewshaft_mrz.'
+  viewshaft_oriental_bay:
+    type: height_surface
+    layer: wcc_viewshaft
+    combine: cap
+    floor_value: 21.0
+    applies_to_zones:
+      - RES_MRZ
+      - RES_MRZ14
+    enabled: yes
+    precedence: 90.0
+    source: 'WDP VIEW-R2.1: in the Oriental Bay Height Precinct, any building to 21
+      m'
+    notes: 'Extent layer in capacityengine: wcc_viewshaft_oriental_bay.'
+  viewshaft_kelburn:
+    type: height_surface
+    layer: wcc_viewshaft
+    combine: cap
+    applies_to_zones: RES_HRZ
+    enabled: yes
+    precedence: 90.0
+    source: 'WDP VIEW-R2.1: in HRZ any building to 22 m (the zone''s height), but
+      in Kelburn none may intrude into Viewshafts 13, 14 or 15'
+    notes: 'Extent layer in capacityengine: wcc_viewshaft_kelburn.'
+  character_precinct:
+    type: parameters
+    layer: wcc_character_precinct
+    combine: replace
+    applies_to_zones:
+      - RES_MRZ
+      - RES_MRZ14
+    parameters:
+      setbacks:
+        - kind: yard
+          name: rear
+          distance: 1.0
+          boundaries: rear
+          source: 'WDP MRZ-S4 (PREC01): rear 1 m only'
+        - kind: yard
+          name: riparian
+          distance: 10.0
+          boundaries: riparian
+          source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a
+            river (not piped); building in it restricted discretionary with no limit,
+            or discretionary in the coastal environment'
+        - kind: yard
+          name: coastal
+          distance: 10.0
+          boundaries: coastal
+          source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+            area; new buildings discretionary outside the Airport, Port, Stadium,
+            Waterfront and City Centre zones'
+      replaces_setbacks: yard
+    enabled: yes
+    precedence: 60.0
+    source: WDP MRZ-PREC01-R5, MRZ-S4 (PREC01)
+  mt_victoria_north:
+    type: parameters
+    layer: wcc_mt_victoria_north
+    combine: replace
+    applies_to_zones:
+      - RES_MRZ
+      - RES_MRZ14
+    parameters:
+      setbacks:
+        - kind: yard
+          name: rear
+          distance: 1.0
+          boundaries: rear
+          source: 'WDP MRZ-S4 (PREC02): rear 1 m only'
+        - kind: yard
+          name: riparian
+          distance: 10.0
+          boundaries: riparian
+          source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a
+            river (not piped); building in it restricted discretionary with no limit,
+            or discretionary in the coastal environment'
+        - kind: yard
+          name: coastal
+          distance: 10.0
+          boundaries: coastal
+          source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+            area; new buildings discretionary outside the Airport, Port, Stadium,
+            Waterfront and City Centre zones'
+      replaces_setbacks: yard
+    enabled: yes
+    precedence: 60.0
+    source: WDP MRZ-PREC02-R3, MRZ-S4 (PREC02)
+  oriental_bay:
+    type: parameters
+    layer: wcc_oriental_bay
+    combine: replace
+    applies_to_zones:
+      - RES_MRZ
+      - RES_MRZ14
+    parameters:
+      setbacks:
+        - kind: yard
+          name: front
+          distance: 0.0
+          boundaries: road
+          source: 'WDP MRZ-PREC03-S1: no boundary setbacks'
+        - kind: yard
+          name: riparian
+          distance: 10.0
+          boundaries: riparian
+          source: 'WDP NATC-R5, CE-R15.3: riparian margin, 10 m from the bed of a
+            river (not piped); building in it restricted discretionary with no limit,
+            or discretionary in the coastal environment'
+        - kind: yard
+          name: coastal
+          distance: 10.0
+          boundaries: coastal
+          source: 'WDP CE-R15.3: coastal margin, 10 m landward of the coastal marine
+            area; new buildings discretionary outside the Airport, Port, Stadium,
+            Waterfront and City Centre zones'
+      replaces_setbacks:
+        - yard
+        - plane
+    enabled: yes
+    precedence: 60.0
+    source: WDP MRZ-PREC03-S1 to S3, MRZ-PREC03-R4
+  ccz_te_aro:
+    type: parameters
+    layer: wcc_suburb
+    combine: replace
+    filter:
+      suburb: Te Aro
+    applies_to_zones: BUS_CITY_CENTRE
+    parameters:
+      use:
+        residential_share: 0.75
+        source: '2023 HBA (Property Economics, September 2023, Appendix 3), LGWM split:
+          Te Aro 75%'
+    enabled: yes
+    precedence: 50.0
+    source: '2023 HBA (Property Economics, September 2023, Appendix 3), LGWM split:
+      Te Aro 75%'
+  ccz_thorndon:
+    type: parameters
+    layer: wcc_suburb
+    combine: replace
+    filter:
+      suburb:
+        - Thorndon
+        - Pipitea
+    applies_to_zones: BUS_CITY_CENTRE
+    parameters:
+      use:
+        residential_share: 0.5
+        source: '2023 HBA (Property Economics, September 2023, Appendix 3), LGWM split:
+          Thorndon between the motorway and the port 50%'
+    enabled: yes
+    precedence: 50.0
+    source: '2023 HBA (Property Economics, September 2023, Appendix 3), LGWM split:
+      Thorndon between the motorway and the port 50%'
+  ccz_mt_cook:
+    type: parameters
+    layer: wcc_suburb
+    combine: replace
+    filter:
+      suburb: Mount Cook
+    applies_to_zones: BUS_CITY_CENTRE
+    parameters:
+      use:
+        residential_share: 0.8
+        source: '2023 HBA (Property Economics, September 2023, Appendix 3), LGWM split:
+          Mt Cook 80%'
+    enabled: yes
+    precedence: 50.0
+    source: '2023 HBA (Property Economics, September 2023, Appendix 3), LGWM split:
+      Mt Cook 80%'
+  ccz_mt_victoria:
+    type: parameters
+    layer: wcc_suburb
+    combine: replace
+    filter:
+      suburb: Mount Victoria
+    applies_to_zones: BUS_CITY_CENTRE
+    parameters:
+      use:
+        residential_share: 0.98
+        source: '2023 HBA (Property Economics, September 2023, Appendix 3), LGWM split:
+          Mt Victoria 98%'
+    enabled: yes
+    precedence: 50.0
+    source: '2023 HBA (Property Economics, September 2023, Appendix 3), LGWM split:
+      Mt Victoria 98%'
+  coastal_inundation_high:
+    type: flag
+    layer: wcc_coastal_inundation_high
+    enabled: yes
+    precedence: 10.0
+    source: WDP CE-R27 (non-complying for hazard sensitive activities)
+  coastal_inundation_medium:
+    type: flag
+    layer: wcc_coastal_inundation_medium_flag
+    enabled: yes
+    precedence: 10.0
+    source: WDP CE-R26 (discretionary)
+  tsunami_high:
+    type: flag
+    layer: wcc_tsunami_high
+    enabled: yes
+    precedence: 10.0
+    source: WDP CE chapter, tsunami high hazard
+  tsunami_medium:
+    type: flag
+    layer: wcc_tsunami_medium
+    enabled: yes
+    precedence: 10.0
+    source: WDP CE chapter, tsunami medium hazard
+  tsunami_low:
+    type: flag
+    layer: wcc_tsunami_low
+    enabled: yes
+    precedence: 10.0
+    source: WDP CE chapter, tsunami low hazard
+  fault_wellington:
+    type: flag
+    layer: wcc_fault_wellington
+    enabled: yes
+    precedence: 10.0
+    source: WDP NH chapter, high hazard
+  fault_ohariu:
+    type: flag
+    layer: wcc_fault_ohariu
+    enabled: yes
+    precedence: 10.0
+    source: WDP NH chapter, high hazard
+  fault_shepherds_gully:
+    type: flag
+    layer: wcc_fault_shepherds_gully
+    enabled: yes
+    precedence: 10.0
+    source: WDP NH chapter, low hazard
+  fault_terawhiti:
+    type: flag
+    layer: wcc_fault_terawhiti
+    enabled: yes
+    precedence: 10.0
+    source: WDP NH chapter, low hazard
+  flood_stream_corridor:
+    type: flag
+    layer: wcc_flood_stream_corridor_flag
+    enabled: yes
+    precedence: 10.0
+    source: WDP NH chapter, high hazard
+  flood_overland:
+    type: flag
+    layer: wcc_flood_overland_flag
+    enabled: yes
+    precedence: 10.0
+    source: WDP NH chapter, medium hazard
+  flood_inundation:
+    type: flag
+    layer: wcc_flood_inundation_flag
+    enabled: yes
+    precedence: 10.0
+    source: WDP NH chapter, low hazard
+  liquefaction:
+    type: flag
+    layer: wcc_liquefaction
+    enabled: yes
+    precedence: 10.0
+    source: WDP NH chapter, low hazard
+  heritage_area:
+    type: flag
+    layer: wcc_heritage_area
+    enabled: yes
+    precedence: 10.0
+    source: WDP HH chapter, SCHED3
+  heritage_building_extent:
+    type: flag
+    layer: wcc_heritage_building_extent
+    enabled: yes
+    precedence: 10.0
+    source: WDP HH chapter, SCHED1
+  heritage_structure_extent:
+    type: flag
+    layer: wcc_heritage_structure_extent
+    enabled: yes
+    precedence: 10.0
+    source: WDP HH chapter, SCHED2
+  maori_sites:
+    type: flag
+    layer: wcc_maori_sites
+    enabled: yes
+    precedence: 10.0
+    source: WDP SASM chapter, SCHED7
+  sna:
+    type: flag
+    layer: wcc_sna_flag
+    enabled: yes
+    precedence: 10.0
+    source: WDP ECO chapter, SCHED8 (under appeal)
+  coastal_environment:
+    type: flag
+    layer: wcc_coastal_environment
+    enabled: yes
+    precedence: 10.0
+    source: WDP CE chapter
+  noise_inner_air:
+    type: flag
+    layer: wcc_noise_inner_air
+    enabled: yes
+    precedence: 10.0
+    source: WDP NOISE chapter, Inner Air Noise Overlay
+  sunlight_access:
+    type: flag
+    layer: wcc_sunlight_access
+    enabled: yes
+    precedence: 10.0
+    source: WDP CCZ-S6, APP9
+  development_lincolnshire:
+    type: flag
+    layer: wcc_development_lincolnshire
+    enabled: yes
+    precedence: 10.0
+    source: 'WDP DEV2 Lincolnshire Farm (decision 9: modelled as zoned)'
+  development_stebbings:
+    type: flag
+    layer: wcc_development_stebbings
+    enabled: yes
+    precedence: 10.0
+    source: 'WDP DEV3 Upper Stebbings and Glenside West (decision 9: modelled as zoned)'
+  development_bus_barns:
+    type: flag
+    layer: wcc_development_bus_barns
+    enabled: yes
+    precedence: 10.0
+    source: 'WDP DEV1 Kilbirnie Bus Barns (decision 9: modelled as zoned)'
+unmodelled_rules:
+  - zones:
+      - RES_MRZ
+      - RES_MRZ14
+      - RES_HRZ
+      - RES_LARGE_LOT
+      - BUS_CITY_CENTRE
+      - BUS_MIXED_USE
+      - BUS_INDUSTRIAL
+    rule: Restricted discretionary breaches with no stated limit
+    reason: 'User decision: restricted discretionary is part of capacity where the
+      band is bounded. Almost every height, recession plane and setback breach in
+      the 2024 District Plan is RD with no limit (e.g. MRZ-R12.2, HRZ-R12.2, CCZ-R24.2,
+      MUZ-R18.2), so the stated standard is used.'
+    likely_effect: understates
+  - zones:
+      - RES_MRZ
+      - RES_MRZ14
+      - RES_HRZ
+    rule: One to three unit standard set in MRZ and HRZ
+    reason: MRZ-S1/S4 and HRZ-S1/S4 let one to three units build with no front or
+      side yard (MRZ) and to 14 m (HRZ). The multi-unit housing set is used throughout
+      (decision 3); on small MRZ sites the yard-free path would give a little more.
+    likely_effect: understates
+  - zones:
+      - RES_HRZ
+      - BUS_MIXED_USE
+    rule: Recession planes beside heritage areas, heritage buildings, character precincts,
+      schools, Maori sites and notable trees
+    reason: HRZ-S3.3 and MUZ-S3 lower the plane to 5 m beside these; the engine's
+      adjacency test reads zones only.
+    likely_effect: overstates
+  - rule: Rail corridor setback of 1.5 m
+    reason: No boundary class for a rail corridor; not applied (MRZ-S4, HRZ-S4, MCZ-S12
+      and the others).
+    likely_effect: overstates
+  - zones: BUS_CITY_CENTRE
+    rule: Minimum sunlight access to public space (CCZ-S6, APP9)
+    reason: Buildings must keep 70% of mapped public spaces in sun at stated times;
+      a shading solve, not modelled. Sites near the 28 mapped spaces are flagged (sunlight_access).
+    likely_effect: overstates
+  - zones: BUS_CITY_CENTRE
+    rule: Old St Paul's adjoining-site planes and building line (CCZ-S2)
+    reason: A handful of sites around Old St Paul's; not modelled.
+    likely_effect: overstates
+  - zones:
+      - BUS_MIXED_USE
+      - BUS_INDUSTRIAL
+    rule: 'Floor area caps: Mixed Use 500 m2 a building (MUZ-S6), General Industrial
+      4,000 m2 a site beside a residential zone (GIZ-S4)'
+    reason: MUZ-S6 caps each building, not the site, so several buildings may stand
+      on one site; GIZ-S4 caps a site's total, which the engine has no rule for. Breaches
+      are RD with no limit.
+    likely_effect: overstates
+  - rule: Viewshaft geometry
+    reason: Each SCHED5 viewshaft is built as a line of sight falling evenly from
+      the viewpoint's eye level to its base level over the distance to the base, within
+      the mapped wedge (build_height_surfaces.R); the schedule's margins and stepped
+      bases (VS8) are not drawn exactly.
+    likely_effect: unknown
+  - rule: WIAL1 shielding exemption and the council's 2025 recommendation
+    reason: An object shielded by an existing immovable object is exempt from the
+      surfaces; not modelled. The council recommended in June 2025 that WIAL exclude
+      terrain-shielded areas and raise the allowance to 11 m; the designation still
+      reads 8 m.
+    likely_effect: understates
+  - rule: Natural hazard activity status
+    reason: New hazard sensitive activities (residential) in high hazard areas are
+      non-complying or discretionary (CE-R26, CE-R27, NH chapter); flagged, with a
+      sensitivity removing them (decision 8).
+    likely_effect: overstates
+  - rule: Development area plans
+    reason: Lincolnshire Farm, Upper Stebbings and Glenside West and the Kilbirnie
+      Bus Barns have development plans (APP11-13) with roads, reserves and building
+      areas; modelled as zoned with the 25% large-site allowance and reported beside
+      the master-plan yields (decision 9).
+    likely_effect: unknown
+  - zones:
+      - RES_HRZ
+      - BUS_CITY_CENTRE
+      - BUS_METRO_CENTRE
+      - BUS_LOCAL_CENTRE
+      - BUS_NEIGHBOURHOOD_CENTRE
+      - BUS_MIXED_USE
+    rule: Building length, separation, outlook and outdoor living standards
+    reason: 'HRZ-S14 to S16 (20 m length, 10 m between buildings), the centre zones''
+      8 m separation and 25 m length for residential buildings, outlook and outdoor
+      living spaces: layout standards the envelope does not represent.'
+    likely_effect: overstates
+

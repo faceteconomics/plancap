@@ -18,9 +18,34 @@ or in R. Capacity is built site by site as a stack of storey footprints
 clipped by every rule that applies. The results can then be summarised by
 zone, height, location or the rule that binds.
 
-> **Status: early development.** The package structure and example data are
-> in place; the rulebook, engine, summaries and plots are being built in
-> stages. See the [development plan](PLAN.md).
+> **Status: early development.** The rulebook (rules, validation, YAML / JSON
+> / Excel input) and example data are in place; site preparation, the engine,
+> summaries and plots are being built in stages. See the
+> [development plan](PLAN.md).
+
+## A rulebook
+
+```r
+library(plancap)
+
+rb <- rulebook("Exampleton District Plan") |>
+  add_zone(zone("MDR", "Medium Density Residential",
+    height = height_limit(12, roof_allowance = 1, storeys = 3, source = "MDR-S1"),
+    setbacks = list(
+      yard(2.5, "road", source = "MDR-S3"),
+      yard(1, c("side", "rear"), source = "MDR-S3"),
+      plane(60, start_height = 4, boundaries = c("side", "rear"), source = "MDR-S2")
+    ),
+    coverage = ratio(0.5, source = "MDR-S4"),
+    landscaping = ratio(0.2, source = "MDR-S5")))
+
+validate_rulebook(rb)
+rule_table(rb)
+write_rulebook(rb, "exampleton.yaml")   # or .json, or .xlsx for a spreadsheet
+```
+
+Rulebooks for Exampleton and, as worked examples, Auckland, Christchurch and
+Wellington ship with the package: `rulebook_example("wellington")`.
 
 ## Scope
 

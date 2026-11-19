@@ -1,0 +1,1633 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://faceteconomics.github.io/plancap/schema/rulebook-0.1.json",
+  "title": "plancap rulebook",
+  "description": "Planning rules for one plan, with a citation for every value. Lengths and areas are in plan.units (metres and square metres unless 'ft'). Any number marked 'value' may instead be a restricted formula string, e.g. \"max(3, 0.4 * H)\".",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "plan",
+    "zones"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "0.1"
+      ]
+    },
+    "extends": {
+      "type": "string",
+      "description": "Path of a rulebook this one modifies; this file's entries override it."
+    },
+    "plan": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "effective_date": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "units": {
+          "enum": [
+            "m",
+            "ft"
+          ]
+        },
+        "hemisphere": {
+          "enum": [
+            "south",
+            "north"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "storey_height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "ground_floor_height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "min_floorplate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "level_reference": {
+          "enum": [
+            "ceiling",
+            "floor"
+          ]
+        },
+        "no_limit_height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "large_site": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "threshold": {
+              "type": "number",
+              "minimum": 0
+            },
+            "deduction": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "method": {
+              "enum": [
+                "divisor",
+                "envelope"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "morphology": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_road_contact": {
+          "type": "number",
+          "minimum": 0
+        },
+        "road_probe_distance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "side_rear_angle_tolerance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 90
+        },
+        "corner_angle_tolerance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 90
+        },
+        "corner_min_frontage": {
+          "type": "number",
+          "minimum": 0
+        },
+        "through_min_bearing_difference": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 180
+        },
+        "access_leg_max_width": {
+          "type": "number",
+          "minimum": 0
+        },
+        "access_leg_min_road_contact": {
+          "type": "number",
+          "minimum": 0
+        },
+        "exclude_access_legs": {
+          "type": "boolean"
+        },
+        "boundary_merge_angle": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 90
+        },
+        "water_boundary_distance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "reserve_families": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "min_sliver_area": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "conversion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dwelling_size": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "unit_mix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "size",
+              "share"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "size": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "share": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          }
+        },
+        "efficiency": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "min_one_dwelling": {
+          "type": "boolean"
+        },
+        "min_one_dwelling_floor": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Residential floor area at or above which a site counts at least one dwelling."
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "ground": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "most_restrictive",
+            "with_access",
+            "full"
+          ]
+        },
+        "overlap": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "outdoor_living_counts_as_landscaping": {
+              "type": "boolean"
+            },
+            "landscaping_on_structure": {
+              "type": "boolean"
+            },
+            "deep_soil_counts_as_landscaping": {
+              "type": "boolean"
+            }
+          }
+        },
+        "parking_area_per_dwelling": {
+          "type": "number",
+          "minimum": 0
+        },
+        "outdoor_area_per_dwelling": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "variant_choice": {
+      "type": "string"
+    },
+    "zone_families": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "zone_map": {
+      "type": "object",
+      "description": "Zone code in the zoning layer to zone key.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "zones": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/zone_full"
+      }
+    },
+    "overlays": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/overlay"
+      }
+    },
+    "areas": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/area"
+      }
+    },
+    "bonuses": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/bonus"
+      }
+    },
+    "entitlements": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/entitlement"
+      }
+    },
+    "unmodelled_rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/unmodelled"
+      }
+    }
+  },
+  "definitions": {
+    "value": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "description": "A number, or a restricted formula string."
+    },
+    "strings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "bands": {
+      "type": "object",
+      "required": [
+        "by",
+        "bands"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "by": {
+          "enum": [
+            "site_area",
+            "height",
+            "storey",
+            "slope",
+            "road_width",
+            "distance",
+            "site_depth"
+          ]
+        },
+        "bands": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "min": {
+                "type": "number",
+                "minimum": 0
+              },
+              "max": {
+                "type": "number",
+                "minimum": 0
+              },
+              "value": {
+                "$ref": "#/definitions/value"
+              }
+            }
+          }
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "ratio": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "value": {
+              "$ref": "#/definitions/value"
+            },
+            "bands": {
+              "$ref": "#/definitions/bands"
+            },
+            "source": {
+              "type": "string"
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "value"
+              ]
+            },
+            {
+              "required": [
+                "bands"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "length_or_bands": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "object",
+          "required": [
+            "bands"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "bands": {
+              "$ref": "#/definitions/bands"
+            }
+          }
+        }
+      ]
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_site_area": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_site_area": {
+          "type": "number",
+          "minimum": 0
+        },
+        "rear_sites": {
+          "enum": [
+            "include",
+            "exclude",
+            "only"
+          ]
+        },
+        "corner_sites": {
+          "enum": [
+            "include",
+            "exclude",
+            "only"
+          ]
+        },
+        "within_frontage": {
+          "type": "number",
+          "minimum": 0
+        },
+        "beyond_frontage": {
+          "type": "number",
+          "minimum": 0
+        },
+        "frontage_depth_share": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "adjacent_zones": {
+          "$ref": "#/definitions/strings"
+        },
+        "not_adjacent_zones": {
+          "$ref": "#/definitions/strings"
+        },
+        "facing": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "min_road_width": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_road_width": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min_slope": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_slope": {
+          "type": "number",
+          "minimum": 0
+        },
+        "distance_to": {
+          "type": "string"
+        },
+        "min_distance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_distance": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "setback": {
+      "type": "object",
+      "required": [
+        "kind",
+        "boundaries"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "yard",
+            "plane",
+            "upper_level",
+            "proportional",
+            "profile"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "distance": {
+          "$ref": "#/definitions/value"
+        },
+        "from_storey": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "above_height": {
+          "type": "number",
+          "minimum": 0
+        },
+        "angle_deg": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 90
+        },
+        "start_height": {
+          "$ref": "#/definitions/value"
+        },
+        "set_in": {
+          "type": "number",
+          "minimum": 0
+        },
+        "angle_by_bearing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "from_deg",
+              "to_deg",
+              "angle_deg"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "from_deg": {
+                "type": "number"
+              },
+              "to_deg": {
+                "type": "number"
+              },
+              "angle_deg": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 90
+              }
+            }
+          }
+        },
+        "angle_by_orientation": {
+          "type": "object",
+          "required": [
+            "north",
+            "east",
+            "south",
+            "west"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "north": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 90
+            },
+            "east": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 90
+            },
+            "south": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 90
+            },
+            "west": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 90
+            }
+          },
+          "description": "Angles at the cardinal bearings of the outward normal, graded linearly in between."
+        },
+        "vertical_above": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Height above which the plane turns vertical."
+        },
+        "max_setback_above": {
+          "type": "object",
+          "required": [
+            "height",
+            "north",
+            "east",
+            "south",
+            "west"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "type": "number",
+              "minimum": 0
+            },
+            "north": {
+              "type": "number",
+              "minimum": 0
+            },
+            "east": {
+              "type": "number",
+              "minimum": 0
+            },
+            "south": {
+              "type": "number",
+              "minimum": 0
+            },
+            "west": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "description": "Above height, the lesser of the plane and this setback (by the direction the boundary faces) applies."
+        },
+        "datum": {
+          "enum": [
+            "boundary",
+            "site",
+            "road"
+          ]
+        },
+        "ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max": {
+          "type": "number",
+          "minimum": 0
+        },
+        "points": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "boundaries": {
+          "$ref": "#/definitions/strings"
+        },
+        "origin": {
+          "enum": [
+            "boundary",
+            "road_far_side",
+            "road_centreline"
+          ]
+        },
+        "when": {
+          "$ref": "#/definitions/conditions"
+        },
+        "variant": {
+          "type": "string"
+        },
+        "activity_status": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "yard"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "distance"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "upper_level"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "distance"
+            ],
+            "anyOf": [
+              {
+                "required": [
+                  "above_height"
+                ]
+              },
+              {
+                "required": [
+                  "from_storey"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "plane"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "start_height"
+            ],
+            "anyOf": [
+              {
+                "required": [
+                  "angle_deg"
+                ]
+              },
+              {
+                "required": [
+                  "angle_by_bearing"
+                ]
+              },
+              {
+                "required": [
+                  "angle_by_orientation"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "proportional"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "ratio"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "profile"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "points"
+            ]
+          }
+        }
+      ]
+    },
+    "height": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "#/definitions/value"
+        },
+        "occupiable": {
+          "type": "number",
+          "minimum": 0
+        },
+        "roof_allowance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "storeys": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "from_overlay": {
+          "type": "string"
+        },
+        "datum": {
+          "enum": [
+            "ground",
+            "finished",
+            "average",
+            "road",
+            "sea_level"
+          ]
+        },
+        "no_limit": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "form": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_floorplate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min_floorplate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_tower_floorplate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "tower_above_height": {
+          "type": "number",
+          "minimum": 0
+        },
+        "tower_above_storey": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_tower_dimension": {
+          "type": "number",
+          "minimum": 0
+        },
+        "tower_separation": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_building_length": {
+          "type": "number",
+          "minimum": 0
+        },
+        "building_separation": {
+          "$ref": "#/definitions/length_or_bands"
+        },
+        "max_building_depth": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min_building_width": {
+          "type": "number",
+          "minimum": 0
+        },
+        "site_shape": {
+          "type": "object",
+          "required": [
+            "width",
+            "depth"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "width": {
+              "type": "number",
+              "minimum": 0
+            },
+            "depth": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "max_site_floorspace": {
+          "type": "number",
+          "minimum": 0
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "density": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "site_area_per_dwelling": {
+          "type": "number",
+          "minimum": 0
+        },
+        "dwellings_per_ha": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min_site_area": {
+          "type": "number",
+          "minimum": 0
+        },
+        "vacant_site_min_area": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_dwellings_per_site": {
+          "type": "number",
+          "minimum": 0
+        },
+        "minor_dwellings_per_site": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min_dwelling_size": {
+          "type": "number",
+          "minimum": 0
+        },
+        "large_site": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "area_per_dwelling": {
+              "type": "number",
+              "minimum": 0
+            },
+            "min_area": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max_average_area": {
+              "type": "number",
+              "minimum": 0
+            },
+            "source": {
+              "type": "string"
+            }
+          }
+        },
+        "access_width": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "min"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "min": {
+                "type": "number",
+                "minimum": 0
+              },
+              "max": {
+                "type": "number",
+                "minimum": 0
+              },
+              "max_dwellings": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "use": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "residential": {
+          "type": "boolean"
+        },
+        "business": {
+          "type": "boolean"
+        },
+        "residential_share": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "object",
+              "required": [
+                "bands"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "bands": {
+                  "$ref": "#/definitions/bands"
+                }
+              }
+            }
+          ]
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "zone": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "method": {
+          "enum": [
+            "volumetric",
+            "density",
+            "hybrid",
+            "none"
+          ]
+        },
+        "source": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "height": {
+          "$ref": "#/definitions/height"
+        },
+        "storey_height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "ground_floor_height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "setbacks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/setback"
+          }
+        },
+        "replaces_setbacks": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "yard",
+              "plane",
+              "upper_level",
+              "proportional",
+              "profile"
+            ]
+          },
+          "description": "In a set of zone changes: the setback kinds the change's setbacks replace; the zone's other setbacks are kept."
+        },
+        "ratios": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "coverage_max": {
+              "$ref": "#/definitions/ratio"
+            },
+            "landscaping_min": {
+              "$ref": "#/definitions/ratio"
+            },
+            "impervious_max": {
+              "$ref": "#/definitions/ratio"
+            },
+            "paved_max": {
+              "$ref": "#/definitions/ratio"
+            },
+            "far_max": {
+              "$ref": "#/definitions/ratio"
+            },
+            "deep_soil_min": {
+              "$ref": "#/definitions/ratio"
+            }
+          }
+        },
+        "form": {
+          "$ref": "#/definitions/form"
+        },
+        "density": {
+          "$ref": "#/definitions/density"
+        },
+        "use": {
+          "$ref": "#/definitions/use"
+        },
+        "variants": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "zone_full": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/zone"
+        },
+        {
+          "required": [
+            "method"
+          ]
+        }
+      ]
+    },
+    "overlay": {
+      "type": "object",
+      "required": [
+        "type",
+        "layer"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "height",
+            "height_surface",
+            "exclusion",
+            "parameters",
+            "flag"
+          ]
+        },
+        "layer": {
+          "type": "string"
+        },
+        "combine": {
+          "enum": [
+            "cap",
+            "replace",
+            "floor",
+            "add",
+            "multiply"
+          ]
+        },
+        "value": {
+          "$ref": "#/definitions/value"
+        },
+        "value_field": {
+          "type": "string"
+        },
+        "value_map": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "floor_value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "filter": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "removes": {
+          "enum": [
+            "all",
+            "residential"
+          ]
+        },
+        "buffer": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "applies_to_zones": {
+          "$ref": "#/definitions/strings"
+        },
+        "parameters": {
+          "$ref": "#/definitions/zone"
+        },
+        "additions": {
+          "$ref": "#/definitions/zone",
+          "description": "Zone changes whose setbacks are appended to the zone's own rather than replacing them."
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "precedence": {
+          "type": "number"
+        },
+        "source": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "height"
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "value"
+                ]
+              },
+              {
+                "required": [
+                  "value_field"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "parameters"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "parameters"
+            ]
+          }
+        }
+      ]
+    },
+    "area": {
+      "type": "object",
+      "required": [
+        "layer"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "layer": {
+          "type": "string"
+        },
+        "filter": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "applies_to_zones": {
+          "$ref": "#/definitions/strings"
+        },
+        "combine": {
+          "enum": [
+            "replace",
+            "cap"
+          ]
+        },
+        "parameters": {
+          "$ref": "#/definitions/zone"
+        },
+        "additions": {
+          "$ref": "#/definitions/zone",
+          "description": "Zone changes whose setbacks are appended to the zone's own rather than replacing them."
+        },
+        "zone_parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/zone"
+          }
+        },
+        "sub_area_field": {
+          "type": "string"
+        },
+        "sub_areas": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/sub_area"
+          }
+        },
+        "totals": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "max_dwellings": {
+              "type": "number",
+              "minimum": 0
+            },
+            "min_dwellings": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max_floorspace": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "source": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "bonus": {
+      "type": "object",
+      "required": [
+        "quantity",
+        "value",
+        "combine"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "quantity": {
+          "enum": [
+            "far",
+            "height",
+            "dwellings",
+            "floor_area"
+          ]
+        },
+        "value": {
+          "$ref": "#/definitions/value"
+        },
+        "combine": {
+          "enum": [
+            "add",
+            "multiply"
+          ]
+        },
+        "applies_to_zones": {
+          "$ref": "#/definitions/strings"
+        },
+        "cap": {
+          "type": "number"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "layer": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/definitions/conditions"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "entitlement": {
+      "type": "object",
+      "required": [
+        "quantity",
+        "value"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "quantity": {
+          "enum": [
+            "dwellings",
+            "height",
+            "floor_area"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "combine": {
+          "const": "floor"
+        },
+        "applies_to_zones": {
+          "$ref": "#/definitions/strings"
+        },
+        "layer": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/definitions/conditions"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "unmodelled": {
+      "type": "object",
+      "required": [
+        "rule",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "rule": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "zones": {
+          "$ref": "#/definitions/strings"
+        },
+        "likely_effect": {
+          "enum": [
+            "overstates",
+            "understates",
+            "either",
+            "unknown"
+          ]
+        },
+        "size": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "sub_area": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "method": {
+          "enum": [
+            "volumetric",
+            "density",
+            "hybrid",
+            "none"
+          ]
+        },
+        "source": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "height": {
+          "$ref": "#/definitions/height"
+        },
+        "storey_height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "ground_floor_height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "setbacks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/setback"
+          }
+        },
+        "replaces_setbacks": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "yard",
+              "plane",
+              "upper_level",
+              "proportional",
+              "profile"
+            ]
+          },
+          "description": "In a set of zone changes: the setback kinds the change's setbacks replace; the zone's other setbacks are kept."
+        },
+        "ratios": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "coverage_max": {
+              "$ref": "#/definitions/ratio"
+            },
+            "landscaping_min": {
+              "$ref": "#/definitions/ratio"
+            },
+            "impervious_max": {
+              "$ref": "#/definitions/ratio"
+            },
+            "paved_max": {
+              "$ref": "#/definitions/ratio"
+            },
+            "far_max": {
+              "$ref": "#/definitions/ratio"
+            },
+            "deep_soil_min": {
+              "$ref": "#/definitions/ratio"
+            }
+          }
+        },
+        "form": {
+          "$ref": "#/definitions/form"
+        },
+        "density": {
+          "$ref": "#/definitions/density"
+        },
+        "use": {
+          "$ref": "#/definitions/use"
+        },
+        "variants": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additions": {
+          "$ref": "#/definitions/zone"
+        },
+        "zone_parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/zone"
+          }
+        },
+        "totals": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "max_dwellings": {
+              "type": "number",
+              "minimum": 0
+            },
+            "min_dwellings": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max_floorspace": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "total_group": {
+          "type": "string",
+          "description": "Sub-areas with the same total_group share one set of totals."
+        }
+      },
+      "description": "A sub-area's changes: zone fields, plus additions, per-zone changes and a dwelling total it may share with other sub-areas."
+    }
+  }
+}

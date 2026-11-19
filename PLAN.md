@@ -1,13 +1,36 @@
 # Plan: a jurisdiction-agnostic R package for plan-enabled capacity
 
 Package: **`plancap`** (free on CRAN; no R package of that name on GitHub).
-Status (20 November 2026): **Stage 0 built locally.** Skeleton, CI
-workflows, pkgdown config, community files, Exampleton (1,467 parcels, 198
-rear lots, DEM) and 51 passing expectations. R CMD check --as-cran: 0 errors,
-0 warnings; remaining notes are the not-yet-created GitHub URLs and the new
-submission. Stage 0 gate (CI green on 3 OSes) waits on the
-faceteconomics/plancap repo existing. Wellington extract comes with the WCC
-rulebook in stage 1.
+Status (20 November 2026):
+
+- **Stage 0 done.** Gate met: R CMD check green on Windows, macOS and Linux
+  (devel, release, oldrel) at github.com/faceteconomics/plancap. Codecov
+  upload is non-fatal until Codecov is linked (needs CODECOV_TOKEN).
+- **Stage 1 built** (rulebook). Schema (`inst/schema/rulebook.schema.json`),
+  R constructors, YAML/JSON/XLSX I/O (all lossless, tested), validation,
+  `rule_table()`, `set_rule()`/`extend_rulebook()`/`extends:`, metres/feet,
+  restricted formulas. Exampleton rulebook hand-written. Gate: the three
+  capacityengine bundles convert and validate (`data-raw/convert_capacityengine.R`,
+  reports in `data-raw/conversion/`): Wellington and Christchurch carry every
+  field; Auckland carries all 217 precincts but 13 fields remain, listed in
+  its report and unmodelled register (see Stage 1 follow-ups below).
+
+### Stage 1 follow-ups (for stage 4, engine)
+
+- Auckland Height Variation Control: `class_field`, `height_conversion_table`,
+  `passthrough_below/above_m`, `between_bands` (mapped total height to
+  occupiable height) and the overlay `sub_areas` of the height-sensitive
+  area. Needs an overlay "height conversion" construct; design with the engine.
+- `value_from: existing_dwelling_setback_average` (SCA front yard set from the
+  neighbours): needs a "measured" value source; v1 net-of-existing work.
+- CfGS-fidelity fields (`cfgs_large_site_area_per_dwelling_m2`) deliberately
+  not carried.
+- Design additions made in stage 1 that the engine must honour:
+  `replaces_setbacks` (an override replaces only the named setback kinds),
+  `additions`, sub-area `total_group`, plane `angle_by_orientation`,
+  `vertical_above`, `max_setback_above`, conversion `min_one_dwelling_floor`.
+- The Wellington extract (real example data, Q16) is still to do: needs the
+  capacity-wellington layers cut to ~1,500 parcels with its rulebook.
 Decisions so far are recorded in section 11.
 
 ---

@@ -13,6 +13,56 @@ navbar:
     right: [search, github, lightswitch]
 
 reference:
+  - title: Rulebooks
+    desc: >
+      A rulebook holds every planning rule for one plan, with a citation for
+      every value. Build one in R, or read it from YAML, JSON or a spreadsheet.
+    contents:
+      - rulebook
+      - add_rules
+      - set_rules
+      - read_rulebook
+      - rulebook_template
+      - rulebook_example
+  - title: Zones
+    desc: The rules a zone applies to every site in it.
+    contents:
+      - zone
+      - height_limit
+      - ratio
+      - bands
+      - building_form
+      - density
+      - use_mix
+  - title: Setbacks
+    desc: >
+      Yards, recession and daylight planes, upper-level and height-proportional
+      setbacks: every rule that keeps a building back from a boundary.
+    contents:
+      - yard
+      - setback_distance
+      - conditions
+      - boundary_classes
+  - title: Overlays, areas, bonuses and entitlements
+    contents:
+      - overlay
+      - area
+      - sub_area
+      - bonus
+      - unmodelled_rule
+  - title: Checking and changing rulebooks
+    contents:
+      - validate_rulebook
+      - rule_table
+      - set_rule
+      - convert_rulebook_units
+      - rulebook_schema_path
+  - title: Values, defaults and assumptions
+    contents:
+      - rule-formulas
+      - rulebook_defaults
+      - morphology_defaults
+      - conversion
   - title: Example data
     desc: Exampleton, a synthetic town built to exercise every rule type.
     contents:

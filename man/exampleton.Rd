@@ -38,7 +38,7 @@ What it contains, and what each part is there to exercise:\tabular{lll}{
    \code{precincts} \tab polygon \tab One precinct with two sub-precincts (\code{sub_precinct}) \cr
    \code{water} \tab line \tab A river through the southern reserve, for riparian setbacks \cr
    \code{transit} \tab point \tab A station, for distance-band rules \cr
-   \code{trees} \tab point \tab Trees with trunk diameter (\code{dbh_m}) and a \code{protected} flag \cr
+   \code{trees} \tab point \tab Trees with trunk diameter (\code{dbh_m}), \code{status} (\code{"protected"} or \code{"unprotected"}) and a root-zone \code{protection_radius_m} \cr
    \code{buildings} \tab polygon \tab Existing buildings with \code{storeys}, for net-of-existing capacity \cr
 }
 
