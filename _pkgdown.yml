@@ -1,0 +1,21 @@
+url: https://faceteconomics.github.io/plancap/
+
+template:
+  bootstrap: 5
+  light-switch: true
+
+home:
+  title: plancap — plan-enabled development capacity
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github, lightswitch]
+
+reference:
+  - title: Example data
+    desc: Exampleton, a synthetic town built to exercise every rule type.
+    contents:
+      - exampleton
+      - exampleton_dem
+      - exampleton_path

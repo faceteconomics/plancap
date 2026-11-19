@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Renviron
+docs/
+*.Rcheck/
+plancap_*.tar.gz
+data-raw/cache/

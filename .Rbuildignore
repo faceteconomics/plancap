@@ -1,0 +1,14 @@
+^plancap\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^PLAN\.md$
+^RULES-RESEARCH\.md$
+^data-raw$
+^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^cran-comments\.md$
+^CODE_OF_CONDUCT\.md$
+^codecov\.yml$
+^\.lintr$

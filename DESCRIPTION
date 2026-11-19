@@ -1,0 +1,33 @@
+Package: plancap
+Title: Plan-Enabled Development Capacity from Planning Rules and Parcels
+Version: 0.0.0.9000
+Authors@R:
+    person("James", "Stewart", email = "j.johannes.stewart@gmail.com",
+           role = c("aut", "cre", "cph"))
+Description: Estimates the floorspace and dwellings that planning rules
+    enable on each land parcel, for any jurisdiction. Rules such as height
+    limits, setbacks, recession planes, site coverage, floor area ratios and
+    density controls are entered as a validated rulebook, by file, by
+    spreadsheet or in R, with a citation for every value. Capacity is built
+    site by site as a stack of storey footprints clipped by every applicable
+    rule, then summarised and plotted by zone, height, location or binding
+    constraint. Scope is plan-enabled capacity only, not feasible or
+    likely-to-be-realised development.
+License: MIT + file LICENSE
+URL: https://github.com/faceteconomics/plancap,
+    https://faceteconomics.github.io/plancap/
+BugReports: https://github.com/faceteconomics/plancap/issues
+Depends:
+    R (>= 4.1)
+Imports:
+    cli,
+    rlang,
+    sf
+Suggests:
+    terra,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Encoding: UTF-8
+Language: en-GB
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

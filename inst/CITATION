@@ -1,0 +1,13 @@
+bibentry(
+  bibtype = "Manual",
+  title = "plancap: Plan-Enabled Development Capacity from Planning Rules and Parcels",
+  author = person("James", "Stewart"),
+  year = "2026",
+  note = paste("R package version", meta$Version),
+  url = "https://github.com/faceteconomics/plancap",
+  textVersion = paste0(
+    "Stewart, J. (2026). plancap: Plan-Enabled Development Capacity from ",
+    "Planning Rules and Parcels. R package version ", meta$Version, ". ",
+    "https://github.com/faceteconomics/plancap"
+  )
+)
