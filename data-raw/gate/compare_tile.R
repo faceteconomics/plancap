@@ -12,13 +12,23 @@ args <- commandArgs(trailingOnly = TRUE)
 tile <- if (length(args)) args[1] else "t_011_011"
 mode <- if (length(args) > 1) args[2] else "flat"
 g <- readRDS(file.path("data-raw/cache", paste0("gate_", tile, ".rds")))
-ce <- switch(mode, flat = g$ce_flat, nofront = g$ce_flat_nofront, published = g$ce_published)
+ce <- switch(mode, flat = g$ce_flat, nofront = g$ce_flat_nofront, published = g$ce_published,
+             terrain = g$ce_terrain_nofront)
 
 rb <- rulebook_example("auckland")
 parcels <- g$sites
 names(parcels)[names(parcels) == "site_id"] <- "parcel_id"
+# Height surfaces need terrain (they are absolute elevations): with ground
+# levels, swap each surface's extent polygons for its raster.
+if (mode %in% c("published", "terrain")) {
+  for (nm in names(g$surface_files)) {
+    g$layers[[nm]] <- terra::rast(file.path("data-raw/cache", g$surface_files[[nm]]))
+  }
+}
+# Published results include terrain: give plancap the same ground levels.
 sc <- scenario(paste("AKL", tile), rb, parcels = parcels[, "parcel_id"], roads = g$roads,
-               zoning = g$zoning, layers = g$layers, water = g$water)
+               zoning = g$zoning, layers = g$layers, water = g$water,
+               ground = if (mode %in% c("published", "terrain")) g$ground)
 t0 <- Sys.time()
 cap <- suppressWarnings(estimate_capacity(sc, variant_choice = "standard"))
 secs <- round(as.numeric(Sys.time() - t0, units = "secs"), 1)

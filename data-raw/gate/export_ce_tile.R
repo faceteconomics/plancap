@@ -100,14 +100,40 @@ real_front <- get("needs_existing_front_setbacks", envir = ns)
 unlockBinding("needs_existing_front_setbacks", ns)
 assign("needs_existing_front_setbacks", function(...) character(0), envir = ns)
 flat_nofront <- suppressWarnings(run_region_tile(tile, ctx))
-assign("needs_existing_front_setbacks", real_front, envir = ns)
 assign("cached_datum", real_datum, envir = ns)
+# Terrain on, front yard still off: plancap's like-for-like with terrain.
+terrain_nofront <- suppressWarnings(run_region_tile(tile, ctx))
+assign("needs_existing_front_setbacks", real_front, envir = ns)
 
-out <- list(tile = tile, sites = sites[, c("site_id", "zone_key")], roads = roads[, 0], zoning = zoning,
+# Ground levels from the tile cache, for plancap's `ground` argument: the
+# mean ground along each boundary segment and over each site.
+segs <- read_region_tile(tile, "segments", cache_dir = scen$precomputed, site_ids = sites$site_id)
+ground <- list(
+  sites = data.frame(site_id = sites$site_id, ground_mean = sites$ground_mean_m),
+  segments = data.frame(site_id = segs$site_id,
+                        seq = as.integer(sub("^.*-s", "", segs$segment_id)),
+                        ground = segs$ground_mean_m))
+out <- list(tile = tile, sites = sites[, c("site_id", "zone_key")], ground = ground, roads = roads[, 0], zoning = zoning,
             layers = layers, water = water, ce_flat = flat$sites, ce_flat_nofront = flat_nofront$sites,
+            ce_terrain_nofront = terrain_nofront$sites,
             ce_published = as.data.frame(published[published$tile_id == tile, ]),
             exported = Sys.time())
 dir.create("../plancap/data-raw/cache", showWarnings = FALSE)
+# Height surfaces (rasters of absolute elevation), cropped to the tile and
+# written beside the export; terra objects do not survive saveRDS().
+surface_files <- character()
+for (nm in names(ctx$surfaces)) {
+  r <- ctx$surfaces[[nm]]
+  bx <- sf::st_transform(box(100), terra::crs(r))
+  rc <- tryCatch(terra::crop(r, terra::ext(terra::vect(bx))), error = function(e) NULL)
+  if (is.null(rc) || all(is.na(terra::values(rc)))) next
+  f <- file.path("../plancap/data-raw/cache", paste0("gate_", tile, "_surface_", nm, ".tif"))
+  terra::writeRaster(rc, f, overwrite = TRUE)
+  # Keyed by the raster name the converted rulebook's overlay uses
+  # (capacityengine keys its surfaces by overlay id).
+  surface_files[[ctx$bundle$overlays[[nm]]$surface_raster %||% nm]] <- basename(f)
+}
+out$surface_files <- surface_files
 f <- file.path("../plancap/data-raw/cache", paste0("gate_", tile, ".rds"))
 saveRDS(out, f)
 cli::cli_inform("{nrow(sites)} sites, {nrow(roads)} roads, {nrow(zoning)} zoning features, \\

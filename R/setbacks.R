@@ -216,6 +216,11 @@ new_setback <- function(kind, fields, boundaries, origin, when, variant, name,
 #' @param bearing Bearing(s) of the boundary's outward normal (degrees
 #'   clockwise from north), for planes whose angle depends on orientation.
 #' @param vars Other variables for formula values, see [eval_rule_value()].
+#' @param slope_in For planes on sloping ground: how fast the site's ground
+#'   rises into the site from the boundary (metres per metre).
+#' @param base_height The building's own height above the site's ground, where
+#'   `height` has been adjusted to the boundary's ground; a plane's
+#'   `max_setback_above` is tested against it.
 #' @return Numeric vector of required distances (m), one per height.
 #' @export
 #' @examples
@@ -223,7 +228,7 @@ new_setback <- function(kind, fields, boundaries, origin, when, variant, name,
 #' setback_distance(p, c(2, 3, 6, 9))
 #' setback_distance(proportional_setback(0.4, "side", min = 3), c(3, 10, 20))
 setback_distance <- function(rule, height, storey = NA_integer_, bearing = NA_real_,
-                             vars = list()) {
+                             vars = list(), slope_in = 0, base_height = height) {
   n <- length(height)
   storey <- rep_len(storey, n)
   vars$H <- height
@@ -245,11 +250,17 @@ setback_distance <- function(rule, height, storey = NA_integer_, bearing = NA_re
       h <- height
       if (!is.null(rule$vertical_above)) h <- pmin(h, rule$vertical_above)
       t <- tan(angle * pi / 180)
-      d <- (rule$set_in %||% 0) + pmax(0, (h - start) / t)
+      # On sloping ground the site's ground rises into the site (slope_in, rise
+      # per metre), which slows the building's gain on the plane
+      # (capacityengine hirb_setback()).
+      s <- rep_len(slope_in, n)
+      s[is.na(s)] <- 0
+      si <- rule$set_in %||% 0
+      d <- si + pmax(0, (h - start + s * si) / pmax(t - s, 0.1 * t))
       cap <- rule$max_setback_above
       if (!is.null(cap)) {
         fixed <- graded_angle(cap[c("north", "east", "south", "west")], bearing)
-        above <- height > cap$height & !is.na(fixed)
+        above <- rep_len(base_height, n) > cap$height & !is.na(fixed)
         d[above] <- pmin(d[above], fixed[above])
       }
       d

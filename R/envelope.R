@@ -95,6 +95,7 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
   choice <- variant_choice %||% rb$variant_choice %||% "max"
   dflt <- utils::modifyList(rulebook_defaults(), rb$defaults %||% list())
   settings <- list(level_reference = dflt$level_reference, min_floorplate = dflt$min_floorplate,
+                   terrain = dflt$terrain %||% "stepped", max_ground_slope = dflt$max_ground_slope %||% 0.5,
                    include_density = include_density, choice = choice, max_storeys = max_storeys,
                    defaults = dflt, morphology = prep$morphology,
                    ground_mode = rb$ground$mode %||% "most_restrictive",
@@ -159,7 +160,8 @@ site_signatures <- function(prep, res, settings, bands = NULL) {
                                                "slope", "ground_mean", "depth", "width", "frontage"),
                                              names(s))]
   env_settings <- settings[c("level_reference", "min_floorplate", "include_density", "choice",
-                             "max_storeys", "defaults", "version", "exclusion_hash")]
+                             "max_storeys", "defaults", "version", "exclusion_hash", "terrain",
+                             "max_ground_slope", "morphology")]
   w_sig <- rlang::hash(prep$water)
   band_by <- if (!is.null(bands) && nrow(bands)) split(paste(bands$upper, round(geos::geos_area(bands$geom), 3)),
                                                       factor(bands$site_id, levels = s$site_id)) else list()
@@ -252,17 +254,14 @@ envelope_core <- function(prep, res, rb, settings, idx, excl = list(), bands = N
   geoms <- if (keep_geometry) vector("list", length(stack)) else NULL
   sbk <- if (keep_setbacks) vector("list", length(stack)) else NULL
   alive <- runs$n_storeys >= 1
-  terrain_off <- if (all(c("ground") %in% names(seg)) && "ground_mean" %in% names(s_df)) {
-    o <- s_df$ground_mean[seg$site] - seg$ground
-    ifelse(is.na(o), 0, o)
-  } else rep(0, nrow(seg))
+  terrain <- terrain_terms(seg, seg_geom, s_df, sg, settings)
 
   for (n in seq_len(max(runs$n_storeys, 0))) {
     at <- alive & runs$n_storeys >= n
     if (!any(at)) break
     lv <- storey_levels(ph, runs$param, n)
     level <- if (settings$level_reference == "ceiling") lv$ceiling else lv$floor
-    req <- required_setbacks(pairs, rs_seg, rs_run, level, n, seg, s_df, prep$distances, terrain_off)
+    req <- required_setbacks(pairs, rs_seg, rs_run, level, n, seg, s_df, prep$distances, terrain)
     sb <- req$setback
     sb[!at[rs_run]] <- 0
     fp <- clip_runs(ground[runs$site], seg_geom, rs_seg, rs_run, sb, corners, runs, rs_start, rank_in_site)
@@ -335,6 +334,14 @@ envelope_core <- function(prep, res, rb, settings, idx, excl = list(), bands = N
     }
   }
   report$removed_by_exclusions <- sum(removed > 0)
+  # A tower's plan dimension and separation limit its shape, not an area; not
+  # modelled (as capacityengine), counted where they would apply.
+  tdim <- vapply(params, function(z) !is.null(z$form$max_tower_dimension) || !is.null(z$form$tower_separation), TRUE)
+  if (any(tdim) && nrow(st)) {
+    th <- vapply(params, function(z) z$form$tower_above_height %||% Inf, 0)
+    rp <- runs$param[st$run]
+    report$tower_controls_unmodelled <- length(unique(st$run[tdim[rp] & st$ceiling_level > th[rp]]))
+  }
   list(stack = out_stack, variants = variants, geometry = geometry, setbacks = setbacks, report = report,
        removed = stats::setNames(removed, s_df$site_id),
        water_share = stats::setNames(water_share, s_df$site_id))
@@ -465,7 +472,7 @@ eval_conditions <- function(w, sg, st, distances) {
 
 # Required setback on every (run, segment) at this storey: the largest any
 # applicable rule asks, and which rule asked it.
-required_setbacks <- function(pairs, rs_seg, rs_run, level, n, seg, s_df, distances, terrain_off) {
+required_setbacks <- function(pairs, rs_seg, rs_run, level, n, seg, s_df, distances, terrain) {
   setback <- numeric(length(rs_seg))
   rule_name <- rep(NA_character_, length(rs_seg))
   source <- rep(NA_character_, length(rs_seg))
@@ -477,14 +484,22 @@ required_setbacks <- function(pairs, rs_seg, rs_run, level, n, seg, s_df, distan
     rule <- rules[[ri]]
     rs <- pairs$rs[k]
     si <- seg$site[rs_seg[rs]]
-    h <- level[rs_run[rs]]
-    if (rule$kind %in% c("plane", "proportional", "profile")) h <- h + terrain_off[rs_seg[rs]]
+    bh <- level[rs_run[rs]]
+    h <- bh
+    sl <- 0
+    # Planes and height-proportional rules are measured from the ground at
+    # their own boundary (unless the rule says the site's ground).
+    if (rule$kind %in% c("plane", "proportional", "profile") && !identical(rule$datum, "site")) {
+      h <- h + terrain$offset[rs_seg[rs]]
+      if (rule$kind == "plane") sl <- terrain$slope[rs_seg[rs]]
+    }
     st <- s_df[si, ]
     vars <- list(site_area = st$area, site_depth = st$depth, site_width = st$width,
                  frontage = st$frontage, n_frontages = st$n_frontage_directions,
                  road_width = st$road_width, slope = st$slope %||% rep(NA_real_, length(k)),
                  corner = as.numeric(st$is_corner), storey = rep(n, length(k)))
-    dd <- setback_distance(rule, h, storey = n, bearing = seg$outward_bearing[rs_seg[rs]], vars = vars)
+    dd <- setback_distance(rule, h, storey = n, bearing = seg$outward_bearing[rs_seg[rs]], vars = vars,
+                           slope_in = sl, base_height = bh)
     origin <- rule$origin %||% "boundary"
     if (origin == "road_far_side") dd <- dd - st$road_width
     if (origin == "road_centreline") dd <- dd - st$road_width / 2
@@ -679,7 +694,7 @@ apply_caps <- function(st, runs, s_df, params, settings) {
   si <- runs$site[st$run]
   net <- s_df$net_area[si] %||% s_df$area[si]
   net[is.na(net)] <- s_df$area[si][is.na(net)]
-  cov <- land <- imp <- fpl <- rep(Inf, nrow(st))
+  cov <- land <- imp <- fpl <- twr <- rep(Inf, nrow(st))
   for (p in unique(runs$param[st$run])) {
     k <- which(runs$param[st$run] == p)
     z <- params[[p]]
@@ -694,9 +709,16 @@ apply_caps <- function(st, runs, s_df, params, settings) {
       imp[k] <- resolve_ratio(r$impervious_max, vars) * net[k]
     }
     if (!is.null(z$form$max_floorplate)) fpl[k] <- z$form$max_floorplate
+    # Above the tower threshold, the tower floorplate limit.
+    tf <- z$form$max_tower_floorplate
+    if (!is.null(tf)) {
+      above <- (!is.null(z$form$tower_above_height) & st$ceiling_level[k] > (z$form$tower_above_height %||% Inf)) |
+        (!is.null(z$form$tower_above_storey) & st$storey[k] >= (z$form$tower_above_storey %||% Inf))
+      twr[k][above] <- tf
+    }
   }
   caps <- cbind(geometry = st$clipped_area, coverage = cov, landscaping = land,
-                impervious = imp, floorplate = fpl)
+                impervious = imp, floorplate = fpl, tower_floorplate = twr)
   caps[is.na(caps)] <- Inf
   b <- max.col(-caps, ties.method = "first")
   st$enabled_area <- caps[cbind(seq_len(nrow(st)), b)]
@@ -952,4 +974,154 @@ building_gaps <- function(geom, len, gap) {
   }
   if (!length(strips)) return(geos::as_geos_geometry("POLYGON EMPTY", crs = crs))
   geos::geos_unary_union(geos::geos_make_collection(geos::as_geos_geometry(strips, crs = crs)))
+}
+
+# ---- Terrain -------------------------------------------------------------------
+
+# Height in relation to a boundary is measured from the ground at that
+# boundary; the building's levels are counted from the site's ground. A
+# boundary is the plan's unit, not the cadastre's piece of it, so its ground is
+# the length-weighted mean over each run of near-straight pieces of one class
+# (capacityengine items 297, 299). "flat" stands the building on one floor at
+# the site's mean ground; "stepped" (item 318) on a plane fitted to the site's
+# boundary ground, so the offset is the plane's height at the run's middle less
+# the run's ground, and the plane's rise into the site slows the building's
+# gain on a recession plane.
+terrain_terms <- function(seg, seg_geom, s_df, site_geom, settings) {
+  n <- nrow(seg)
+  zero <- list(offset = rep(0, n), slope = rep(0, n))
+  if (!"ground" %in% names(seg) || !"ground_mean" %in% names(s_df) || !n) return(zero)
+  merge <- settings$morphology$boundary_merge_angle %||% 5
+  run <- boundary_runs(seg_geom, seg$site, seg$boundary_class, merge)
+  len <- geos::geos_length(seg_geom)
+  has <- !is.na(seg$ground)
+  num <- rowsum(ifelse(has, seg$ground * len, 0), run)
+  den <- rowsum(ifelse(has, len, 0), run)
+  k <- match(run, as.integer(rownames(num)))
+  rg <- ifelse(den[k] > 0, num[k] / den[k], NA_real_)
+  tg <- s_df$ground_mean[seg$site]
+  offset <- ifelse(is.na(rg) | is.na(tg), 0, tg - rg)
+  slope <- rep(0, n)
+  if (identical(settings$terrain, "stepped")) {
+    pf <- ground_planes(seg_geom, seg$site, seg$ground, site_geom, settings$max_ground_slope %||% 0.5)
+    b <- seg$outward_bearing * pi / 180
+    inx <- -sin(b)
+    iny <- -cos(b)
+    gx <- pf$gx[seg$site]
+    gy <- pf$gy[seg$site]
+    s <- gx * inx + gy * iny
+    s[is.na(s)] <- 0
+    wsum <- function(v) {
+      r <- rowsum(len * v, run)
+      r[match(run, as.integer(rownames(r))), 1]
+    }
+    W <- wsum(rep(1, n))
+    W[W <= 0] <- NA
+    rmx <- wsum(pf$mx) / W
+    rmy <- wsum(pf$my) / W
+    slope <- wsum(s) / W
+    slope[is.na(slope)] <- 0
+    pb <- pf$z[seg$site] + gx * (rmx - pf$cx[seg$site]) + gy * (rmy - pf$cy[seg$site])
+    ok <- !is.na(pb) & !is.na(rg)
+    offset[ok] <- pb[ok] - rg[ok]
+  }
+  list(offset = offset, slope = slope)
+}
+
+# Runs of near-straight pieces of one boundary: consecutive segments of one
+# site meeting at a turn of no more than `tol_deg`, of the same class.
+boundary_runs <- function(geom, site_idx, cls, tol_deg) {
+  n <- length(geom)
+  run <- seq_len(n)
+  if (n < 2 || is.na(tol_deg) || tol_deg <= 0) return(run)
+  s <- geos::geos_point_start(geom)
+  e <- geos::geos_point_end(geom)
+  sx <- geos::geos_x(s)
+  sy <- geos::geos_y(s)
+  ex <- geos::geos_x(e)
+  ey <- geos::geos_y(e)
+  len <- sqrt((ex - sx)^2 + (ey - sy)^2)
+  ok <- !is.na(len) & len > 1e-9
+  ux <- (ex - sx) / len
+  uy <- (ey - sy) / len
+  ends <- data.frame(seg = c(seq_len(n), seq_len(n)), x = c(sx, ex), y = c(sy, ey),
+                     dx = c(ux, -ux), dy = c(uy, -uy))[c(ok, ok), , drop = FALSE]
+  key <- paste(site_idx[ends$seg], round(ends$x, 2), round(ends$y, 2))
+  o <- order(key)
+  ends <- ends[o, , drop = FALSE]
+  key <- key[o]
+  cnt <- tabulate(match(key, unique(key)))[match(key, unique(key))]
+  pair <- which(key[-1] == key[-length(key)] & cnt[-1] == 2)
+  if (!length(pair)) return(run)
+  a <- ends[pair, ]
+  b <- ends[pair + 1L, ]
+  turn <- acos(pmin(1, pmax(-1, -(a$dx * b$dx + a$dy * b$dy)))) * 180 / pi
+  same <- (is.na(cls[a$seg]) & is.na(cls[b$seg])) |
+    (!is.na(cls[a$seg]) & !is.na(cls[b$seg]) & cls[a$seg] == cls[b$seg])
+  join <- turn <= tol_deg & same & a$seg != b$seg
+  i <- a$seg[join]
+  j <- b$seg[join]
+  if (!length(i)) return(run)
+  repeat {
+    m <- pmin(run[i], run[j])
+    idx <- c(i, j)
+    val <- c(m, m)
+    oo <- order(idx, val)
+    first <- oo[!duplicated(idx[oo])]
+    nxt <- run
+    nxt[idx[first]] <- pmin(run[idx[first]], val[first])
+    if (identical(nxt, run)) break
+    run <- nxt
+  }
+  run
+}
+
+# Each site's ground as a plane z = a + gx (x - cx) + gy (y - cy) about its
+# centroid, fitted to its boundaries' ground weighted by length; the slope is
+# capped at `max_slope`, and a site whose boundaries do not span it in both
+# directions keeps a level plane at their mean.
+ground_planes <- function(geom, site_idx, z, site_geom, max_slope = 0.5) {
+  ns <- length(site_geom)
+  cen <- geos::geos_centroid(site_geom)
+  cx <- geos::geos_x(cen)
+  cy <- geos::geos_y(cen)
+  mid <- geos::geos_interpolate_normalized(geom, 0.5)
+  mx <- geos::geos_x(mid)
+  my <- geos::geos_y(mid)
+  w <- geos::geos_length(geom)
+  ok <- !is.na(z) & is.finite(z) & w > 0
+  out <- list(cx = cx, cy = cy, z = rep(NA_real_, ns), gx = rep(0, ns), gy = rep(0, ns), mx = mx, my = my)
+  if (!any(ok)) return(out)
+  i <- site_idx[ok]
+  w <- w[ok]
+  zz <- z[ok]
+  dx <- mx[ok] - cx[i]
+  dy <- my[ok] - cy[i]
+  S <- function(v) {
+    r <- rep(0, ns)
+    s <- rowsum(v, i)
+    r[as.integer(rownames(s))] <- s[, 1]
+    r
+  }
+  s0 <- S(w); sx <- S(w * dx); sy <- S(w * dy)
+  sxx <- S(w * dx * dx); sxy <- S(w * dx * dy); syy <- S(w * dy * dy)
+  sz <- S(w * zz); sxz <- S(w * dx * zz); syz <- S(w * dy * zz)
+  det <- s0 * (sxx * syy - sxy^2) - sx * (sx * syy - sxy * sy) + sy * (sx * sxy - sxx * sy)
+  has <- s0 > 0
+  out$z[has] <- sz[has] / s0[has]
+  spread <- ifelse(has, (sxx + syy) / pmax(s0, 1e-9), 0)
+  good <- has & abs(det) > 1e-6 * s0^3 * pmax(spread, 1e-9)^2
+  a <- (sz * (sxx * syy - sxy^2) - sx * (sxz * syy - sxy * syz) + sy * (sxz * sxy - sxx * syz)) / det
+  b <- (s0 * (sxz * syy - sxy * syz) - sz * (sx * syy - sxy * sy) + sy * (sx * syz - sxz * sy)) / det
+  c <- (s0 * (sxx * syz - sxy * sxz) - sx * (sx * syz - sxz * sy) + sz * (sx * sxy - sxx * sy)) / det
+  out$z[good] <- a[good]
+  out$gx[good] <- b[good]
+  out$gy[good] <- c[good]
+  mag <- sqrt(out$gx^2 + out$gy^2)
+  over <- mag > max_slope
+  if (any(over)) {
+    out$gx[over] <- out$gx[over] * max_slope / mag[over]
+    out$gy[over] <- out$gy[over] * max_slope / mag[over]
+  }
+  out
 }

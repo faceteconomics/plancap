@@ -41,9 +41,26 @@ each traced to its cause:
   neighbours' existing houses** (`value_from`, capacityengine item 314/362).
   Not carried by the conversion; with it, capacityengine's flat figure is
   1,654,391 m2 (plancap +1.0%).
-- **Not compared yet: terrain.** capacityengine's published figure (stepped
-  terrain on a sloping-site ground plane, item 318) is 1,645,691 m2, 0.5%
-  below its flat run; plancap's stepped terrain is the next piece of work.
+
+## Result with terrain and height surfaces (stage 4, part 4)
+
+capacityengine with its cached ground datum (stepped terrain, item 318) and
+its height surfaces (maunga and museum viewshafts, Whenuapai airspace), the
+front yard still off; plancap given the same ground levels (`ground`
+argument) and the surface rasters:
+
+| | capacityengine | plancap | difference |
+|---|---|---|---|
+| Floor area | 1,661,340 m2 | 1,661,898 m2 | +0.034% |
+| Dwellings | 6,185 | 6,153 | -0.52% |
+| Sites matching floor area to 0.01 m2 | | | 2,658 of 2,680 (99.2%) |
+
+The same residuals as on flat ground (the 17 to 21 irregular special
+character lots, access width from easements) and one Neighbourhood Centre
+site 9.6 m2 apart. Terrain and surfaces themselves reproduce: every MHU, MHS
+and THAB site matches. Surfaces need ground levels because they are absolute
+elevations; a maunga viewshaft at 18.5 m over ground at 28.2 m leaves only its
+9 m floor height.
 
 ## What the gate found and fixed in plancap
 

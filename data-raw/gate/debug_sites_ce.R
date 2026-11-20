@@ -20,12 +20,15 @@ h <- suppressWarnings(resolve_effective_height(sites, zp, overlay_values = ov$me
 print(sf::st_drop_geometry(h)[, intersect(c("site_id", "zone_key", "param_id", "height_total_m",
                                              "height_occupiable_m", "storeys_nominal", "storey_height_m",
                                              "site_area_m2"), names(h))])
+terrain <- Sys.getenv("TERRAIN") == "1"
+datum <- if (terrain) cached_datum(sites, segs)
 env <- suppressWarnings(build_envelope(h, segs, zp, include_density = TRUE, keep_setbacks = TRUE,
+                                       segment_datum = datum$segments, site_datum = datum$sites,
                                        water = water_near(ctx$water, h, pad_m = 100)))
 print(as.data.frame(env)[, c("site_id", "storey", "ceiling_level_m", "clipped_area_m2")])
 sb <- attr(env, "setbacks")
-print(as.data.frame(sb)[sb$storey == 1, intersect(c("site_id", "segment_id", "boundary_class", "length_m",
-                                                    "setback_m", "rule", "source"), names(sb))])
+print(as.data.frame(sb)[sb$storey == 3, intersect(c("site_id", "segment_id", "boundary_class", "length_m",
+                                                    "setback_m", "ground_offset_m", "rule"), names(sb))])
 cp <- apply_caps(env, zp)
 print(as.data.frame(cp)[, c("site_id", "storey", "enabled_area_m2", "binding_constraint")])
 fin <- enforce_stack_rules(cp, min_floorplate_m2 = ctx$bundle$defaults$min_floorplate_m2, zone_parameters = zp)

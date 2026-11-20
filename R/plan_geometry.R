@@ -65,6 +65,7 @@ plan_geometry <- function(pg, zoning, rulebook, layers = list(), zone_field = "z
                            centrelines = inputs$centrelines, width_field = inputs$width_field %||% "width_m",
                            rulebook = rulebook, morphology = morphology)
     if (!is.null(inputs$dem)) ppg <- attach_terrain(ppg, inputs$dem)
+    if (!is.null(inputs$ground)) ppg <- attach_ground(ppg, inputs$ground)
     new_sites <- ppg$sites
     if ("parcel_ids" %in% names(sites)) new_sites$parcel_ids <- sites$parcel_ids[parts$site]
     new_sites$zone_key <- ifelse(startsWith(parts$key, "?"), NA_character_, parts$key)

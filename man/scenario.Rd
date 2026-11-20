@@ -15,6 +15,7 @@ scenario(
   water = NULL,
   centrelines = NULL,
   dem = NULL,
+  ground = NULL,
   zone_field = "zone",
   site_id = NULL,
   group_by = NULL,
@@ -48,6 +49,12 @@ rulebook names them.}
 \item{centrelines}{Road centrelines with a width column (\code{width_field}).}
 
 \item{dem}{Optional ground surface as a \code{terra::SpatRaster}.}
+
+\item{ground}{Optional ground levels supplied directly instead of a \code{dem}
+(from a survey, or another model): a list with \code{sites} (a data frame of
+\code{site_id} and \code{ground_mean}) and \code{segments} (a data frame of \code{site_id},
+\code{seq}, the segment's position in its site's boundary counting from 1, and
+\code{ground}, the mean ground level along it).}
 
 \item{zone_field}{Column of \code{zoning} holding zone codes.}
 

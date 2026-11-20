@@ -22,6 +22,11 @@
 #' @param water Water features, for riparian, coastal and lakeside boundaries.
 #' @param centrelines Road centrelines with a width column (`width_field`).
 #' @param dem Optional ground surface as a `terra::SpatRaster`.
+#' @param ground Optional ground levels supplied directly instead of a `dem`
+#'   (from a survey, or another model): a list with `sites` (a data frame of
+#'   `site_id` and `ground_mean`) and `segments` (a data frame of `site_id`,
+#'   `seq`, the segment's position in its site's boundary counting from 1, and
+#'   `ground`, the mean ground level along it).
 #' @param zone_field Column of `zoning` holding zone codes.
 #' @param site_id Column of `parcels` to use as the site id. Default
 #'   `"parcel_id"` if present, otherwise row numbers.
@@ -47,7 +52,7 @@
 #' taller <- scenario_change(base, "MDR at 16 m",
 #'   rulebook = set_rule(base$rulebook, "zones.MDR.height.value", 16))
 scenario <- function(name, rulebook, parcels, zoning, roads = NULL, layers = list(),
-                     water = NULL, centrelines = NULL, dem = NULL, zone_field = "zone",
+                     water = NULL, centrelines = NULL, dem = NULL, ground = NULL, zone_field = "zone",
                      site_id = NULL, group_by = NULL, width_field = "width_m",
                      morphology = list(), notes = NULL) {
   check_string(name, null_ok = FALSE)
@@ -66,9 +71,12 @@ scenario <- function(name, rulebook, parcels, zoning, roads = NULL, layers = lis
   if (!is.null(group_by) && !group_by %in% names(parcels)) {
     cli::cli_abort("{.arg parcels} has no {.field {group_by}} column.")
   }
+  if (!is.null(ground) && (!is.list(ground) || is.null(ground$sites) || is.null(ground$segments))) {
+    cli::cli_abort("{.arg ground} must be a list with {.field sites} and {.field segments}.")
+  }
   structure(list(name = name, rulebook = rulebook, parcels = parcels, zoning = zoning,
                  roads = roads, layers = layers, water = water, centrelines = centrelines,
-                 dem = dem, zone_field = zone_field, site_id = site_id, group_by = group_by,
+                 dem = dem, ground = ground, zone_field = zone_field, site_id = site_id, group_by = group_by,
                  width_field = width_field, morphology = morphology, notes = notes),
             class = "plancap_scenario")
 }
@@ -148,7 +156,7 @@ prepare_sites <- function(x, cache = TRUE) {
   m <- morphology_settings(x$rulebook, x$morphology)
   h_parcels <- rlang::hash(list(
     parcels = x$parcels, roads = x$roads, water = x$water, centrelines = x$centrelines,
-    dem = dem_signature(x$dem), site_id = x$site_id, group_by = x$group_by,
+    dem = dem_signature(x$dem), ground = x$ground, site_id = x$site_id, group_by = x$group_by,
     width_field = x$width_field, morphology = m, version = utils::packageVersion("plancap")))
   rb <- x$rulebook
   plan_rules <- list(zone_map = rb$zone_map, zone_families = rb$zone_families,
@@ -174,11 +182,12 @@ prepare_sites <- function(x, cache = TRUE) {
                             centrelines = x$centrelines, width_field = x$width_field,
                             rulebook = x$rulebook, morphology = x$morphology)
       if (!is.null(x$dem)) pg <- attach_terrain(pg, x$dem)
+      if (!is.null(x$ground)) pg <- attach_ground(pg, x$ground)
       if (cache) cache_set(h_parcels, pg)
     }
     plan <- plan_geometry(pg, x$zoning, x$rulebook, layers = x$layers,
                           zone_field = x$zone_field,
-                          inputs = list(roads = x$roads, water = x$water, dem = x$dem,
+                          inputs = list(roads = x$roads, water = x$water, dem = x$dem, ground = x$ground,
                                         centrelines = x$centrelines, width_field = x$width_field),
                           morphology = x$morphology)
     if (cache) cache_set(h_plan, plan)
@@ -243,12 +252,31 @@ dem_signature <- function(dem) {
 attach_terrain <- function(pg, dem) {
   rlang::check_installed("terra", reason = "to read a ground surface.")
   seg <- pg$segments
-  mid <- cbind((seg$x0 + seg$x1) / 2, (seg$y0 + seg$y1) / 2)
-  seg$ground <- terra::extract(dem, mid)[, 1]
+  # Mean ground along each boundary segment: sampled every metre, ends included.
+  len <- sqrt((seg$x1 - seg$x0)^2 + (seg$y1 - seg$y0)^2)
+  k <- pmax(2L, ceiling(len) + 1L)
+  id <- rep(seq_len(nrow(seg)), k)
+  t <- unlist(lapply(k, function(m) seq(0, 1, length.out = m)))
+  pts <- cbind(seg$x0[id] + t * (seg$x1[id] - seg$x0[id]), seg$y0[id] + t * (seg$y1[id] - seg$y0[id]))
+  z <- terra::extract(dem, pts)[, 1]
+  seg$ground <- as.vector(tapply(z, id, mean, na.rm = TRUE))
+  seg$ground[is.nan(seg$ground)] <- NA
   v <- terra::vect(pg$sites)
   pg$sites$ground_mean <- terra::extract(dem, v, fun = mean, na.rm = TRUE)[, 2]
   slope <- terra::terrain(dem, "slope", unit = "degrees")
   pg$sites$slope <- tan(terra::extract(slope, v, fun = mean, na.rm = TRUE)[, 2] * pi / 180) * 100
+  pg$segments <- seg
+  pg
+}
+
+# Ground levels supplied as tables rather than sampled from a DEM.
+attach_ground <- function(pg, ground) {
+  seg <- pg$segments
+  seq_of <- as.integer(sub("^.*-", "", seg$segment_id))
+  key <- paste(seg$site_id, seq_of)
+  g <- ground$segments
+  seg$ground <- g$ground[match(key, paste(g$site_id, g$seq))]
+  pg$sites$ground_mean <- ground$sites$ground_mean[match(pg$sites$site_id, ground$sites$site_id)]
   pg$segments <- seg
   pg
 }

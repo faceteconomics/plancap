@@ -91,10 +91,16 @@ Status (20 November 2026):
   rule, area-conditional zone families, unmeasured access uncapped, CfGS
   large-site divisor, precinct name parsing.
 
-  **Stage 4, part 4 (next)**: stepped terrain (item 318) and boundary runs
-  (item 299), compared with tolerance against the published tile; then site
-  shape factor (item 324), tower controls, the measured front yard
-  (`value_from`, needs building outlines), and access width from easements.
+- **Stage 4, part 4 built**: stepped terrain (item 318) with boundary runs
+  (item 299) and ground planes; ground levels from a DEM (sampled along each
+  boundary) or supplied as tables; tower floorplate cap; tower dimension and
+  separation flagged. Gate with terrain and height surfaces: floor area
+  +0.034%, 99.2% of sites exact (data-raw/gate/README.md). 344 expectations.
+
+  **Stage 4, part 5 (next)**: site shape factor (item 324); the measured front
+  yard (`value_from`, needs building outlines); access width from easements;
+  faster surface sampling (the gate tile takes 158 s with surfaces, 34 s
+  without); the 17 to 21 irregular special-character lots (classification).
 
   *(Earlier note)* **Stage 4, part 3**: stepped terrain (item 318) and boundary runs
   (item 299); site shape factor (item 324); tower controls; then the tile

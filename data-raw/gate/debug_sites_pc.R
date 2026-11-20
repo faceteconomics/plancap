@@ -11,13 +11,14 @@ names(parcels)[names(parcels) == "site_id"] <- "parcel_id"
 near <- g$sites[lengths(sf::st_is_within_distance(g$sites, parcels, 60)) > 0, ]
 names(near)[names(near) == "site_id"] <- "parcel_id"
 sc <- scenario("dbg", rulebook_example("auckland"), parcels = near[, "parcel_id"], roads = g$roads,
-               zoning = g$zoning, layers = g$layers, water = g$water)
+               zoning = g$zoning, layers = g$layers, water = g$water,
+               ground = if (Sys.getenv("TERRAIN") == "1") g$ground)
 env <- suppressWarnings(build_envelopes(sc, keep_setbacks = TRUE, include_density = TRUE, variant_choice = "standard"))
 print(env$stack[env$stack$site_id %in% ids, c("site_id", "variant", "storey", "ceiling_level", "clipped_area",
                                               "enabled_area", "binding")])
 sb <- env$setbacks
 seg <- sf::st_drop_geometry(prepare_sites(sc)$segments)
-sb <- merge(sb[sb$site_id %in% ids & sb$storey == 1, ], seg[, c("segment_id", "boundary_class", "length", "tags",
+sb <- merge(sb[sb$site_id %in% ids & sb$storey == 3, ], seg[, c("segment_id", "boundary_class", "length", "tags",
                                                                   "adjacent_zone_key")], by = "segment_id")
 print(sb[, c("site_id", "segment_id", "boundary_class", "length", "setback", "rule", "source", "adjacent_zone_key")])
 res <- resolve_sites(prepare_sites(sc), sc$rulebook)

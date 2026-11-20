@@ -86,6 +86,16 @@
             "floor"
           ]
         },
+        "terrain": {
+          "enum": [
+            "stepped",
+            "flat"
+          ]
+        },
+        "max_ground_slope": {
+          "type": "number",
+          "minimum": 0
+        },
         "no_limit_height": {
           "type": "number",
           "exclusiveMinimum": 0

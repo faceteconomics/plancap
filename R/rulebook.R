@@ -64,6 +64,13 @@ rulebook_schema_version <- function() "0.1"
 #'   \item{`level_reference`}{Where each storey is tested against height and
 #'     planes: `"ceiling"` (the default; a storey must fit entirely) or
 #'     `"floor"`.}
+#'   \item{`terrain`}{How buildings meet sloping ground, where ground levels
+#'     are supplied: `"stepped"` (the default; each site's ground is a plane
+#'     fitted to its boundaries' ground, and a recession plane is measured from
+#'     the ground at its own boundary) or `"flat"` (one floor at the site's
+#'     mean ground).}
+#'   \item{`max_ground_slope`}{Steepest fitted ground slope (rise over run)
+#'     accepted; steeper fits are scaled back. 0.5.}
 #'   \item{`no_limit_height`}{Stand-in height (m) for zones with no height
 #'     limit; `NULL` means such zones are flagged and given no stand-in.}
 #'   \item{`large_site`}{Large-site treatment: `threshold` (m2, 10,000),
@@ -76,6 +83,7 @@ rulebook_schema_version <- function() "0.1"
 #' rulebook_defaults()
 rulebook_defaults <- function() {
   list(storey_height = 3, min_floorplate = 30, level_reference = "ceiling",
+       terrain = "stepped", max_ground_slope = 0.5,
        large_site = list(threshold = 10000, deduction = 0.25, method = "divisor"))
 }
 
