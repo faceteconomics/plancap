@@ -2,6 +2,20 @@
 
 ## plancap 0.0.0.9000
 
+### Reproducing capacityengine (stage 4, part 3)
+
+- On a 2,680-site Auckland tile, on flat ground, plancap reproduces
+  capacityengine’s floor area to +0.033% (99.4% of sites to 0.01 m2) and
+  its dwellings to -0.5% (`data-raw/gate/`).
+- [`zone_family()`](https://faceteconomics.github.io/plancap/reference/zone_family.md):
+  a family that counts across a boundary only where the contiguous area
+  of its zones there is within bounds (rules next to small or large open
+  space).
+- A zone stating no storey count divides its height into as many
+  default-height storeys as fit (20 m: six storeys of 3.33 m).
+- A site with no road frontage is left uncapped by the access width
+  table and flagged (`access_unmeasured`).
+
 ### Heights, surfaces and building form (stage 4, part 2)
 
 - Height overlays follow capacityengine’s rules: an override replaces

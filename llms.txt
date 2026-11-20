@@ -105,6 +105,8 @@ spreadsheet.
   [`set_ground()`](https://faceteconomics.github.io/plancap/reference/set_rules.md)
   [`set_variant_choice()`](https://faceteconomics.github.io/plancap/reference/set_rules.md)
   : Set rulebook-wide settings
+- [`zone_family()`](https://faceteconomics.github.io/plancap/reference/zone_family.md)
+  : A zone family that depends on the size of the land across a boundary
 - [`read_rulebook()`](https://faceteconomics.github.io/plancap/reference/read_rulebook.md)
   [`write_rulebook()`](https://faceteconomics.github.io/plancap/reference/read_rulebook.md)
   : Read and write rulebooks

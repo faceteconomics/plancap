@@ -41,6 +41,14 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="plancap-0009000">plancap 0.0.0.9000<a class="anchor" aria-label="anchor" href="#plancap-0009000"></a></h2>
 <div class="section level3">
+<h3 id="reproducing-capacityengine-stage-part-0-0-0-9000">Reproducing capacityengine (stage 4, part 3)<a class="anchor" aria-label="anchor" href="#reproducing-capacityengine-stage-part-0-0-0-9000"></a></h3>
+<ul><li>On a 2,680-site Auckland tile, on flat ground, plancap reproduces capacityengine’s floor area to +0.033% (99.4% of sites to 0.01 m2) and its dwellings to -0.5% (<code>data-raw/gate/</code>).</li>
+<li>
+<code><a href="../reference/zone_family.html">zone_family()</a></code>: a family that counts across a boundary only where the contiguous area of its zones there is within bounds (rules next to small or large open space).</li>
+<li>A zone stating no storey count divides its height into as many default-height storeys as fit (20 m: six storeys of 3.33 m).</li>
+<li>A site with no road frontage is left uncapped by the access width table and flagged (<code>access_unmeasured</code>).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="heights-surfaces-and-building-form-stage-part-0-0-0-9000">Heights, surfaces and building form (stage 4, part 2)<a class="anchor" aria-label="anchor" href="#heights-surfaces-and-building-form-stage-part-0-0-0-9000"></a></h3>
 <ul><li>Height overlays follow capacityengine’s rules: an override replaces total and occupiable height; a cap lowers total height and lowers occupiable height only where its value is lower (a cap that bites only the roof allowance leaves the storeys); a cap over a zone with no height caps nothing. Overlays may carry a <code>height_conversion</code> table from mapped total height to occupiable height (Auckland’s Height Variation Control).</li>
 <li>Height surfaces (rasters, as elevations with a <code>dem</code> or as heights above ground): a surface covering a whole site caps its height at the lowest point; one covering part takes, at each storey, the land the surface is too low for.</li>
