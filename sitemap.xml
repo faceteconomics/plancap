@@ -14,7 +14,10 @@
 <url><loc>https://faceteconomics.github.io/plancap/reference/bands.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/bonus.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/boundary_classes.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/build_envelopes.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/building_form.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/check_morphology.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/clear_site_cache.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/conditions.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/conversion.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/convert_rulebook_units.html</loc></url>
@@ -24,9 +27,11 @@
 <url><loc>https://faceteconomics.github.io/plancap/reference/exampleton_path.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/height_limit.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/index.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/morphology.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/morphology_defaults.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/overlay.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/plancap-package.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/prepare_sites.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/ratio.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/read_rulebook.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rule-formulas.html</loc></url>
@@ -36,6 +41,7 @@
 <url><loc>https://faceteconomics.github.io/plancap/reference/rulebook_example.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rulebook_schema_path.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rulebook_template.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/scenario.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/set_rule.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/set_rules.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/setback_distance.html</loc></url>

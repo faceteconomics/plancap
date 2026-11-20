@@ -184,6 +184,48 @@ a boundary.
 - [`rulebook_schema_path()`](https://faceteconomics.github.io/plancap/reference/rulebook_schema_path.md)
   : Path to the rulebook JSON Schema
 
+## Scenarios and site preparation
+
+A scenario is a rulebook with its parcels and maps. Preparing it turns
+parcels into sites with classified boundaries, ready for the engine;
+prepared steps are reused across scenarios that share their inputs.
+
+- [`scenario()`](https://faceteconomics.github.io/plancap/reference/scenario.md)
+  [`scenario_change()`](https://faceteconomics.github.io/plancap/reference/scenario.md)
+  : Scenarios: a rulebook with its maps and parcels
+- [`prepare_sites()`](https://faceteconomics.github.io/plancap/reference/prepare_sites.md)
+  : Prepare sites for a scenario
+- [`clear_site_cache()`](https://faceteconomics.github.io/plancap/reference/clear_site_cache.md)
+  : Clear plancap's cache of prepared sites
+
+## The building envelope
+
+Each site’s stack of storey footprints, clipped by every rule that
+applies at each height and capped by site ratios.
+
+- [`build_envelopes()`](https://faceteconomics.github.io/plancap/reference/build_envelopes.md)
+  : Build the storey-by-storey building envelope of every site
+
+## Site and boundary types
+
+Road frontages, side and rear boundaries, corner, through and rear
+sites, access legs, water boundaries and road widths, each with the
+evidence for the call.
+
+- [`find_road_frontages()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
+  [`find_side_rear()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
+  [`find_corner_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
+  [`find_through_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
+  [`find_rear_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
+  [`find_access_legs()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
+  [`find_water_boundaries()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
+  [`find_road_widths()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
+  [`site_metrics()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
+  : Identify what each boundary and site is
+- [`check_morphology()`](https://faceteconomics.github.io/plancap/reference/check_morphology.md)
+  [`plot_morphology()`](https://faceteconomics.github.io/plancap/reference/check_morphology.md)
+  : Check and draw how sites and boundaries were classified
+
 ## Values, defaults and assumptions
 
 - [`rule_formula_vars()`](https://faceteconomics.github.io/plancap/reference/rule-formulas.md)

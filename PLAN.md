@@ -7,6 +7,7 @@ GitHub). Status (20 November 2026):
   Linux (devel, release, oldrel) at github.com/faceteconomics/plancap.
   Codecov upload is non-fatal until Codecov is linked (needs
   CODECOV_TOKEN).
+
 - **Stage 1 built** (rulebook). Schema
   (`inst/schema/rulebook.schema.json`), R constructors, YAML/JSON/XLSX
   I/O (all lossless, tested), validation,
@@ -18,6 +19,63 @@ GitHub). Status (20 November 2026):
   `data-raw/conversion/`): Wellington and Christchurch carry every
   field; Auckland carries all 217 precincts but 13 fields remain, listed
   in its report and unmodelled register (see Stage 1 follow-ups below).
+
+- **Stage 2 built** (site preparation).
+  [`scenario()`](https://faceteconomics.github.io/plancap/reference/scenario.md),
+  [`scenario_change()`](https://faceteconomics.github.io/plancap/reference/scenario.md),
+  [`prepare_sites()`](https://faceteconomics.github.io/plancap/reference/prepare_sites.md)
+  with two hashed, session-cached steps (parcel geometry; plan
+  geometry); `find_*()` morphology helpers and
+  [`site_metrics()`](https://faceteconomics.github.io/plancap/reference/morphology.md);
+  [`check_morphology()`](https://faceteconomics.github.io/plancap/reference/check_morphology.md),
+  [`plot_morphology()`](https://faceteconomics.github.io/plancap/reference/check_morphology.md).
+  Gate: capacityengine’s boundary and adjacency cases ported (rectangle
+  classes, winding indifference, thin spike, corner by directions not
+  spread, curved street not a corner, internal boundary dissolves,
+  far-side zone, carriageway probe, contiguous reserve area) and pass;
+  Exampleton prepares as built (9/9 through lots, every rear lot’s leg,
+  area conserved, all morphology checks in range); a zoning-only change
+  reuses the parcel geometry, a rule-only change reuses both. 222
+  expectations.
+
+  Stage 2 design notes for the engine: boundaries have one class (road,
+  side, rear) plus tags (reserve, riparian, coastal, lakeside,
+  zone_boundary); a rule naming a tag in `boundaries` matches it. Water
+  yards should be measured from the water feature (as capacityengine
+  item 347), the tag only says the boundary is near water. Corner sites
+  keep the ambiguous rear of capacityengine (flagged via `is_corner`).
+  Overlay and area membership are long tables with shares, so partial
+  coverage (engine item
+
+  368. is resolvable in stage 4. Not yet: incremental (affected-site)
+       runs, which belong to stage 3/6; a disk cache.
+
+- **Stage 3 built** (envelope engine).
+  [`build_envelopes()`](https://faceteconomics.github.io/plancap/reference/build_envelopes.md):
+  rule resolution (zone, then areas and sub-areas, then parameter and
+  height overlays; resolved once per distinct combination), storey
+  stack, one setback per boundary per storey, single clip with
+  reflex-corner wedges, crumbs dropped, caps (coverage and landscaping
+  of net site area, floorplate), monotonic stack, variants (max by
+  default), water yards from the water, access legs off the ground,
+  flat-terrain offsets, `keep_setbacks`, incremental runs from a
+  `baseline`. Gate: capacityengine’s hand-worked figures reproduce
+  exactly through the converted Auckland rulebook (MHS 433.5/193.5
+  clipped, 240/193.5 enabled; THAB 495/331.32/148.92, 748.92 total);
+  reflex corners, cul-de-sac fins, convex lots; incremental run equals
+  full run. Benchmark (`inst/bench/bench_envelope.R`): linear, ~0.5 ms a
+  site to prepare and ~1.6 ms a site to build (12,411 sites in 20 s).
+  261 expectations.
+
+  Not yet (stage 4): stepped terrain (capacityengine item 318) and
+  boundary runs for ground (item 299); split of boundaries at frontage
+  triggers (midpoint test used, item 130); height surfaces and partial
+  coverage (item 368); exclusion overlays (hazards, trees) and the
+  residential-only kind; FAR and max site floorspace caps; building
+  length, separation and gaps; tower controls; impervious only in
+  `with_access` ground mode; yield. The real-site check (S039789)
+  belongs with the stage 4 tile reproduction, which needs the Auckland
+  cadastre.
 
 ### Stage 1 follow-ups (for stage 4, engine)
 
@@ -116,10 +174,10 @@ What is ported, generalised:
 | capacityengine | New package | Generalisation |
 |----|----|----|
 | YAML bundle + JSON Schema | `rulebook` S3 object, YAML/JSON/XLSX/R entry | NZ terms renamed to neutral ones (see 3.2); NPS zone keys become user zone keys |
-| `build_sites`, `split_sites_by_zone` | `prepare_sites()` | parcel+title amalgamation becomes an optional `group_by` |
+| `build_sites`, `split_sites_by_zone` | [`prepare_sites()`](https://faceteconomics.github.io/plancap/reference/prepare_sites.md) | parcel+title amalgamation becomes an optional `group_by` |
 | `classify_boundaries`, frontage, `access_legs` | `classify_boundaries()` | road boundaries from a road layer, OR inferred from gaps / a street centreline layer |
 | `apply_zone_adjacency` | `resolve_adjacency()` | unchanged method (probe far side of midpoint) |
-| `build_envelope`, `apply_caps`, `enforce_stack_rules` | `build_envelopes()` | hemisphere-aware orientation rules; units parameter |
+| `build_envelope`, `apply_caps`, `enforce_stack_rules` | [`build_envelopes()`](https://faceteconomics.github.io/plancap/reference/build_envelopes.md) | hemisphere-aware orientation rules; units parameter |
 | yield paths | `estimate_yield()` | conversion assumptions explicit and required |
 | `aggregate_results`, `diff_scenarios` | `summarise_capacity()`, `compare_scenarios()` | much richer, see sections 5A and 6 |
 | explorer `site_rules_scene()` | `explain_site()`, `plot_site()` | static ggplot first, interactive optional |
@@ -299,18 +357,18 @@ plotted and corrected on their own, before any capacity run.
 
 | Helper | Identifies | Default assumptions (all overridable) |
 |----|----|----|
-| `find_road_frontages()` | Boundaries on a road; frontage length per road | Road layer if given, else gap or centreline inference; min road contact 0.5 m; probe distance 25 m to clear carriageways |
-| `find_side_rear()` | Side vs rear boundaries | Angle to frontage; tolerance 30°; depth-share rule for ambiguous segments |
-| `find_corner_sites()` | Sites on two or more roads at an angle | Corner angle tolerance; min frontage on each road |
-| `find_through_sites()` | Sites with frontage on opposite sides | Bearing difference ≥ 135° |
-| `find_rear_sites()` | Rear (battle-axe) sites | Frontage below a width threshold or reached only by a leg |
-| `find_access_legs()` | Driveways / access legs, and whether they come off net site area | Leg opening 7.5 m max; road contact ≥ 0.5 m; `exclude_from_net_area = TRUE` |
+| [`find_road_frontages()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Boundaries on a road; frontage length per road | Road layer if given, else gap or centreline inference; min road contact 0.5 m; probe distance 25 m to clear carriageways |
+| [`find_side_rear()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Side vs rear boundaries | Angle to frontage; tolerance 30°; depth-share rule for ambiguous segments |
+| [`find_corner_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Sites on two or more roads at an angle | Corner angle tolerance; min frontage on each road |
+| [`find_through_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Sites with frontage on opposite sides | Bearing difference ≥ 135° |
+| [`find_rear_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Rear (battle-axe) sites | Frontage below a width threshold or reached only by a leg |
+| [`find_access_legs()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Driveways / access legs, and whether they come off net site area | Leg opening 7.5 m max; road contact ≥ 0.5 m; `exclude_from_net_area = TRUE` |
 | `find_rights_of_way()` | Shared accessways from an easement layer | Optional layer; width from geometry |
 | `find_internal_boundaries()` | Common walls / internal boundaries (unit titles, cross-leases, amalgamated sites) | Shared-edge overlap fraction, never `intersects` |
-| `find_water_boundaries()` | Coastal, riparian, lakeside boundaries | Distance to water layer; bank vs centreline |
+| [`find_water_boundaries()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Coastal, riparian, lakeside boundaries | Distance to water layer; bank vs centreline |
 | `find_reserve_boundaries()` | Boundaries onto open space / reserves | Zone family membership across the boundary |
 | `find_boundary_runs()` | Near-straight pieces of one boundary treated as one | Merge angle 5° |
-| `site_metrics()` | Area, depth, width, frontage width, compactness, largest inscribed rectangle (site shape factor) | — |
+| [`site_metrics()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Area, depth, width, frontage width, compactness, largest inscribed rectangle (site shape factor) | — |
 
 How assumptions are held:
 
@@ -394,12 +452,13 @@ cap <- estimate_capacity(sites, rb, variant = "standard",
                          conversion = conversion(dwelling_size = 90))
 ```
 
-`estimate_capacity()` = `build_envelopes()` + `estimate_yield()`.
-Envelope method as in capacityengine: loop storeys, vectorise sites,
-reduce setbacks/planes/upper-level rules to one required setback per
-segment, three GEOS calls a storey, test each storey at its ceiling,
-then caps (coverage as share of SITE area, FAR, floorplate), then stack
-rules.
+`estimate_capacity()` =
+[`build_envelopes()`](https://faceteconomics.github.io/plancap/reference/build_envelopes.md) +
+`estimate_yield()`. Envelope method as in capacityengine: loop storeys,
+vectorise sites, reduce setbacks/planes/upper-level rules to one
+required setback per segment, three GEOS calls a storey, test each
+storey at its ceiling, then caps (coverage as share of SITE area, FAR,
+floorplate), then stack rules.
 
 The result is a `cap_result` S3 object:
 
@@ -713,11 +772,11 @@ Everything optional is checked with
 |----|----|----|
 | 0 | Name, repo, skeleton (usethis), CI, licence, Exampleton data | CI green on 3 OSes |
 | 1 | Rulebook: schema, R constructors, YAML/JSON I/O, validation, print/rule_table | Auckland/CHC/WCC bundles convert and validate; round-trip tests |
-| 2 | Site preparation, split into parcel geometry and plan geometry, each hashed; `scenario()` object | Ported boundary/adjacency tests pass; Exampleton prepared; a zoning-only change reuses the parcel geometry |
+| 2 | Site preparation, split into parcel geometry and plan geometry, each hashed; [`scenario()`](https://faceteconomics.github.io/plancap/reference/scenario.md) object | Ported boundary/adjacency tests pass; Exampleton prepared; a zoning-only change reuses the parcel geometry |
 | 3 | Envelope engine; accepts prepared parts; affected-site runs | Hand-checked cases reproduce exactly (S039789 etc.); benchmark |
 | 4 | Yield paths, overlays, areas, variants, conversion | A capacityengine region tile reproduces to the m² |
 | 5 | Summaries, sensitivity, explain_site | Reconciliation checks; vignettes 1, 5 draft |
-| 6 | **Scenarios and comparison**: `scenario_change()`, `scenario_set()`, manifests, `run_scenarios()`, `compare_scenarios()`, crosswalk, transitions, attribution, `diff_inputs()`; Exampleton PC1 | On Exampleton PC1: an incremental run equals a full run; drivers sum to the total change; land reconciles. On Auckland: operative vs PC120 matches capacityengine’s difference on a tile. “Comparing plan changes” vignette drafted |
+| 6 | **Scenarios and comparison**: [`scenario_change()`](https://faceteconomics.github.io/plancap/reference/scenario.md), `scenario_set()`, manifests, `run_scenarios()`, `compare_scenarios()`, crosswalk, transitions, attribution, `diff_inputs()`; Exampleton PC1 | On Exampleton PC1: an incremental run equals a full run; drivers sum to the total change; land reconciles. On Auckland: operative vs PC120 matches capacityengine’s difference on a tile. “Comparing plan changes” vignette drafted |
 | 7 | Plots (including comparison plots) and a theme design pass | Rendered gallery reviewed by you |
 | 8 | XLSX template entry, new-jurisdiction vignette, docs, pkgdown | A fresh jurisdiction entered from the template end to end |
 | 9 | Release: public repo, pkgdown live, (CRAN submission if Q8) | R CMD check 0/0/0; you sign off |

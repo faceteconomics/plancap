@@ -60,8 +60,18 @@ single run.</p>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A named list:</p><dl><dt><code>min_road_contact</code></dt>
-<dd><p>Shortest length (m) of shared edge with a road
-parcel that makes a boundary a road frontage. 0.5.</p></dd>
+<dd><p>Shortest total road frontage (m) for a site to
+count as fronting a road. 0.5.</p></dd>
+
+<dt><code>road_tolerance</code></dt>
+<dd><p>Distance (m) within which a boundary counts as
+running along a road parcel, absorbing cadastral slivers. A boundary
+segment is a road frontage when at least half its length is within it.
+0.5.</p></dd>
+
+<dt><code>boundary_probe_distance</code></dt>
+<dd><p>How far (m) across a side or rear
+boundary to look for the zone opposite. 1.</p></dd>
 
 <dt><code>road_probe_distance</code></dt>
 <dd><p>How far (m) across a road boundary to look
@@ -70,6 +80,15 @@ for the zone opposite, so the probe clears the carriageway. 25.</p></dd>
 <dt><code>side_rear_angle_tolerance</code></dt>
 <dd><p>Degrees from parallel to the frontage
 within which a boundary is a rear boundary. 30.</p></dd>
+
+<dt><code>rear_depth_share</code></dt>
+<dd><p>How far back (as a share of the site's depth
+from the frontage) a parallel boundary must sit to be a rear boundary.
+0.5.</p></dd>
+
+<dt><code>rear_site_max_frontage</code></dt>
+<dd><p>A site with less road frontage than this
+(m) is a rear site. 7.5.</p></dd>
 
 <dt><code>corner_angle_tolerance</code></dt>
 <dd><p>Degrees by which two frontages must differ

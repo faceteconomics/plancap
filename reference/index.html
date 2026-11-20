@@ -272,6 +272,75 @@
         </dt>
         <dd>Path to the rulebook JSON Schema</dd>
       </dl></div><div class="section level2">
+      <h2 id="scenarios-and-site-preparation">Scenarios and site preparation<a class="anchor" aria-label="anchor" href="#scenarios-and-site-preparation"></a></h2>
+
+      <div class="section-desc"><p>A scenario is a rulebook with its parcels and maps. Preparing it turns parcels into sites with classified boundaries, ready for the engine; prepared steps are reused across scenarios that share their inputs.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="scenario.html">scenario()</a></code> <code><a href="scenario.html">scenario_change()</a></code>
+
+        </dt>
+        <dd>Scenarios: a rulebook with its maps and parcels</dd>
+
+        <dt>
+
+          <code><a href="prepare_sites.html">prepare_sites()</a></code>
+
+        </dt>
+        <dd>Prepare sites for a scenario</dd>
+
+        <dt>
+
+          <code><a href="clear_site_cache.html">clear_site_cache()</a></code>
+
+        </dt>
+        <dd>Clear plancap's cache of prepared sites</dd>
+      </dl></div><div class="section level2">
+      <h2 id="the-building-envelope">The building envelope<a class="anchor" aria-label="anchor" href="#the-building-envelope"></a></h2>
+
+      <div class="section-desc"><p>Each site’s stack of storey footprints, clipped by every rule that applies at each height and capped by site ratios.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="build_envelopes.html">build_envelopes()</a></code>
+
+        </dt>
+        <dd>Build the storey-by-storey building envelope of every site</dd>
+      </dl></div><div class="section level2">
+      <h2 id="site-and-boundary-types">Site and boundary types<a class="anchor" aria-label="anchor" href="#site-and-boundary-types"></a></h2>
+
+      <div class="section-desc"><p>Road frontages, side and rear boundaries, corner, through and rear sites, access legs, water boundaries and road widths, each with the evidence for the call.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="morphology.html">find_road_frontages()</a></code> <code><a href="morphology.html">find_side_rear()</a></code> <code><a href="morphology.html">find_corner_sites()</a></code> <code><a href="morphology.html">find_through_sites()</a></code> <code><a href="morphology.html">find_rear_sites()</a></code> <code><a href="morphology.html">find_access_legs()</a></code> <code><a href="morphology.html">find_water_boundaries()</a></code> <code><a href="morphology.html">find_road_widths()</a></code> <code><a href="morphology.html">site_metrics()</a></code>
+
+        </dt>
+        <dd>Identify what each boundary and site is</dd>
+
+        <dt>
+
+          <code><a href="check_morphology.html">check_morphology()</a></code> <code><a href="check_morphology.html">plot_morphology()</a></code>
+
+        </dt>
+        <dd>Check and draw how sites and boundaries were classified</dd>
+      </dl></div><div class="section level2">
       <h2 id="values-defaults-and-assumptions">Values, defaults and assumptions<a class="anchor" aria-label="anchor" href="#values-defaults-and-assumptions"></a></h2>
 
 

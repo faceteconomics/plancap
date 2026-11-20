@@ -41,10 +41,17 @@
 <div id="plan-a-jurisdiction-agnostic-r-package-for-plan-enabled-capacity" class="section level1">
 
 <p>Package: <strong><code>plancap</code></strong> (free on CRAN; no R package of that name on GitHub). Status (20 November 2026):</p>
-<ul><li>
-<strong>Stage 0 done.</strong> Gate met: R CMD check green on Windows, macOS and Linux (devel, release, oldrel) at github.com/faceteconomics/plancap. Codecov upload is non-fatal until Codecov is linked (needs CODECOV_TOKEN).</li>
+<ul><li><p><strong>Stage 0 done.</strong> Gate met: R CMD check green on Windows, macOS and Linux (devel, release, oldrel) at github.com/faceteconomics/plancap. Codecov upload is non-fatal until Codecov is linked (needs CODECOV_TOKEN).</p></li>
+<li><p><strong>Stage 1 built</strong> (rulebook). Schema (<code>inst/schema/rulebook.schema.json</code>), R constructors, YAML/JSON/XLSX I/O (all lossless, tested), validation, <code><a href="reference/rule_table.html">rule_table()</a></code>, <code><a href="reference/set_rule.html">set_rule()</a></code>/<code><a href="reference/set_rule.html">extend_rulebook()</a></code>/<code>extends:</code>, metres/feet, restricted formulas. Exampleton rulebook hand-written. Gate: the three capacityengine bundles convert and validate (<code>data-raw/convert_capacityengine.R</code>, reports in <code>data-raw/conversion/</code>): Wellington and Christchurch carry every field; Auckland carries all 217 precincts but 13 fields remain, listed in its report and unmodelled register (see Stage 1 follow-ups below).</p></li>
 <li>
-<strong>Stage 1 built</strong> (rulebook). Schema (<code>inst/schema/rulebook.schema.json</code>), R constructors, YAML/JSON/XLSX I/O (all lossless, tested), validation, <code><a href="reference/rule_table.html">rule_table()</a></code>, <code><a href="reference/set_rule.html">set_rule()</a></code>/<code><a href="reference/set_rule.html">extend_rulebook()</a></code>/<code>extends:</code>, metres/feet, restricted formulas. Exampleton rulebook hand-written. Gate: the three capacityengine bundles convert and validate (<code>data-raw/convert_capacityengine.R</code>, reports in <code>data-raw/conversion/</code>): Wellington and Christchurch carry every field; Auckland carries all 217 precincts but 13 fields remain, listed in its report and unmodelled register (see Stage 1 follow-ups below).</li>
+<p><strong>Stage 2 built</strong> (site preparation). <code><a href="reference/scenario.html">scenario()</a></code>, <code><a href="reference/scenario.html">scenario_change()</a></code>, <code><a href="reference/prepare_sites.html">prepare_sites()</a></code> with two hashed, session-cached steps (parcel geometry; plan geometry); <code>find_*()</code> morphology helpers and <code><a href="reference/morphology.html">site_metrics()</a></code>; <code><a href="reference/check_morphology.html">check_morphology()</a></code>, <code><a href="reference/check_morphology.html">plot_morphology()</a></code>. Gate: capacityengine’s boundary and adjacency cases ported (rectangle classes, winding indifference, thin spike, corner by directions not spread, curved street not a corner, internal boundary dissolves, far-side zone, carriageway probe, contiguous reserve area) and pass; Exampleton prepares as built (9/9 through lots, every rear lot’s leg, area conserved, all morphology checks in range); a zoning-only change reuses the parcel geometry, a rule-only change reuses both. 222 expectations.</p>
+<p>Stage 2 design notes for the engine: boundaries have one class (road, side, rear) plus tags (reserve, riparian, coastal, lakeside, zone_boundary); a rule naming a tag in <code>boundaries</code> matches it. Water yards should be measured from the water feature (as capacityengine item 347), the tag only says the boundary is near water. Corner sites keep the ambiguous rear of capacityengine (flagged via <code>is_corner</code>). Overlay and area membership are long tables with shares, so partial coverage (engine item</p>
+<ol start="368" style="list-style-type: decimal"><li>is resolvable in stage 4. Not yet: incremental (affected-site) runs, which belong to stage 3/6; a disk cache.</li>
+</ol></li>
+<li>
+<p><strong>Stage 3 built</strong> (envelope engine). <code><a href="reference/build_envelopes.html">build_envelopes()</a></code>: rule resolution (zone, then areas and sub-areas, then parameter and height overlays; resolved once per distinct combination), storey stack, one setback per boundary per storey, single clip with reflex-corner wedges, crumbs dropped, caps (coverage and landscaping of net site area, floorplate), monotonic stack, variants (max by default), water yards from the water, access legs off the ground, flat-terrain offsets, <code>keep_setbacks</code>, incremental runs from a <code>baseline</code>. Gate: capacityengine’s hand-worked figures reproduce exactly through the converted Auckland rulebook (MHS 433.5/193.5 clipped, 240/193.5 enabled; THAB 495/331.32/148.92, 748.92 total); reflex corners, cul-de-sac fins, convex lots; incremental run equals full run. Benchmark (<code>inst/bench/bench_envelope.R</code>): linear, ~0.5 ms a site to prepare and ~1.6 ms a site to build (12,411 sites in 20 s). 261 expectations.</p>
+<p>Not yet (stage 4): stepped terrain (capacityengine item 318) and boundary runs for ground (item 299); split of boundaries at frontage triggers (midpoint test used, item 130); height surfaces and partial coverage (item 368); exclusion overlays (hazards, trees) and the residential-only kind; FAR and max site floorspace caps; building length, separation and gaps; tower controls; impervious only in <code>with_access</code> ground mode; yield. The real-site check (S039789) belongs with the stage 4 tile reproduction, which needs the Auckland cadastre.</p>
+</li>
 </ul><div class="section level3">
 <h3 id="stage-1-follow-ups-for-stage-4-engine">Stage 1 follow-ups (for stage 4, engine)<a class="anchor" aria-label="anchor" href="#stage-1-follow-ups-for-stage-4-engine"></a></h3>
 <ul><li>Auckland Height Variation Control: <code>class_field</code>, <code>height_conversion_table</code>, <code>passthrough_below/above_m</code>, <code>between_bands</code> (mapped total height to occupiable height) and the overlay <code>sub_areas</code> of the height-sensitive area. Needs an overlay “height conversion” construct; design with the engine.</li>
@@ -98,7 +105,7 @@
 </tr><tr><td>
 <code>build_sites</code>, <code>split_sites_by_zone</code>
 </td>
-<td><code>prepare_sites()</code></td>
+<td><code><a href="reference/prepare_sites.html">prepare_sites()</a></code></td>
 <td>parcel+title amalgamation becomes an optional <code>group_by</code>
 </td>
 </tr><tr><td>
@@ -112,7 +119,7 @@
 </tr><tr><td>
 <code>build_envelope</code>, <code>apply_caps</code>, <code>enforce_stack_rules</code>
 </td>
-<td><code>build_envelopes()</code></td>
+<td><code><a href="reference/build_envelopes.html">build_envelopes()</a></code></td>
 <td>hemisphere-aware orientation rules; units parameter</td>
 </tr><tr><td>yield paths</td>
 <td><code>estimate_yield()</code></td>
@@ -211,22 +218,22 @@
 <table class="table"><colgroup><col width="33%"><col width="33%"><col width="33%"></colgroup><thead><tr><th>Helper</th>
 <th>Identifies</th>
 <th>Default assumptions (all overridable)</th>
-</tr></thead><tbody><tr><td><code>find_road_frontages()</code></td>
+</tr></thead><tbody><tr><td><code><a href="reference/morphology.html">find_road_frontages()</a></code></td>
 <td>Boundaries on a road; frontage length per road</td>
 <td>Road layer if given, else gap or centreline inference; min road contact 0.5 m; probe distance 25 m to clear carriageways</td>
-</tr><tr><td><code>find_side_rear()</code></td>
+</tr><tr><td><code><a href="reference/morphology.html">find_side_rear()</a></code></td>
 <td>Side vs rear boundaries</td>
 <td>Angle to frontage; tolerance 30°; depth-share rule for ambiguous segments</td>
-</tr><tr><td><code>find_corner_sites()</code></td>
+</tr><tr><td><code><a href="reference/morphology.html">find_corner_sites()</a></code></td>
 <td>Sites on two or more roads at an angle</td>
 <td>Corner angle tolerance; min frontage on each road</td>
-</tr><tr><td><code>find_through_sites()</code></td>
+</tr><tr><td><code><a href="reference/morphology.html">find_through_sites()</a></code></td>
 <td>Sites with frontage on opposite sides</td>
 <td>Bearing difference ≥ 135°</td>
-</tr><tr><td><code>find_rear_sites()</code></td>
+</tr><tr><td><code><a href="reference/morphology.html">find_rear_sites()</a></code></td>
 <td>Rear (battle-axe) sites</td>
 <td>Frontage below a width threshold or reached only by a leg</td>
-</tr><tr><td><code>find_access_legs()</code></td>
+</tr><tr><td><code><a href="reference/morphology.html">find_access_legs()</a></code></td>
 <td>Driveways / access legs, and whether they come off net site area</td>
 <td>Leg opening 7.5 m max; road contact ≥ 0.5 m; <code>exclude_from_net_area = TRUE</code>
 </td>
@@ -237,7 +244,7 @@
 <td>Common walls / internal boundaries (unit titles, cross-leases, amalgamated sites)</td>
 <td>Shared-edge overlap fraction, never <code>intersects</code>
 </td>
-</tr><tr><td><code>find_water_boundaries()</code></td>
+</tr><tr><td><code><a href="reference/morphology.html">find_water_boundaries()</a></code></td>
 <td>Coastal, riparian, lakeside boundaries</td>
 <td>Distance to water layer; bank vs centreline</td>
 </tr><tr><td><code>find_reserve_boundaries()</code></td>
@@ -246,14 +253,14 @@
 </tr><tr><td><code>find_boundary_runs()</code></td>
 <td>Near-straight pieces of one boundary treated as one</td>
 <td>Merge angle 5°</td>
-</tr><tr><td><code>site_metrics()</code></td>
+</tr><tr><td><code><a href="reference/morphology.html">site_metrics()</a></code></td>
 <td>Area, depth, width, frontage width, compactness, largest inscribed rectangle (site shape factor)</td>
 <td>—</td>
 </tr></tbody></table><p>How assumptions are held:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/morphology_defaults.html">morphology_defaults</a></span><span class="op">(</span><span class="op">)</span>                       <span class="co"># package defaults, documented</span></span>
 <span><span class="va">rb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_rules.html">set_morphology</a></span><span class="op">(</span><span class="va">rb</span>, corner_angle_deg <span class="op">=</span> <span class="fl">25</span>, access_leg_max_width_m <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
-<span><span class="va">sites</span> <span class="op">&lt;-</span> <span class="fu">prepare_sites</span><span class="op">(</span><span class="va">parcels</span>, <span class="va">zoning</span>, rulebook <span class="op">=</span> <span class="va">rb</span>,</span>
+<span><span class="va">sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/prepare_sites.html">prepare_sites</a></span><span class="op">(</span><span class="va">parcels</span>, <span class="va">zoning</span>, rulebook <span class="op">=</span> <span class="va">rb</span>,</span>
 <span>                       morphology <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>min_road_contact_m <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>  <span class="co"># run override</span></span></code></pre></div>
 <p>Precedence: run argument &gt; rulebook <code>morphology:</code> block &gt; package default. The values actually used are stored on the result, so every run says which definitions it applied. Each helper returns the classification <strong>and the evidence</strong> (contact length, angle, probe hit), so a wrong call can be traced.</p>
 <p>Checking tools:</p>
@@ -267,7 +274,7 @@
 <div class="section level2">
 <h2 id="id_4-site-preparation">4. Site preparation<a class="anchor" aria-label="anchor" href="#id_4-site-preparation"></a></h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sites</span> <span class="op">&lt;-</span> <span class="fu">prepare_sites</span><span class="op">(</span><span class="va">parcels</span>, <span class="va">zoning</span>,</span>
+<code class="sourceCode R"><span><span class="va">sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/prepare_sites.html">prepare_sites</a></span><span class="op">(</span><span class="va">parcels</span>, <span class="va">zoning</span>,</span>
 <span>  zone_field <span class="op">=</span> <span class="st">"ZONE"</span>, roads <span class="op">=</span> <span class="va">road_parcels</span>,      <span class="co"># or streets = centrelines</span></span>
 <span>  water <span class="op">=</span> <span class="va">rivers</span>, group_by <span class="op">=</span> <span class="cn">NULL</span>, terrain <span class="op">=</span> <span class="cn">NULL</span>, rulebook <span class="op">=</span> <span class="va">rb</span><span class="op">)</span></span></code></pre></div>
 <p>Steps, each also exported on its own:</p>
@@ -297,7 +304,7 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cap</span> <span class="op">&lt;-</span> <span class="fu">estimate_capacity</span><span class="op">(</span><span class="va">sites</span>, <span class="va">rb</span>, variant <span class="op">=</span> <span class="st">"standard"</span>,</span>
 <span>                         conversion <span class="op">=</span> <span class="fu"><a href="reference/conversion.html">conversion</a></span><span class="op">(</span>dwelling_size <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><code>estimate_capacity()</code> = <code>build_envelopes()</code> + <code>estimate_yield()</code>. Envelope method as in capacityengine: loop storeys, vectorise sites, reduce setbacks/planes/upper-level rules to one required setback per segment, three GEOS calls a storey, test each storey at its ceiling, then caps (coverage as share of SITE area, FAR, floorplate), then stack rules.</p>
+<p><code>estimate_capacity()</code> = <code><a href="reference/build_envelopes.html">build_envelopes()</a></code> + <code>estimate_yield()</code>. Envelope method as in capacityengine: loop storeys, vectorise sites, reduce setbacks/planes/upper-level rules to one required setback per segment, three GEOS calls a storey, test each storey at its ceiling, then caps (coverage as share of SITE area, FAR, floorplate), then stack rules.</p>
 <p>The result is a <code>cap_result</code> S3 object:</p>
 <table class="table"><colgroup><col width="50%"><col width="50%"></colgroup><thead><tr><th>Slot</th>
 <th>Content</th>
@@ -343,12 +350,12 @@
 <td>A structure plan’s new lots; amalgamations; road widening</td>
 <td>A different parcel layer; comparison by crosswalk or common geography</td>
 </tr></tbody></table><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">scenario</span><span class="op">(</span><span class="st">"Operative"</span>, rulebook <span class="op">=</span> <span class="va">rb_operative</span>,</span>
+<code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/scenario.html">scenario</a></span><span class="op">(</span><span class="st">"Operative"</span>, rulebook <span class="op">=</span> <span class="va">rb_operative</span>,</span>
 <span>                 layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>parcels <span class="op">=</span> <span class="va">parcels</span>, roads <span class="op">=</span> <span class="va">roads</span>, zoning <span class="op">=</span> <span class="va">zoning_op</span>,</span>
 <span>                               height_areas <span class="op">=</span> <span class="va">ha</span>, flood_hazard <span class="op">=</span> <span class="va">fh</span>, precincts <span class="op">=</span> <span class="va">pr</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># A plan change starts from the baseline and says only what changes</span></span>
-<span><span class="va">pc1</span> <span class="op">&lt;-</span> <span class="fu">scenario_change</span><span class="op">(</span><span class="va">base</span>, <span class="st">"PC1 as notified"</span>,</span>
+<span><span class="va">pc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/scenario.html">scenario_change</a></span><span class="op">(</span><span class="va">base</span>, <span class="st">"PC1 as notified"</span>,</span>
 <span>                       rulebook <span class="op">=</span> <span class="fu"><a href="reference/read_rulebook.html">read_rulebook</a></span><span class="op">(</span><span class="st">"pc1.yaml"</span><span class="op">)</span>,   <span class="co"># extends: operative.yaml</span></span>
 <span>                       layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>zoning <span class="op">=</span> <span class="va">zoning_pc1</span><span class="op">)</span><span class="op">)</span>      <span class="co"># other layers inherited</span></span>
 <span></span>
@@ -543,7 +550,7 @@
 <td>Rulebook: schema, R constructors, YAML/JSON I/O, validation, print/rule_table</td>
 <td>Auckland/CHC/WCC bundles convert and validate; round-trip tests</td>
 </tr><tr><td>2</td>
-<td>Site preparation, split into parcel geometry and plan geometry, each hashed; <code>scenario()</code> object</td>
+<td>Site preparation, split into parcel geometry and plan geometry, each hashed; <code><a href="reference/scenario.html">scenario()</a></code> object</td>
 <td>Ported boundary/adjacency tests pass; Exampleton prepared; a zoning-only change reuses the parcel geometry</td>
 </tr><tr><td>3</td>
 <td>Envelope engine; accepts prepared parts; affected-site runs</td>
@@ -556,7 +563,7 @@
 <td>Reconciliation checks; vignettes 1, 5 draft</td>
 </tr><tr><td>6</td>
 <td>
-<strong>Scenarios and comparison</strong>: <code>scenario_change()</code>, <code>scenario_set()</code>, manifests, <code>run_scenarios()</code>, <code>compare_scenarios()</code>, crosswalk, transitions, attribution, <code>diff_inputs()</code>; Exampleton PC1</td>
+<strong>Scenarios and comparison</strong>: <code><a href="reference/scenario.html">scenario_change()</a></code>, <code>scenario_set()</code>, manifests, <code>run_scenarios()</code>, <code>compare_scenarios()</code>, crosswalk, transitions, attribution, <code>diff_inputs()</code>; Exampleton PC1</td>
 <td>On Exampleton PC1: an incremental run equals a full run; drivers sum to the total change; land reconciles. On Auckland: operative vs PC120 matches capacityengine’s difference on a tile. “Comparing plan changes” vignette drafted</td>
 </tr><tr><td>7</td>
 <td>Plots (including comparison plots) and a theme design pass</td>
