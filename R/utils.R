@@ -91,3 +91,6 @@ merge_lists <- function(x, y) {
 
 # Escape braces so text can pass through cli's glue interpolation verbatim.
 esc <- function(x) gsub("}", "}}", gsub("{", "{{", x, fixed = TRUE), fixed = TRUE)
+
+# Replace NA (element-wise) with a default.
+`%|NA|%` <- function(x, y) ifelse(is.na(x), y, x)

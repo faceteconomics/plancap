@@ -72,6 +72,10 @@ reference:
       applies at each height and capped by site ratios.
     contents:
       - build_envelopes
+  - title: Capacity
+    desc: Floor area and dwellings, by the path each zone's method sets.
+    contents:
+      - estimate_capacity
   - title: Site and boundary types
     desc: >
       Road frontages, side and rear boundaries, corner, through and rear

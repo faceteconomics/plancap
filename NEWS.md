@@ -1,5 +1,19 @@
 # plancap 0.0.0.9000
 
+## Capacity (stage 4, part 1)
+
+* `estimate_capacity()` turns envelopes into floor area (split between
+  residential and business by each zone's use and residential share, by
+  storey where it changes) and dwellings, by volumetric, density, hybrid
+  and large-site paths; then floor area ratio and maximum site floorspace
+  (capping the stack from the ground up), no dwellings without a buildable
+  envelope or on land overlays remove, dwellings per site, the access width
+  cap, minor dwellings, area totals (including sub-areas sharing a total),
+  and entitlements as a floor. Bonuses are reported in `*_with_bonus`
+  columns.
+* Exclusion overlays: `removes: all` takes land off the buildable ground;
+  `removes: residential` keeps floor area over it out of dwellings.
+
 ## The envelope engine (stage 3)
 
 * `build_envelopes()` builds each site's storey stack: storeys at the zone's

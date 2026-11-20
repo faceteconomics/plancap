@@ -60,6 +60,25 @@ Status (20 November 2026):
   ground mode; yield. The real-site check (S039789) belongs with the stage 4
   tile reproduction, which needs the Auckland cadastre.
 
+- **Stage 4, part 1 built** (yield). `estimate_capacity()`: use split
+  (bands by storey), volumetric / density / hybrid / large-site paths
+  (capacityengine items 322, 323, 358, 363, 365, 374, 377), FAR and
+  max site floorspace capping the stack from the ground up, access width,
+  dwellings per site, minor dwellings, area and sub-area totals
+  (total_group), entitlements as a floor, bonuses in `*_with_bonus`
+  columns (height bonuses not yet evaluated: they need a second envelope).
+  Exclusion overlays (all / residential) in the engine. 306 expectations.
+  Differences from capacityengine to expect at the tile gate: access width
+  is read from road frontage (capacityengine measures access from
+  easements, item 259); site shape factor (item 324) not yet; access legs
+  are not the "entrance strip" offsets of item 374.
+
+  **Stage 4, part 2 (next)**: height surfaces and partial coverage (item
+  368), stepped terrain (item 318) and boundary runs (item 299), the
+  Auckland Height Variation Control conversion, building length /
+  separation / gaps, tower controls, site shape factor, height bonuses;
+  then the tile reproduction against capacityengine.
+
 ### Stage 1 follow-ups (for stage 4, engine)
 
 - Auckland Height Variation Control: `class_field`, `height_conversion_table`,

@@ -74,8 +74,10 @@
 build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_density = FALSE,
                             keep_geometry = FALSE, keep_setbacks = FALSE, baseline = NULL,
                             max_storeys = 60) {
+  layers <- list()
   if (inherits(x, "plancap_scenario")) {
     rulebook <- x$rulebook
+    layers <- x$layers
     prep <- prepare_sites(x)
   } else if (inherits(x, "plancap_sites")) {
     check_rulebook(rulebook)
@@ -95,6 +97,8 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
                    ground_mode = rb$ground$mode %||% "most_restrictive",
                    version = as.character(utils::packageVersion("plancap")))
 
+  excl <- exclusion_layers(rb, layers, sf::st_crs(prep$sites))
+  settings$exclusion_hash <- rlang::hash(lapply(excl, function(e) wk::as_wkb(e$geom)))
   res <- resolve_sites(prep, rb)
   sites <- prep$sites
   s_df <- sf::st_drop_geometry(sites)
@@ -107,12 +111,16 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
     copied <- which(same %in% TRUE)
     todo <- setdiff(todo, copied)
   }
-  core <- envelope_core(prep, res, rb, settings, idx = todo, keep_geometry = keep_geometry,
+  core <- envelope_core(prep, res, rb, settings, idx = todo, excl = excl, keep_geometry = keep_geometry,
                         keep_setbacks = keep_setbacks)
   if (length(copied)) {
     ids <- sites$site_id[copied]
     core$stack <- rbind(core$stack, baseline$stack[baseline$stack$site_id %in% ids, names(core$stack)])
     core$variants <- rbind(core$variants, baseline$variants[baseline$variants$site_id %in% ids, names(core$variants)])
+    if (is.null(core$removed)) core$removed <- stats::setNames(rep(0, nrow(sites)), sites$site_id)
+    core$removed[ids] <- baseline$sites$removed_area[match(ids, baseline$sites$site_id)]
+    if (is.null(core$water_share)) core$water_share <- stats::setNames(rep(0, nrow(sites)), sites$site_id)
+    core$water_share[ids] <- baseline$sites$water_yard_share[match(ids, baseline$sites$site_id)]
     if (keep_geometry && !is.null(baseline$geometry)) {
       core$geometry <- rbind(core$geometry, baseline$geometry[baseline$geometry$site_id %in% ids, ])
     }
@@ -139,7 +147,7 @@ site_signatures <- function(prep, res, settings) {
                                                "slope", "ground_mean", "depth", "width", "frontage"),
                                              names(s))]
   env_settings <- settings[c("level_reference", "min_floorplate", "include_density", "choice",
-                             "max_storeys", "defaults", "version")]
+                             "max_storeys", "defaults", "version", "exclusion_hash")]
   w_sig <- rlang::hash(prep$water)
   vapply(seq_len(nrow(s)), function(i) {
     if (is.na(res$param_id[i])) return(NA_character_)
@@ -150,7 +158,7 @@ site_signatures <- function(prep, res, settings) {
 
 # ---- The storey loop -----------------------------------------------------------
 
-envelope_core <- function(prep, res, rb, settings, idx, keep_geometry, keep_setbacks) {
+envelope_core <- function(prep, res, rb, settings, idx, excl = list(), keep_geometry, keep_setbacks) {
   sites <- prep$sites
   s_df <- sf::st_drop_geometry(sites)
   empty <- list(stack = empty_stack_df(), variants = data.frame(site_id = character(),
@@ -182,7 +190,29 @@ envelope_core <- function(prep, res, rb, settings, idx, keep_geometry, keep_setb
     li <- match(prep$access_legs$site_id, sites$site_id)
     ground[li] <- safe_difference(ground[li], as_geos(prep$access_legs))
   }
+  before_water <- geos::geos_area(ground)
   ground <- water_yards(ground, sites, pid, params, prep$water, live)
+  water_share <- ifelse(s_df$area > 0, (before_water - geos::geos_area(ground)) / s_df$area, 0)
+  # Exclusion overlays: land that comes off the buildable ground ("all"), or
+  # where floor area may not be dwellings ("residential").
+  removed <- rep(0, nrow(sites))
+  res_geom <- NULL
+  zone_of <- s_df$zone_key
+  for (e in excl) {
+    i <- live[is.null(e$zones) | zone_of[live] %in% e$zones]
+    if (!length(i)) next
+    hit <- i[geos::geos_intersects(ground[i], rep(e$geom, length(i)))]
+    if (!length(hit)) next
+    if (e$removes == "all") {
+      before <- geos::geos_area(ground[hit])
+      ground[hit] <- safe_difference(ground[hit], rep(e$geom, length(hit)))
+      removed[hit] <- removed[hit] + before - geos::geos_area(ground[hit])
+    } else {
+      if (is.null(res_geom)) res_geom <- rep(wk::wk_set_crs(geos::as_geos_geometry("POLYGON EMPTY"),
+                                                            wk::wk_crs(sg)), nrow(sites))
+      res_geom[hit] <- geos::geos_union(res_geom[hit], geos::geos_intersection(sg[hit], rep(e$geom, length(hit))))
+    }
+  }
 
   # Segments and which rules apply to each, per run.
   seg <- sf::st_drop_geometry(prep$segments)
@@ -224,7 +254,9 @@ envelope_core <- function(prep, res, rb, settings, idx, keep_geometry, keep_setb
     area <- geos::geos_area(fp)
     w <- which(at)
     stack[[n]] <- data.frame(run = w, storey = n, floor_level = lv$floor[w],
-                             ceiling_level = lv$ceiling[w], clipped_area = area[w])
+                             ceiling_level = lv$ceiling[w], clipped_area = area[w],
+                             residential_excluded = if (is.null(res_geom)) 0 else
+                               geos::geos_area(geos::geos_intersection(fp[w], res_geom[runs$site[w]])))
     if (keep_geometry) geoms[[n]] <- list(run = w, storey = n, geom = fp[w])
     if (keep_setbacks) {
       k <- which(at[rs_run])
@@ -236,7 +268,8 @@ envelope_core <- function(prep, res, rb, settings, idx, keep_geometry, keep_setb
   }
   st <- do.call(rbind, stack[!vapply(stack, is.null, TRUE)])
   if (is.null(st)) st <- data.frame(run = integer(), storey = integer(), floor_level = numeric(),
-                                    ceiling_level = numeric(), clipped_area = numeric())
+                                    ceiling_level = numeric(), clipped_area = numeric(),
+                                    residential_excluded = numeric())
   st <- apply_caps(st, runs, s_df, params, settings)
   st <- stack_rules(st, min_fp)
   totals <- tapply(st$enabled_area, factor(st$run, levels = seq_len(nr)), sum)
@@ -249,7 +282,7 @@ envelope_core <- function(prep, res, rb, settings, idx, keep_geometry, keep_setb
   st$site_id <- s_df$site_id[runs$site[st$run]]
   st$variant <- runs$variant[st$run]
   st$param_id <- runs$param[st$run]
-  out_stack <- st[, names(empty_stack_df())]
+  out_stack <- st[, c(names(empty_stack_df()), "residential_excluded")]
 
   geometry <- NULL
   if (keep_geometry) {
@@ -273,7 +306,10 @@ envelope_core <- function(prep, res, rb, settings, idx, keep_geometry, keep_setb
       setbacks <- sb_all
     }
   }
-  list(stack = out_stack, variants = variants, geometry = geometry, setbacks = setbacks, report = report)
+  report$removed_by_exclusions <- sum(removed > 0)
+  list(stack = out_stack, variants = variants, geometry = geometry, setbacks = setbacks, report = report,
+       removed = stats::setNames(removed, s_df$site_id),
+       water_share = stats::setNames(water_share, s_df$site_id))
 }
 
 empty_stack_df <- function() {
@@ -692,6 +728,10 @@ finish_envelope <- function(core, s_df, res, sig, settings) {
   sites$footprint[is.na(sites$footprint)] <- 0
   sites$flag <- ifelse(is.na(sites$param_id), "no_rules",
                        ifelse(sites$floor_area == 0, "no_envelope", "ok"))
+  sites$water_yard_share <- as.vector(core$water_share[s_df$site_id] %||% 0)
+  sites$water_yard_share[is.na(sites$water_yard_share)] <- 0
+  sites$removed_area <- as.vector(core$removed[s_df$site_id] %||% 0)
+  sites$removed_area[is.na(sites$removed_area)] <- 0
   structure(list(stack = st, sites = sites, variants = core$variants, geometry = core$geometry,
                  setbacks = core$setbacks, report = core$report,
                  signatures = stats::setNames(sig, s_df$site_id), settings = settings),
@@ -715,4 +755,28 @@ print.plancap_envelope <- function(x, ...) {
     cli::cli_text("{x$report$copied_from_baseline} site{?s} unchanged from the baseline, copied.")
   }
   invisible(x)
+}
+
+# Exclusion overlays with their geometry, filtered and buffered, dissolved.
+exclusion_layers <- function(rb, layers, crs) {
+  out <- list()
+  for (id in names(rb$overlays)) {
+    d <- rb$overlays[[id]]
+    if (!identical(d$type, "exclusion") || isFALSE(d$enabled)) next
+    lyr <- layers[[d$layer]]
+    if (is.null(lyr) || !inherits(lyr, "sf") || !nrow(lyr)) next
+    if (sf::st_crs(lyr) != crs) lyr <- sf::st_transform(lyr, crs)
+    for (f in names(d$filter)) lyr <- lyr[as.character(lyr[[f]]) %in% as.character(d$filter[[f]]), ]
+    if (!nrow(lyr)) next
+    g <- as_geos(lyr)
+    if (!is.null(d$buffer)) {
+      r <- if (is.numeric(d$buffer)) d$buffer else as.numeric(lyr[[d$buffer]])
+      g <- geos::geos_buffer(g, r)
+    }
+    g <- g[geos::geos_type(g) %in% c("polygon", "multipolygon")]
+    if (!length(g)) next
+    out[[id]] <- list(geom = geos::geos_unary_union(geos::geos_make_collection(g)),
+                      removes = d$removes %||% "all", zones = d$applies_to_zones)
+  }
+  out
 }
