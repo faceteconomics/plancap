@@ -183,7 +183,7 @@ prepare_sites <- function(x, cache = TRUE) {
                           morphology = x$morphology)
     if (cache) cache_set(h_plan, plan)
   }
-  structure(c(plan, list(scenario = x$name, morphology = m,
+  structure(c(plan, list(scenario = x$name, morphology = m, water = x$water,
                          hashes = c(parcel_geometry = h_parcels, plan_geometry = h_plan),
                          reused = reused)),
             class = "plancap_sites")

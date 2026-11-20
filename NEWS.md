@@ -1,5 +1,27 @@
 # plancap 0.0.0.9000
 
+## The envelope engine (stage 3)
+
+* `build_envelopes()` builds each site's storey stack: storeys at the zone's
+  own storey height, each tested at its ceiling; one setback per boundary per
+  storey (the deepest any applicable rule asks); a single clip with reflex
+  corners filled; coverage and landscaping as shares of net site area;
+  floorplate caps; a stack that never widens and ends below the minimum
+  floorplate. Water yards are measured from the water; access legs come off
+  the buildable ground.
+* Rules are resolved per site: zone, then precincts and sub-areas (which
+  replace), then parameter overlays and height overlays. A change replaces
+  whole fields such as `height`, and replaces only the setback kinds it
+  names.
+* Alternative standards are built separately and each site takes the most
+  enabling (or the one named by `variant_choice`).
+* `keep_setbacks = TRUE` returns, for every boundary at every storey, the
+  setback applied and the rule and citation that set it.
+* Incremental runs: given a `baseline`, sites whose inputs are unchanged are
+  copied; the result equals a full run.
+* Reproduces capacityengine's hand-worked envelope figures through the
+  converted Auckland rulebook.
+
 ## Scenarios and site preparation (stage 2)
 
 * `scenario()` bundles a rulebook with its parcels, roads, zoning and other

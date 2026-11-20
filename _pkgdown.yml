@@ -66,6 +66,12 @@ reference:
       - scenario
       - prepare_sites
       - clear_site_cache
+  - title: The building envelope
+    desc: >
+      Each site's stack of storey footprints, clipped by every rule that
+      applies at each height and capped by site ratios.
+    contents:
+      - build_envelopes
   - title: Site and boundary types
     desc: >
       Road frontages, side and rear boundaries, corner, through and rear

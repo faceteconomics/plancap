@@ -37,6 +37,29 @@ Status (20 November 2026):
   368) is resolvable in stage 4. Not yet: incremental (affected-site) runs,
   which belong to stage 3/6; a disk cache.
 
+- **Stage 3 built** (envelope engine). `build_envelopes()`: rule resolution
+  (zone, then areas and sub-areas, then parameter and height overlays;
+  resolved once per distinct combination), storey stack, one setback per
+  boundary per storey, single clip with reflex-corner wedges, crumbs dropped,
+  caps (coverage and landscaping of net site area, floorplate), monotonic
+  stack, variants (max by default), water yards from the water, access legs
+  off the ground, flat-terrain offsets, `keep_setbacks`, incremental runs
+  from a `baseline`. Gate: capacityengine's hand-worked figures reproduce
+  exactly through the converted Auckland rulebook (MHS 433.5/193.5 clipped,
+  240/193.5 enabled; THAB 495/331.32/148.92, 748.92 total); reflex corners,
+  cul-de-sac fins, convex lots; incremental run equals full run. Benchmark
+  (`inst/bench/bench_envelope.R`): linear, ~0.5 ms a site to prepare and
+  ~1.6 ms a site to build (12,411 sites in 20 s). 261 expectations.
+
+  Not yet (stage 4): stepped terrain (capacityengine item 318) and
+  boundary runs for ground (item 299); split of boundaries at frontage
+  triggers (midpoint test used, item 130); height surfaces and partial
+  coverage (item 368); exclusion overlays (hazards, trees) and the
+  residential-only kind; FAR and max site floorspace caps; building length,
+  separation and gaps; tower controls; impervious only in `with_access`
+  ground mode; yield. The real-site check (S039789) belongs with the stage 4
+  tile reproduction, which needs the Auckland cadastre.
+
 ### Stage 1 follow-ups (for stage 4, engine)
 
 - Auckland Height Variation Control: `class_field`, `height_conversion_table`,
