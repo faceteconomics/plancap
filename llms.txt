@@ -206,6 +206,13 @@ applies at each height and capped by site ratios.
 - [`build_envelopes()`](https://faceteconomics.github.io/plancap/reference/build_envelopes.md)
   : Build the storey-by-storey building envelope of every site
 
+## Capacity
+
+Floor area and dwellings, by the path each zone’s method sets.
+
+- [`estimate_capacity()`](https://faceteconomics.github.io/plancap/reference/estimate_capacity.md)
+  : Estimate plan-enabled capacity
+
 ## Site and boundary types
 
 Road frontages, side and rear boundaries, corner, through and rear

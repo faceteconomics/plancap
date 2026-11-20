@@ -141,11 +141,11 @@ head(env$sites)
 #> 4  P00004      MDR 44c5d8349d2124b4f418d91bfffa29a1 front_exemption       3
 #> 5  P00005      MDR 44c5d8349d2124b4f418d91bfffa29a1        standard       3
 #> 6  P00006      MDR 44c5d8349d2124b4f418d91bfffa29a1        standard       3
-#>   height footprint floor_area  binding flag
-#> 1     11  357.1497  1071.4492 coverage   ok
-#> 2     11  513.1069  1539.3206 coverage   ok
-#> 3     11  389.1607  1103.5445 coverage   ok
-#> 4     11  184.5345   553.6034 coverage   ok
-#> 5     11  290.8621   834.5310 coverage   ok
-#> 6     11  480.3579  1441.0736 coverage   ok
+#>   height footprint floor_area  binding flag water_yard_share removed_area
+#> 1     11  357.1497  1071.4492 coverage   ok                0            0
+#> 2     11  513.1069  1539.3206 coverage   ok                0            0
+#> 3     11  389.1607  1103.5445 coverage   ok                0            0
+#> 4     11  184.5345   553.6034 coverage   ok                0            0
+#> 5     11  290.8621   834.5310 coverage   ok                0            0
+#> 6     11  480.3579  1441.0736 coverage   ok                0            0
 ```
