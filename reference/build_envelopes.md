@@ -16,7 +16,8 @@ build_envelopes(
   keep_geometry = FALSE,
   keep_setbacks = FALSE,
   baseline = NULL,
-  max_storeys = 60
+  max_storeys = 60,
+  height_add = NULL
 )
 ```
 
@@ -59,6 +60,11 @@ build_envelopes(
 - max_storeys:
 
   Guard against a runaway height (not a plan rule).
+
+- height_add:
+
+  Optional named numeric vector, by site id: metres of extra height (as
+  a height bonus gives), added to total and occupiable height.
 
 ## Value
 
@@ -129,10 +135,10 @@ sc <- scenario("Operative", rulebook_example("exampleton"),
   zoning = town$zoning, layers = town["height_areas"])
 env <- build_envelopes(sc)
 env
-#> <plancap envelope> Operative: 60 of 60 sites build; 83,469 m2 of floor area.
+#> <plancap envelope> Operative: 60 of 60 sites build; 80,511 m2 of floor area.
 #> Plan-enabled, gross, blank-slate building envelope (before yield and use
 #> split).
-#> Binding constraint by storey: coverage 70%, geometry 30%.
+#> Binding constraint by storey: coverage 68%, geometry 32%.
 head(env$sites)
 #>   site_id zone_key                         param_id         variant storeys
 #> 1  P00001      MDR 44c5d8349d2124b4f418d91bfffa29a1 front_exemption       3

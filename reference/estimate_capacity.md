@@ -6,7 +6,14 @@ business) and dwellings, by the path its zone's method sets:
 ## Usage
 
 ``` r
-estimate_capacity(x, envelope = NULL, baseline = NULL, conversion = NULL, ...)
+estimate_capacity(
+  x,
+  envelope = NULL,
+  baseline = NULL,
+  conversion = NULL,
+  ...,
+  .height_bonus = TRUE
+)
 ```
 
 ## Arguments
@@ -38,6 +45,11 @@ estimate_capacity(x, envelope = NULL, baseline = NULL, conversion = NULL, ...)
 
   Passed to
   [`build_envelopes()`](https://faceteconomics.github.io/plancap/reference/build_envelopes.md).
+
+- .height_bonus:
+
+  Internal: whether to evaluate height bonuses (the second, bonus run
+  sets this to `FALSE`).
 
 ## Value
 
@@ -86,9 +98,10 @@ sc <- scenario("Operative", rulebook_example("exampleton"),
   zoning = town$zoning, layers = town[c("height_areas", "transit")])
 cap <- estimate_capacity(sc)
 cap
-#> <plancap capacity> Operative: 80 sites, 119,270 m2 floor area (100,070 m2
-#> residential), 1,042 dwellings (+0 minor).
+#> <plancap capacity> Operative: 80 sites, 116,312 m2 floor area (97,112 m2
+#> residential), 1,012 dwellings (+0 minor).
 #> Plan-enabled, gross, blank-slate capacity; dwellings at 78 m2 and 85%
 #> efficiency.
 #> Paths: volumetric 80.
+#> With bonuses: +1 dwellings.
 ```

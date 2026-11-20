@@ -16,6 +16,8 @@ overlay(
   value_field = NULL,
   value_map = NULL,
   floor_value = NULL,
+  height_conversion = NULL,
+  surface_datum = NULL,
   filter = NULL,
   removes = NULL,
   buffer = NULL,
@@ -73,6 +75,20 @@ overlay(
 
   A height always allowed regardless of the surface, so the effective
   height is `max(surface, floor_value)`.
+
+- height_conversion:
+
+  For height overlays whose mapped value is total height: a list with
+  `table` (a data frame or list of `total` and `occupiable`), and
+  optionally `passthrough_below`, `passthrough_above` and `between`
+  (`"passthrough"`, `"interpolate"` or `"snap_nearest"`) for values the
+  table does not list.
+
+- surface_datum:
+
+  For height surfaces: `"absolute"` if the raster holds elevations (the
+  scenario then needs a `dem`), `"ground"` if it holds heights above
+  ground.
 
 - filter:
 

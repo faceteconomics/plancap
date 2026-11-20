@@ -62,7 +62,8 @@ floorplate limits.</p>
 <span>  keep_geometry <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  keep_setbacks <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  baseline <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_storeys <span class="op">=</span> <span class="fl">60</span></span>
+<span>  max_storeys <span class="op">=</span> <span class="fl">60</span>,</span>
+<span>  height_add <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -103,6 +104,12 @@ storey, so meant for a few sites, not a region.</p></dd>
 
 <dt id="arg-max-storeys">max_storeys<a class="anchor" aria-label="anchor" href="#arg-max-storeys"></a></dt>
 <dd><p>Guard against a runaway height (not a plan rule).</p></dd>
+
+
+<dt id="arg-height-add">height_add<a class="anchor" aria-label="anchor" href="#arg-height-add"></a></dt>
+<dd><p>Optional named numeric vector, by site id: metres of
+extra height (as a height bonus gives), added to total and occupiable
+height.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -166,10 +173,10 @@ run.</p>
 <span class="r-in"><span>  zoning <span class="op">=</span> <span class="va">town</span><span class="op">$</span><span class="va">zoning</span>, layers <span class="op">=</span> <span class="va">town</span><span class="op">[</span><span class="st">"height_areas"</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu">build_envelopes</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">env</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap envelope&gt; Operative: 60 of 60 sites build; 83,469 m2 of floor area.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap envelope&gt; Operative: 60 of 60 sites build; 80,511 m2 of floor area.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">Plan-enabled, gross, blank-slate building envelope (before yield and use</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">split).</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Binding constraint by storey: coverage 70%, geometry 30%.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Binding constraint by storey: coverage 68%, geometry 32%.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">env</span><span class="op">$</span><span class="va">sites</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   site_id zone_key                         param_id         variant storeys</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  P00001      MDR 44c5d8349d2124b4f418d91bfffa29a1 front_exemption       3</span>

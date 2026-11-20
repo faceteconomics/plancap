@@ -48,7 +48,14 @@ business) and dwellings, by the path its zone's method sets:</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">estimate_capacity</span><span class="op">(</span><span class="va">x</span>, envelope <span class="op">=</span> <span class="cn">NULL</span>, baseline <span class="op">=</span> <span class="cn">NULL</span>, conversion <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">estimate_capacity</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  envelope <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  baseline <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  conversion <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  .height_bonus <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -75,6 +82,11 @@ unchanged are copied (see <code><a href="build_envelopes.html">build_envelopes()
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Passed to <code><a href="build_envelopes.html">build_envelopes()</a></code>.</p></dd>
+
+
+<dt id="arg--height-bonus">.height_bonus<a class="anchor" aria-label="anchor" href="#arg--height-bonus"></a></dt>
+<dd><p>Internal: whether to evaluate height bonuses (the
+second, bonus run sets this to <code>FALSE</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -120,11 +132,12 @@ buildings existed, before feasibility or take-up.</p>
 <span class="r-in"><span>  zoning <span class="op">=</span> <span class="va">town</span><span class="op">$</span><span class="va">zoning</span>, layers <span class="op">=</span> <span class="va">town</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"height_areas"</span>, <span class="st">"transit"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cap</span> <span class="op">&lt;-</span> <span class="fu">estimate_capacity</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cap</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap capacity&gt; Operative: 80 sites, 119,270 m2 floor area (100,070 m2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> residential), 1,042 dwellings (+0 minor).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap capacity&gt; Operative: 80 sites, 116,312 m2 floor area (97,112 m2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> residential), 1,012 dwellings (+0 minor).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">Plan-enabled, gross, blank-slate capacity; dwellings at 78 m2 and 85%</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">efficiency.</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Paths: volumetric 80.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> With bonuses: +1 dwellings.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
