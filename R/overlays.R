@@ -23,6 +23,14 @@
 #'   or a named list mapping attribute codes to values.
 #' @param floor_value A height always allowed regardless of the surface, so
 #'   the effective height is `max(surface, floor_value)`.
+#' @param height_conversion For height overlays whose mapped value is total
+#'   height: a list with `table` (a data frame or list of `total` and
+#'   `occupiable`), and optionally `passthrough_below`, `passthrough_above` and
+#'   `between` (`"passthrough"`, `"interpolate"` or `"snap_nearest"`) for
+#'   values the table does not list.
+#' @param surface_datum For height surfaces: `"absolute"` if the raster holds
+#'   elevations (the scenario then needs a `dem`), `"ground"` if it holds
+#'   heights above ground.
 #' @param filter Named list: attribute to accepted values, applied when the
 #'   layer is read.
 #' @param removes For exclusions: `"all"` (every building) or `"residential"`
@@ -57,7 +65,8 @@
 #' overlay("flood", "exclusion", layer = "flood_hazard", source = "Rule 9.2")
 overlay <- function(id, type = c("height", "height_surface", "exclusion", "parameters", "flag"),
                     layer, combine = NULL, value = NULL, value_field = NULL,
-                    value_map = NULL, floor_value = NULL, filter = NULL,
+                    value_map = NULL, floor_value = NULL, height_conversion = NULL,
+                    surface_datum = NULL, filter = NULL,
                     removes = NULL, buffer = NULL, applies_to_zones = NULL,
                     parameters = NULL, additions = NULL, enabled = TRUE,
                     precedence = 0, label = NULL, source = NULL, notes = NULL) {
@@ -73,6 +82,12 @@ overlay <- function(id, type = c("height", "height_surface", "exclusion", "param
   check_value(value)
   check_string(value_field)
   check_number(floor_value, lower = 0)
+  check_choice(surface_datum, c("absolute", "ground"))
+  if (!is.null(height_conversion)) {
+    tb <- height_conversion$table
+    if (is.data.frame(tb)) tb <- lapply(seq_len(nrow(tb)), function(i) as.list(tb[i, c("total", "occupiable")]))
+    height_conversion$table <- tb
+  }
   check_choice(removes, c("all", "residential"))
   if (!is.null(buffer) && !is_number(buffer) && !is_string(buffer)) {
     cli::cli_abort("{.arg buffer} must be a distance or an attribute name.")
@@ -90,6 +105,7 @@ overlay <- function(id, type = c("height", "height_surface", "exclusion", "param
   o <- compact(list(
     label = label, type = type, layer = layer, combine = combine, value = value,
     value_field = value_field, value_map = value_map, floor_value = floor_value,
+    height_conversion = height_conversion, surface_datum = surface_datum,
     filter = filter, removes = removes, buffer = buffer,
     applies_to_zones = applies_to_zones,
     parameters = if (!is.null(parameters)) unclass(parameters),

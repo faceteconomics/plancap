@@ -56,6 +56,9 @@
 #'   storey, so meant for a few sites, not a region.
 #' @param baseline An earlier `plancap_envelope` to copy unchanged sites from.
 #' @param max_storeys Guard against a runaway height (not a plan rule).
+#' @param height_add Optional named numeric vector, by site id: metres of
+#'   extra height (as a height bonus gives), added to total and occupiable
+#'   height.
 #' @return A `plancap_envelope`: a list with `stack` (one row per site and
 #'   storey of the chosen variant), `sites` (one row per site: variant, storeys,
 #'   height reached, footprint, floor area, the constraint that bound most),
@@ -73,7 +76,7 @@
 #' head(env$sites)
 build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_density = FALSE,
                             keep_geometry = FALSE, keep_setbacks = FALSE, baseline = NULL,
-                            max_storeys = 60) {
+                            max_storeys = 60, height_add = NULL) {
   layers <- list()
   if (inherits(x, "plancap_scenario")) {
     rulebook <- x$rulebook
@@ -99,10 +102,16 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
 
   excl <- exclusion_layers(rb, layers, sf::st_crs(prep$sites))
   settings$exclusion_hash <- rlang::hash(lapply(excl, function(e) wk::as_wkb(e$geom)))
-  res <- resolve_sites(prep, rb)
+  surf <- sample_surfaces(prep, rb, layers, dflt)
+  mods <- surf$mods
+  if (!is.null(height_add) && length(height_add)) {
+    mods <- rbind(mods, data.frame(site_id = names(height_add), what = "height_add",
+                                   value = as.numeric(height_add), stringsAsFactors = FALSE))
+  }
+  res <- resolve_sites(prep, rb, mods)
   sites <- prep$sites
   s_df <- sf::st_drop_geometry(sites)
-  sig <- site_signatures(prep, res, settings)
+  sig <- site_signatures(prep, res, settings, surf$bands)
 
   todo <- seq_len(nrow(sites))
   copied <- integer()
@@ -111,7 +120,8 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
     copied <- which(same %in% TRUE)
     todo <- setdiff(todo, copied)
   }
-  core <- envelope_core(prep, res, rb, settings, idx = todo, excl = excl, keep_geometry = keep_geometry,
+  core <- envelope_core(prep, res, rb, settings, idx = todo, excl = excl, bands = surf$bands,
+                        keep_geometry = keep_geometry,
                         keep_setbacks = keep_setbacks)
   if (length(copied)) {
     ids <- sites$site_id[copied]
@@ -127,13 +137,15 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
   }
   out <- finish_envelope(core, s_df, res, sig, settings)
   out$report$copied_from_baseline <- length(copied)
+  out$report$surfaces_missing <- surf$missing
+  out$report$surface_partial <- length(unique(surf$bands$site_id))
   out$scenario <- prep$scenario
   out
 }
 
 # ---- Signatures --------------------------------------------------------------
 
-site_signatures <- function(prep, res, settings) {
+site_signatures <- function(prep, res, settings, bands = NULL) {
   s <- prep$sites
   seg <- sf::st_drop_geometry(prep$segments)
   cols <- intersect(c("boundary_class", "tags", "x0", "y0", "x1", "y1", "outward_bearing",
@@ -149,16 +161,19 @@ site_signatures <- function(prep, res, settings) {
   env_settings <- settings[c("level_reference", "min_floorplate", "include_density", "choice",
                              "max_storeys", "defaults", "version", "exclusion_hash")]
   w_sig <- rlang::hash(prep$water)
+  band_by <- if (!is.null(bands) && nrow(bands)) split(paste(bands$upper, round(geos::geos_area(bands$geom), 3)),
+                                                      factor(bands$site_id, levels = s$site_id)) else list()
   vapply(seq_len(nrow(s)), function(i) {
     if (is.na(res$param_id[i])) return(NA_character_)
     rlang::hash(list(unclass(wkb[[i]]), seg_by[[i]], attrs[i, ], leg_by[[i]], dist_by[[i]],
-                     res$param_id[i], env_settings, w_sig))
+                     res$param_id[i], env_settings, w_sig, band_by[[s$site_id[i]]]))
   }, "")
 }
 
 # ---- The storey loop -----------------------------------------------------------
 
-envelope_core <- function(prep, res, rb, settings, idx, excl = list(), keep_geometry, keep_setbacks) {
+envelope_core <- function(prep, res, rb, settings, idx, excl = list(), bands = NULL, keep_geometry,
+                          keep_setbacks) {
   sites <- prep$sites
   s_df <- sf::st_drop_geometry(sites)
   empty <- list(stack = empty_stack_df(), variants = data.frame(site_id = character(),
@@ -232,6 +247,7 @@ envelope_core <- function(prep, res, rb, settings, idx, excl = list(), keep_geom
   corners <- reflex_corners(seg_geom, seg$site, sg)
 
   min_fp <- settings$min_floorplate
+  gap_cache <- new.env(parent = emptyenv())
   stack <- vector("list", max(runs$n_storeys, 1))
   geoms <- if (keep_geometry) vector("list", length(stack)) else NULL
   sbk <- if (keep_setbacks) vector("list", length(stack)) else NULL
@@ -250,6 +266,18 @@ envelope_core <- function(prep, res, rb, settings, idx, excl = list(), keep_geom
     sb <- req$setback
     sb[!at[rs_run]] <- 0
     fp <- clip_runs(ground[runs$site], seg_geom, rs_seg, rs_run, sb, corners, runs, rs_start, rank_in_site)
+    # Height surfaces covering part of a site: each storey loses the land the
+    # surface is too low for at its level (capacityengine item 368).
+    if (!is.null(bands) && nrow(bands)) {
+      bi <- match(bands$site_id, sites$site_id)
+      for (r in which(at & runs$site %in% bi)) {
+        k <- which(bi == runs$site[r] & bands$upper < level[r] - 1e-6)
+        if (length(k)) fp[r] <- safe_difference(fp[r], geos::geos_unary_union(geos::geos_make_collection(bands$geom[k])))
+      }
+    }
+    # Building length and separation: gaps of the separation every length
+    # along the site's oriented rectangle, at the storeys separation applies.
+    fp <- cut_building_gaps(fp, at, runs, params, level, sg, gap_cache)
     fp <- drop_small_parts(fp, min_fp)
     area <- geos::geos_area(fp)
     w <- which(at)
@@ -779,4 +807,150 @@ exclusion_layers <- function(rb, layers, crs) {
                       removes = d$removes %||% "all", zones = d$applies_to_zones)
   }
   out
+}
+
+# ---- Height surfaces ------------------------------------------------------------
+
+# Sample every enabled height surface (a terra SpatRaster in the scenario's
+# layers) over the sites in its zones. A surface covering almost all of a site
+# (99%) caps its height at the surface's lowest point above ground; one
+# covering less leaves the height alone and instead takes, at each storey, the
+# land where the surface is lower than that storey (capacityengine item 368).
+sample_surfaces <- function(prep, rb, layers, dflt, covered_min = 0.99) {
+  empty <- list(mods = data.frame(site_id = character(), what = character(), value = numeric(),
+                                  stringsAsFactors = FALSE), bands = NULL, missing = character())
+  defs <- Filter(function(o) identical(o$type, "height_surface") && !isFALSE(o$enabled), rb$overlays)
+  if (!length(defs)) return(empty)
+  s <- prep$sites
+  sd <- sf::st_drop_geometry(s)
+  mods <- list()
+  bands <- list()
+  missing <- character()
+  for (id in names(defs)) {
+    d <- defs[[id]]
+    r <- layers[[d$layer]]
+    if (is.null(r) || !inherits(r, "SpatRaster")) {
+      missing <- c(missing, d$layer)
+      next
+    }
+    rlang::check_installed("terra", reason = "to sample height surfaces.")
+    absolute <- !identical(d$surface_datum, "ground")
+    if (absolute && is.null(sd$ground_mean)) {
+      missing <- c(missing, paste0(d$layer, " (needs a dem)"))
+      next
+    }
+    sel <- which(!is.na(sd$zone_key) & (is.null(d$applies_to_zones) | sd$zone_key %in% d$applies_to_zones))
+    if (!length(sel)) next
+    v <- terra::vect(sf::st_transform(s[sel, ], terra::crs(r)))
+    lo <- terra::extract(r, v, fun = min, na.rm = TRUE)[, 2]
+    n <- terra::extract(r, v, fun = function(x, ...) sum(!is.na(x)))[, 2]
+    cell <- prod(terra::res(r))
+    cov <- pmin(1, n * cell / sd$area[sel])
+    ground <- if (absolute) sd$ground_mean[sel] else 0
+    above <- pmax(lo - ground, 0)
+    if (!is.null(d$floor_value)) above <- pmax(above, d$floor_value)
+    full <- !is.na(above) & cov >= covered_min
+    if (any(full)) {
+      mods[[length(mods) + 1]] <- data.frame(site_id = sd$site_id[sel][full], what = "surface_cap",
+                                             value = above[full], stringsAsFactors = FALSE)
+    }
+    part <- sel[!is.na(lo) & cov > 0 & cov < covered_min]
+    for (i in part) {
+      b <- surface_bands(s[i, ], r, if (absolute) sd$ground_mean[i] else 0, d$floor_value)
+      if (!is.null(b)) bands[[length(bands) + 1]] <- b
+    }
+  }
+  bands <- if (length(bands)) do.call(rbind, bands) else NULL
+  if (!is.null(bands)) {
+    g <- bands$geom
+    bands <- data.frame(site_id = bands$site_id, upper = bands$upper)
+    bands$geom <- g
+  }
+  list(mods = if (length(mods)) do.call(rbind, mods) else empty$mods, bands = bands,
+       missing = unique(missing))
+}
+
+# The parts of one site under a surface, by the height the surface allows
+# there, as polygons: each comes off every storey whose level reaches it.
+surface_bands <- function(site, r, ground, floor_value) {
+  v <- terra::vect(sf::st_transform(site, terra::crs(r)))
+  rc <- tryCatch(terra::crop(r, terra::ext(v) + 2 * max(terra::res(r)), snap = "out"), error = function(e) NULL)
+  if (is.null(rc)) return(NULL)
+  above <- terra::clamp(rc - ground, lower = floor_value %||% 0, values = TRUE)
+  # Bands of 0.5 m: fine enough for any storey height, coarse enough to stay
+  # few polygons.
+  q <- floor(above * 2) / 2
+  pv <- terra::as.polygons(q, dissolve = TRUE)
+  if (!nrow(pv)) return(NULL)
+  b <- sf::st_as_sf(pv)
+  names(b)[1] <- "upper"
+  b <- suppressWarnings(sf::st_intersection(sf::st_make_valid(sf::st_transform(b, sf::st_crs(site))),
+                                            sf::st_geometry(site)))
+  b <- b[!sf::st_is_empty(b), ]
+  b <- b[sf::st_dimension(b) %in% 2, ]
+  b <- b[as.numeric(sf::st_area(b)) > 0.01, ]
+  if (!nrow(b)) return(NULL)
+  data.frame(site_id = site$site_id, upper = b$upper) |>
+    (\(d) { d$geom <- as_geos(b); d })()
+}
+
+# ---- Building length and separation ----------------------------------------------
+
+cut_building_gaps <- function(fp, at, runs, params, level, site_geom, cache) {
+  for (p in unique(runs$param[at])) {
+    f <- params[[p]]$form
+    len <- f$max_building_length
+    sep_rule <- f$building_separation
+    if (is.null(len) || is.null(sep_rule)) next
+    r <- which(at & runs$param == p)
+    sep <- if (is.numeric(sep_rule)) rep(sep_rule, length(r)) else
+      resolve_ratio(sep_rule, list(height = level[r]))
+    for (k in seq_along(r)) {
+      if (is.na(sep[k]) || sep[k] <= 0) next
+      key <- paste(runs$site[r[k]], len, sep[k])
+      g <- cache[[key]]
+      if (is.null(g)) {
+        g <- building_gaps(site_geom[runs$site[r[k]]], len, sep[k])
+        cache[[key]] <- g
+      }
+      if (!geos::geos_is_empty(g)) fp[r[k]] <- safe_difference(fp[r[k]], g)
+    }
+  }
+  fp
+}
+
+# On the site's minimum rotated rectangle, strips `gap` wide every `len` metres
+# from one corner, in both directions: a building may run `len`, then stands
+# `gap` from the next (capacityengine item 372).
+building_gaps <- function(geom, len, gap) {
+  crs <- wk::wk_crs(geom)
+  rr <- geos::geos_minimum_rotated_rectangle(geom)
+  xy <- wk::wk_coords(rr)
+  if (nrow(xy) < 4) return(geos::as_geos_geometry("POLYGON EMPTY", crs = crs))
+  p0 <- c(xy$x[1], xy$y[1])
+  p1 <- c(xy$x[2], xy$y[2])
+  p2 <- c(xy$x[3], xy$y[3])
+  A <- sqrt(sum((p1 - p0)^2))
+  B <- sqrt(sum((p2 - p1)^2))
+  if (A < 1e-6 || B < 1e-6) return(geos::as_geos_geometry("POLYGON EMPTY", crs = crs))
+  eu <- (p1 - p0) / A
+  ev <- (p2 - p1) / B
+  rect <- function(o, e1, a, b, e2, w) {
+    m <- rbind(o + e1 * a, o + e1 * b, o + e1 * b + e2 * w, o + e1 * a + e2 * w, o + e1 * a)
+    sprintf("POLYGON ((%s))", paste(sprintf("%.3f %.3f", m[, 1], m[, 2]), collapse = ", "))
+  }
+  strips <- character()
+  for (dir in 1:2) {
+    L <- if (dir == 1) A else B
+    W <- if (dir == 1) B else A
+    e1 <- if (dir == 1) eu else ev
+    e2 <- if (dir == 1) ev else eu
+    s0 <- len
+    while (s0 < L - 1e-6) {
+      strips <- c(strips, rect(p0, e1, s0, min(s0 + gap, L), e2, W))
+      s0 <- s0 + gap + len
+    }
+  }
+  if (!length(strips)) return(geos::as_geos_geometry("POLYGON EMPTY", crs = crs))
+  geos::geos_unary_union(geos::geos_make_collection(geos::as_geos_geometry(strips, crs = crs)))
 }

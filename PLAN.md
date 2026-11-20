@@ -73,11 +73,24 @@ Status (20 November 2026):
   easements, item 259); site shape factor (item 324) not yet; access legs
   are not the "entrance strip" offsets of item 374.
 
-  **Stage 4, part 2 (next)**: height surfaces and partial coverage (item
-  368), stepped terrain (item 318) and boundary runs (item 299), the
-  Auckland Height Variation Control conversion, building length /
-  separation / gaps, tower controls, site shape factor, height bonuses;
-  then the tile reproduction against capacityengine.
+- **Stage 4, part 2 built**: height overlays with capacityengine's cap and
+  override semantics (item 297) and a `height_conversion` table (HVC, item
+  68 passthrough between bands); height surfaces, full cover caps, partial
+  cover by storey (item 368, covered share 0.99); building length and
+  separation gaps, from a height (items 372, 374; converter maps
+  `building_gaps_above_m` to separation bands by height); height bonuses
+  via an incremental second envelope. Auckland conversion now drops 9
+  fields. 328 expectations.
+
+  **Stage 4, part 3 (next)**: stepped terrain (item 318) and boundary runs
+  (item 299); site shape factor (item 324); tower controls; then the tile
+  reproduction: run plancap on a capacityengine tile's own sites, roads,
+  zoning, overlays, DEM and water, compare per site against
+  `capacityengine/outputs/region_sites.parquet` (floorspace_m2, dwellings,
+  yield_path), and reconcile every difference to a known cause
+  (access width from easements, item 259; entrance strips, item 374;
+  open-space area tokens such as OPEN_SPACE_OVER_2000_WIDE, which plancap
+  families do not yet express).
 
 ### Stage 1 follow-ups (for stage 4, engine)
 

@@ -1223,6 +1223,65 @@
           "type": "number",
           "minimum": 0
         },
+        "height_conversion": {
+          "type": "object",
+          "required": [
+            "table"
+          ],
+          "additionalProperties": false,
+          "description": "Converts a mapped total height to its occupiable part.",
+          "properties": {
+            "table": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "total",
+                  "occupiable"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "total": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "occupiable": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "passthrough_below": {
+              "type": "number",
+              "minimum": 0
+            },
+            "passthrough_above": {
+              "type": "number",
+              "minimum": 0
+            },
+            "between": {
+              "enum": [
+                "passthrough",
+                "interpolate",
+                "snap_nearest"
+              ]
+            },
+            "source": {
+              "type": "string"
+            }
+          }
+        },
+        "surface_datum": {
+          "enum": [
+            "absolute",
+            "ground"
+          ],
+          "description": "For height surfaces: whether raster values are elevations (absolute, the default) or heights above ground."
+        },
         "filter": {
           "type": "object",
           "additionalProperties": {

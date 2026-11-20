@@ -110,6 +110,10 @@ unit_walk <- function(x, k, key = "", value_dim = NA) {
     v <- x[[nm]]
     if (nm == "points") {
       x[[nm]] <- lapply(v, function(p) unlist(p) * k)
+    } else if (nm == "height_conversion") {
+      v$table <- lapply(v$table, function(r) { r$total <- r$total * k; r$occupiable <- r$occupiable * k; r })
+      for (f in c("passthrough_below", "passthrough_above")) if (!is.null(v[[f]])) v[[f]] <- v[[f]] * k
+      x[[nm]] <- v
     } else if (nm == "max_setback_above") {
       x[[nm]] <- lapply(v, function(e) e * k)  # a height and four distances
     } else if (nm == "angle_by_orientation") {

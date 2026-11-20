@@ -13,6 +13,8 @@ overlay(
   value_field = NULL,
   value_map = NULL,
   floor_value = NULL,
+  height_conversion = NULL,
+  surface_datum = NULL,
   filter = NULL,
   removes = NULL,
   buffer = NULL,
@@ -53,6 +55,16 @@ or a named list mapping attribute codes to values.}
 
 \item{floor_value}{A height always allowed regardless of the surface, so
 the effective height is \code{max(surface, floor_value)}.}
+
+\item{height_conversion}{For height overlays whose mapped value is total
+height: a list with \code{table} (a data frame or list of \code{total} and
+\code{occupiable}), and optionally \code{passthrough_below}, \code{passthrough_above} and
+\code{between} (\code{"passthrough"}, \code{"interpolate"} or \code{"snap_nearest"}) for
+values the table does not list.}
+
+\item{surface_datum}{For height surfaces: \code{"absolute"} if the raster holds
+elevations (the scenario then needs a \code{dem}), \code{"ground"} if it holds
+heights above ground.}
 
 \item{filter}{Named list: attribute to accepted values, applied when the
 layer is read.}

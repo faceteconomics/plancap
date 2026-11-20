@@ -1,5 +1,22 @@
 # plancap 0.0.0.9000
 
+## Heights, surfaces and building form (stage 4, part 2)
+
+* Height overlays follow capacityengine's rules: an override replaces total
+  and occupiable height; a cap lowers total height and lowers occupiable
+  height only where its value is lower (a cap that bites only the roof
+  allowance leaves the storeys); a cap over a zone with no height caps
+  nothing. Overlays may carry a `height_conversion` table from mapped total
+  height to occupiable height (Auckland's Height Variation Control).
+* Height surfaces (rasters, as elevations with a `dem` or as heights above
+  ground): a surface covering a whole site caps its height at the lowest
+  point; one covering part takes, at each storey, the land the surface is
+  too low for.
+* Building length and separation cut gaps through the footprint, from the
+  height separation starts (`building_separation` may be bands by height).
+* Height bonuses are built as a second, incremental envelope and reported in
+  the `*_with_bonus` columns.
+
 ## Capacity (stage 4, part 1)
 
 * `estimate_capacity()` turns envelopes into floor area (split between

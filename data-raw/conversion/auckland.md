@@ -1,17 +1,13 @@
 # Conversion report: auckland
 
 Source: `../capacityengine/inst/plans/auckland/aup-oip-2025.yaml`  
-Converted: 2026-11-20 12:45
+Converted: 2026-11-20 13:43
 
 Validation: valid, 97 warnings.
 
 ## Fields not carried across
 
 - `overlays/height_and_building_sensitive_area :: sub_areas` (list(list(source_layer = "hsa_13m_areas", value = 13L, source = "AUP D14.4.1 (A8), areas in Figure D14.10.1")))
-- `overlays/height_variation_control :: between_bands` ("passthrough")
-- `overlays/height_variation_control :: height_conversion_table` (list(list(total_m = 13L, occupiable_m = 11L, roof_form_m = 2L,      source = "H10.6.1.1"), list(total_m = 18L, occupiabl)
-- `overlays/height_variation_control :: passthrough_above_m` (27L)
-- `overlays/height_variation_control :: passthrough_below_m` (11L)
 - `overlays/maunga_viewshaft :: class_field` ("viewshaft_significance")
 - `overlays/special_character/overrides/yards/front :: value_from (yard set from neighbours' existing setbacks; not representable)` ("existing_dwelling_setback_average")
 - `zones/RES_MHS :: cfgs_large_site_area_per_dwelling_m2` (300L)

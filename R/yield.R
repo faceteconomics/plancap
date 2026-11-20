@@ -34,6 +34,8 @@
 #'   unchanged are copied (see [build_envelopes()]).
 #' @param conversion Optional [conversion()] overriding the rulebook's.
 #' @param ... Passed to [build_envelopes()].
+#' @param .height_bonus Internal: whether to evaluate height bonuses (the
+#'   second, bonus run sets this to `FALSE`).
 #' @return A `plancap_capacity` object: `sites` (`sf`, one row per site, every
 #'   site kept, with floor area, dwellings, the path and binding constraints
 #'   and flags), `stack` (per storey, with the residential and business
@@ -48,7 +50,8 @@
 #'   zoning = town$zoning, layers = town[c("height_areas", "transit")])
 #' cap <- estimate_capacity(sc)
 #' cap
-estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = NULL, ...) {
+estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = NULL, ...,
+                              .height_bonus = TRUE) {
   if (!inherits(x, "plancap_scenario")) cli::cli_abort("{.arg x} must be a {.fn scenario}.")
   rb <- x$rulebook
   conv <- if (!is.null(conversion)) unclass(conversion) else rb$conversion
@@ -165,8 +168,23 @@ estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = 
   binding[ent$raised] <- "entitlement"
   dwell <- ent$dwellings
 
-  # Bonuses, reported apart.
-  bon <- bonuses(dwell, floor_area, res_area, s, pz, rb, prep, conv, min_size)
+  # Bonuses, reported apart. A height bonus needs the envelope again with the
+  # extra height, built incrementally (only the sites that qualify change);
+  # the other bonuses then apply on top.
+  b_fa <- floor_area
+  b_dw <- dwell
+  b_res <- res_area
+  hb <- height_bonus_add(s, rb, prep)
+  if (.height_bonus && length(hb)) {
+    env_b <- build_envelopes(x, include_density = TRUE, baseline = envelope, height_add = hb, ...)
+    cb <- estimate_capacity(x, envelope = env_b, conversion = conversion, .height_bonus = FALSE)
+    m <- match(s$site_id, cb$sites$site_id)
+    b_fa <- cb$sites$floor_area[m]
+    b_dw <- cb$sites$dwellings[m]
+    b_res <- cb$sites$residential_floor_area[m]
+    report$height_bonus_sites <- length(hb)
+  }
+  bon <- bonuses(b_dw, b_fa, b_res, s, pz, rb, prep, conv, min_size)
 
   out <- prep$sites[, "site_id"]
   out$parent_id <- s$parent_id
@@ -376,9 +394,8 @@ entitlements <- function(dwell, s, rb, prep, can_build) {
   list(dwellings = dwell, raised = raised)
 }
 
-# Bonuses: floor area ratio, floor area and dwelling bonuses, reported in
-# separate columns. Height bonuses need a second envelope and are reported as
-# not yet evaluated.
+# Floor area ratio, floor area and dwelling bonuses, on top of the (height
+# bonus) results, reported in separate columns.
 bonuses <- function(dwell, floor_area, res_area, s, pz, rb, prep, conv, min_size) {
   fa <- floor_area
   dw <- dwell
@@ -400,6 +417,17 @@ bonuses <- function(dwell, floor_area, res_area, s, pz, rb, prep, conv, min_size
     }
   }
   list(floor_area = fa, dwellings = dw)
+}
+
+# Metres of extra height each site's height bonuses give.
+height_bonus_add <- function(s, rb, prep) {
+  add <- rep(0, nrow(s))
+  for (b in rb$bonuses) {
+    if (!identical(b$quantity, "height") || !is.numeric(b$value) || identical(b$combine, "multiply")) next
+    hit <- (is.null(b$applies_to_zones) | s$zone_key %in% b$applies_to_zones) & site_meets(b$when, s, prep)
+    add[hit] <- add[hit] + b$value
+  }
+  stats::setNames(add[add > 0], s$site_id[add > 0])
 }
 
 #' @export

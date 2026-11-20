@@ -152,7 +152,7 @@ handled_zone_fields <- c(
   "residential_enabled", "business_enabled", "residential_apportionment",
   "residential_apportionment_source", "access_width_applies", "variants", "yards", "hirb",
   "upper_level_setback", "label", "min_dwellings_total", "max_dwellings_total",
-  "max_floorspace_total"
+  "max_floorspace_total", "building_gaps_above_m"
 )
 
 # `partial = TRUE` converts an override (precinct, sub-precinct, overlay), where
@@ -201,7 +201,14 @@ conv_zone <- function(z, where, bundle, partial = FALSE, totals_env = NULL) {
     max_floorplate = z[["max_floorplate_m2"]], max_tower_floorplate = z[["max_tower_floorplate_m2"]],
     tower_above_height = z[["tower_above_height_m"]], tower_above_storey = z[["tower_above_storey"]],
     max_tower_dimension = z[["max_tower_dimension_m"]], tower_separation = z[["tower_separation_m"]],
-    max_building_length = z[["max_building_length_m"]], building_separation = z[["building_separation_m"]],
+    max_building_length = z[["max_building_length_m"]],
+    building_separation = if (!is.null(z[["building_separation_m"]]) && !is.null(z[["building_gaps_above_m"]])) {
+      # Gaps that start above a height (capacityengine item 374) are a
+      # separation of zero below it.
+      list(bands = list(by = "height", bands = list(
+        list(min = 0, max = z[["building_gaps_above_m"]], value = 0),
+        list(min = z[["building_gaps_above_m"]], value = z[["building_separation_m"]]))))
+    } else z[["building_separation_m"]],
     site_shape = if (!is.null(ss)) list(width = ss[["width_m"]], depth = ss[["length_m"]]),
     max_site_floorspace = z[["max_site_floorspace_m2"]],
     source = ss[["source"]]
@@ -272,7 +279,9 @@ conv_overlay <- function(o, id, bundle) {
   tc <- map[[o[["type"]]]]
   handled <- c("type", "source_layer", "surface_raster", "precedence", "value", "value_field",
                "value_domain", "filter", "floor_value", "removes", "applies_to_zones",
-               "overrides", "default_enabled", "source", "notes", "unit")
+               "overrides", "default_enabled", "source", "notes", "unit",
+               "height_conversion_table", "passthrough_below_m", "passthrough_above_m",
+               "between_bands")
   for (f in setdiff(names(o), handled)) drop(where, f, o[[f]])
   if (!is.null(o[["unit"]]) && o[["unit"]] != "m") drop(where, "unit", o[["unit"]])
   vm <- NULL
@@ -291,6 +300,11 @@ conv_overlay <- function(o, id, bundle) {
     combine = if (!is.na(tc[2])) tc[2],
     value = o[["value"]], value_field = o[["value_field"]], value_map = vm,
     floor_value = o[["floor_value"]],
+    height_conversion = if (!is.null(o[["height_conversion_table"]])) compact(list(
+      table = lapply(o[["height_conversion_table"]], function(r) compact(list(
+        total = r[["total_m"]], occupiable = r[["occupiable_m"]], source = r[["source"]]))),
+      passthrough_below = o[["passthrough_below_m"]], passthrough_above = o[["passthrough_above_m"]],
+      between = o[["between_bands"]] %||% "passthrough")),
     filter = if (!is.null(o[["filter"]])) lapply(o[["filter"]], function(v) as.list(unlist(v))),
     removes = if (tc[1] == "exclusion") o[["removes"]] %||% "all",
     applies_to_zones = if (!is.null(o[["applies_to_zones"]])) as.character(unlist(o[["applies_to_zones"]])),

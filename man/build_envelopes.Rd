@@ -12,7 +12,8 @@ build_envelopes(
   keep_geometry = FALSE,
   keep_setbacks = FALSE,
   baseline = NULL,
-  max_storeys = 60
+  max_storeys = 60,
+  height_add = NULL
 )
 }
 \arguments{
@@ -34,6 +35,10 @@ storey, so meant for a few sites, not a region.}
 \item{baseline}{An earlier \code{plancap_envelope} to copy unchanged sites from.}
 
 \item{max_storeys}{Guard against a runaway height (not a plan rule).}
+
+\item{height_add}{Optional named numeric vector, by site id: metres of
+extra height (as a height bonus gives), added to total and occupiable
+height.}
 }
 \value{
 A \code{plancap_envelope}: a list with \code{stack} (one row per site and

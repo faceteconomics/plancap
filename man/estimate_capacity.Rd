@@ -4,7 +4,14 @@
 \alias{estimate_capacity}
 \title{Estimate plan-enabled capacity}
 \usage{
-estimate_capacity(x, envelope = NULL, baseline = NULL, conversion = NULL, ...)
+estimate_capacity(
+  x,
+  envelope = NULL,
+  baseline = NULL,
+  conversion = NULL,
+  ...,
+  .height_bonus = TRUE
+)
 }
 \arguments{
 \item{x}{A \code{\link[=scenario]{scenario()}}.}
@@ -18,6 +25,9 @@ unchanged are copied (see \code{\link[=build_envelopes]{build_envelopes()}}).}
 \item{conversion}{Optional \code{\link[=conversion]{conversion()}} overriding the rulebook's.}
 
 \item{...}{Passed to \code{\link[=build_envelopes]{build_envelopes()}}.}
+
+\item{.height_bonus}{Internal: whether to evaluate height bonuses (the
+second, bonus run sets this to \code{FALSE}).}
 }
 \value{
 A \code{plancap_capacity} object: \code{sites} (\code{sf}, one row per site, every
