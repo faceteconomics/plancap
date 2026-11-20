@@ -17,7 +17,9 @@ one, please share it.
 - Record every rule you could not model in `unmodelled_rules`, with the
   likely effect of modelling it (`overstates`, `understates` or
   `either`).
-- Run `validate_rulebook()` before opening a pull request.
+- Run
+  [`validate_rulebook()`](https://faceteconomics.github.io/plancap/reference/validate_rulebook.md)
+  before opening a pull request.
 
 ## 2. A rule the package cannot yet express
 

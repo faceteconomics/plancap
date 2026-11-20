@@ -225,7 +225,9 @@ Each one is:
 The engine already reduces everything to the “required setback per
 segment at each storey, take the max”, so it handles this with no
 change. What changes is the rulebook: the user-facing constructors
-(`setback()`, `plane()`, `upper_level_setback()`,
+(`setback()`,
+[`plane()`](https://faceteconomics.github.io/plancap/reference/yard.md),
+[`upper_level_setback()`](https://faceteconomics.github.io/plancap/reference/yard.md),
 `height_proportional_setback()`, `road_slant()`, `sky_exposure_plane()`)
 all compile to profiles. A new jurisdiction with an odd rule can enter
 the profile directly, with no package code.

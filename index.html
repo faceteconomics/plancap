@@ -61,8 +61,30 @@
 <p><strong>plancap</strong> estimates the floorspace and dwellings that planning rules enable on each land parcel, for any jurisdiction, and summarises and plots the result.</p>
 <p>Planning rules (height limits, setbacks, recession or daylight planes, site coverage, landscaping, floor area ratios, density controls, overlays and precincts) are entered as a <strong>rulebook</strong>: a validated set of rules with a citation for every value. You can write it as a YAML file, as a spreadsheet, or in R. Capacity is built site by site as a stack of storey footprints clipped by every rule that applies. The results can then be summarised by zone, height, location or the rule that binds.</p>
 <blockquote>
-<p><strong>Status: early development.</strong> The package structure and example data are in place; the rulebook, engine, summaries and plots are being built in stages. See the <a href="PLAN.html">development plan</a>.</p>
+<p><strong>Status: early development.</strong> The rulebook (rules, validation, YAML / JSON / Excel input) and example data are in place; site preparation, the engine, summaries and plots are being built in stages. See the <a href="PLAN.html">development plan</a>.</p>
 </blockquote>
+<div class="section level2">
+<h2 id="a-rulebook">A rulebook<a class="anchor" aria-label="anchor" href="#a-rulebook"></a>
+</h2>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/faceteconomics/plancap" class="external-link">plancap</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">rb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/rulebook.html">rulebook</a></span><span class="op">(</span><span class="st">"Exampleton District Plan"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/add_rules.html">add_zone</a></span><span class="op">(</span><span class="fu"><a href="reference/zone.html">zone</a></span><span class="op">(</span><span class="st">"MDR"</span>, <span class="st">"Medium Density Residential"</span>,</span>
+<span>    height <span class="op">=</span> <span class="fu"><a href="reference/height_limit.html">height_limit</a></span><span class="op">(</span><span class="fl">12</span>, roof_allowance <span class="op">=</span> <span class="fl">1</span>, storeys <span class="op">=</span> <span class="fl">3</span>, source <span class="op">=</span> <span class="st">"MDR-S1"</span><span class="op">)</span>,</span>
+<span>    setbacks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="reference/yard.html">yard</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="st">"road"</span>, source <span class="op">=</span> <span class="st">"MDR-S3"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="reference/yard.html">yard</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"side"</span>, <span class="st">"rear"</span><span class="op">)</span>, source <span class="op">=</span> <span class="st">"MDR-S3"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="reference/yard.html">plane</a></span><span class="op">(</span><span class="fl">60</span>, start_height <span class="op">=</span> <span class="fl">4</span>, boundaries <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"side"</span>, <span class="st">"rear"</span><span class="op">)</span>, source <span class="op">=</span> <span class="st">"MDR-S2"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    coverage <span class="op">=</span> <span class="fu"><a href="reference/ratio.html">ratio</a></span><span class="op">(</span><span class="fl">0.5</span>, source <span class="op">=</span> <span class="st">"MDR-S4"</span><span class="op">)</span>,</span>
+<span>    landscaping <span class="op">=</span> <span class="fu"><a href="reference/ratio.html">ratio</a></span><span class="op">(</span><span class="fl">0.2</span>, source <span class="op">=</span> <span class="st">"MDR-S5"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/validate_rulebook.html">validate_rulebook</a></span><span class="op">(</span><span class="va">rb</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/rule_table.html">rule_table</a></span><span class="op">(</span><span class="va">rb</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/read_rulebook.html">write_rulebook</a></span><span class="op">(</span><span class="va">rb</span>, <span class="st">"exampleton.yaml"</span><span class="op">)</span>   <span class="co"># or .json, or .xlsx for a spreadsheet</span></span></code></pre></div>
+<p>Rulebooks for Exampleton and, as worked examples, Auckland, Christchurch and Wellington ship with the package: <code>rulebook_example("wellington")</code>.</p>
+</div>
 <div class="section level2">
 <h2 id="scope">Scope<a class="anchor" aria-label="anchor" href="#scope"></a>
 </h2>
@@ -71,7 +93,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"faceteconomics/plancap"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -79,7 +101,7 @@
 <h2 id="example-data">Example data<a class="anchor" aria-label="anchor" href="#example-data"></a>
 </h2>
 <p><code><a href="reference/exampleton.html">exampleton()</a></code> loads Exampleton, a synthetic town of about 1,500 parcels built so that every rule type has something to act on. It has corner, rear and through lots, a split-zoned block, height areas, a precinct, a river with a flood plain, protected trees, existing buildings and a ground surface. It is placed in the open sea so it cannot be mistaken for a real place.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/faceteconomics/plancap" class="external-link">plancap</a></span><span class="op">)</span></span>
 <span><span class="va">town</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/exampleton.html">exampleton</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">town</span><span class="op">)</span></span>

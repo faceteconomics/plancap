@@ -291,7 +291,7 @@
 <li>an origin (the boundary, the far side of the road, the road centreline, or a parallel offset);</li>
 <li>a datum (ground at the boundary, site mean, road level, an RL);</li>
 <li>conditions (B6).</li>
-</ul><p>The engine already reduces everything to the “required setback per segment at each storey, take the max”, so it handles this with no change. What changes is the rulebook: the user-facing constructors (<code>setback()</code>, <code>plane()</code>, <code>upper_level_setback()</code>, <code>height_proportional_setback()</code>, <code>road_slant()</code>, <code>sky_exposure_plane()</code>) all compile to profiles. A new jurisdiction with an odd rule can enter the profile directly, with no package code.</p>
+</ul><p>The engine already reduces everything to the “required setback per segment at each storey, take the max”, so it handles this with no change. What changes is the rulebook: the user-facing constructors (<code>setback()</code>, <code><a href="reference/yard.html">plane()</a></code>, <code><a href="reference/yard.html">upper_level_setback()</a></code>, <code>height_proportional_setback()</code>, <code>road_slant()</code>, <code>sky_exposure_plane()</code>) all compile to profiles. A new jurisdiction with an odd rule can enter the profile directly, with no package code.</p>
 </div>
 <div class="section level3">
 <h3 id="b6-values-as-formulas-and-new-triggers">B6. Values as formulas, and new triggers<a class="anchor" aria-label="anchor" href="#b6-values-as-formulas-and-new-triggers"></a></h3>

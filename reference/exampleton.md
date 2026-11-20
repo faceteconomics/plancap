@@ -43,7 +43,7 @@ What it contains, and what each part is there to exercise:
 | `precincts` | polygon | One precinct with two sub-precincts (`sub_precinct`) |
 | `water` | line | A river through the southern reserve, for riparian setbacks |
 | `transit` | point | A station, for distance-band rules |
-| `trees` | point | Trees with trunk diameter (`dbh_m`) and a `protected` flag |
+| `trees` | point | Trees with trunk diameter (`dbh_m`), `status` (`"protected"` or `"unprotected"`) and a root-zone `protection_radius_m` |
 | `buildings` | polygon | Existing buildings with `storeys`, for net-of-existing capacity |
 
 A ground surface is supplied separately as a 5 m raster; see
