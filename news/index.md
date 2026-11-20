@@ -2,6 +2,23 @@
 
 ## plancap 0.0.0.9000
 
+### Terrain and towers (stage 4, part 4)
+
+- Stepped terrain (the default, `defaults$terrain`): each site’s ground
+  is a plane fitted to its boundaries’ ground; a recession plane is
+  measured from the ground at its own boundary, taken over runs of
+  near-straight pieces of one boundary, and the ground’s rise into the
+  site slows the building’s gain on the plane. `terrain = "flat"` stands
+  the building on one floor at the site’s mean ground.
+- Ground levels may be supplied as tables (`scenario(ground = )`)
+  instead of a DEM; a DEM is now sampled along each boundary, not at its
+  midpoint.
+- A tower floorplate limit caps storeys above the tower threshold; tower
+  plan dimension and separation are counted in the run report as not
+  modelled.
+- Reproduces capacityengine with terrain and height surfaces on the gate
+  tile to +0.034% of floor area (99.2% of sites exact).
+
 ### Reproducing capacityengine (stage 4, part 3)
 
 - On a 2,680-site Auckland tile, on flat ground, plancap reproduces

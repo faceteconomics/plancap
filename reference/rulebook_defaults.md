@@ -27,6 +27,19 @@ A named list:
   Where each storey is tested against height and planes: `"ceiling"`
   (the default; a storey must fit entirely) or `"floor"`.
 
+- `terrain`:
+
+  How buildings meet sloping ground, where ground levels are supplied:
+  `"stepped"` (the default; each site's ground is a plane fitted to its
+  boundaries' ground, and a recession plane is measured from the ground
+  at its own boundary) or `"flat"` (one floor at the site's mean
+  ground).
+
+- `max_ground_slope`:
+
+  Steepest fitted ground slope (rise over run) accepted; steeper fits
+  are scaled back. 0.5.
+
 - `no_limit_height`:
 
   Stand-in height (m) for zones with no height limit; `NULL` means such
@@ -50,6 +63,12 @@ rulebook_defaults()
 #> 
 #> $level_reference
 #> [1] "ceiling"
+#> 
+#> $terrain
+#> [1] "stepped"
+#> 
+#> $max_ground_slope
+#> [1] 0.5
 #> 
 #> $large_site
 #> $large_site$threshold

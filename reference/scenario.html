@@ -64,6 +64,7 @@ scenarios, and two scenarios may differ in any of these.</p>
 <span>  water <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  centrelines <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dem <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ground <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zone_field <span class="op">=</span> <span class="st">"zone"</span>,</span>
 <span>  site_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  group_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -118,6 +119,14 @@ rulebook names them.</p></dd>
 
 <dt id="arg-dem">dem<a class="anchor" aria-label="anchor" href="#arg-dem"></a></dt>
 <dd><p>Optional ground surface as a <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code>.</p></dd>
+
+
+<dt id="arg-ground">ground<a class="anchor" aria-label="anchor" href="#arg-ground"></a></dt>
+<dd><p>Optional ground levels supplied directly instead of a <code>dem</code>
+(from a survey, or another model): a list with <code>sites</code> (a data frame of
+<code>site_id</code> and <code>ground_mean</code>) and <code>segments</code> (a data frame of <code>site_id</code>,
+<code>seq</code>, the segment's position in its site's boundary counting from 1, and
+<code>ground</code>, the mean ground level along it).</p></dd>
 
 
 <dt id="arg-zone-field">zone_field<a class="anchor" aria-label="anchor" href="#arg-zone-field"></a></dt>

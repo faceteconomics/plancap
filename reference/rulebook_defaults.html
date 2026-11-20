@@ -63,6 +63,17 @@ storeys end the stack. 30.</p></dd>
 planes: <code>"ceiling"</code> (the default; a storey must fit entirely) or
 <code>"floor"</code>.</p></dd>
 
+<dt><code>terrain</code></dt>
+<dd><p>How buildings meet sloping ground, where ground levels
+are supplied: <code>"stepped"</code> (the default; each site's ground is a plane
+fitted to its boundaries' ground, and a recession plane is measured from
+the ground at its own boundary) or <code>"flat"</code> (one floor at the site's
+mean ground).</p></dd>
+
+<dt><code>max_ground_slope</code></dt>
+<dd><p>Steepest fitted ground slope (rise over run)
+accepted; steeper fits are scaled back. 0.5.</p></dd>
+
 <dt><code>no_limit_height</code></dt>
 <dd><p>Stand-in height (m) for zones with no height
 limit; <code>NULL</code> means such zones are flagged and given no stand-in.</p></dd>
@@ -87,6 +98,12 @@ limit; <code>NULL</code> means such zones are flagged and given no stand-in.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $level_reference</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ceiling"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $terrain</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "stepped"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_ground_slope</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $large_site</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $large_site$threshold</span>

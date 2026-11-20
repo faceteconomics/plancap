@@ -18,6 +18,7 @@ scenario(
   water = NULL,
   centrelines = NULL,
   dem = NULL,
+  ground = NULL,
   zone_field = "zone",
   site_id = NULL,
   group_by = NULL,
@@ -71,6 +72,14 @@ scenario_change(base, name, ...)
 
   Optional ground surface as a
   [`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html).
+
+- ground:
+
+  Optional ground levels supplied directly instead of a `dem` (from a
+  survey, or another model): a list with `sites` (a data frame of
+  `site_id` and `ground_mean`) and `segments` (a data frame of
+  `site_id`, `seq`, the segment's position in its site's boundary
+  counting from 1, and `ground`, the mean ground level along it).
 
 - zone_field:
 

@@ -12,7 +12,9 @@ setback_distance(
   height,
   storey = NA_integer_,
   bearing = NA_real_,
-  vars = list()
+  vars = list(),
+  slope_in = 0,
+  base_height = height
 )
 ```
 
@@ -43,6 +45,17 @@ setback_distance(
 
   Other variables for formula values, see
   [`eval_rule_value()`](https://faceteconomics.github.io/plancap/reference/rule-formulas.md).
+
+- slope_in:
+
+  For planes on sloping ground: how fast the site's ground rises into
+  the site from the boundary (metres per metre).
+
+- base_height:
+
+  The building's own height above the site's ground, where `height` has
+  been adjusted to the boundary's ground; a plane's `max_setback_above`
+  is tested against it.
 
 ## Value
 

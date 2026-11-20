@@ -56,7 +56,9 @@ plotted on their own.</p>
 <span>  <span class="va">height</span>,</span>
 <span>  storey <span class="op">=</span> <span class="cn">NA_integer_</span>,</span>
 <span>  bearing <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
-<span>  vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  slope_in <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  base_height <span class="op">=</span> <span class="va">height</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -85,6 +87,17 @@ clockwise from north), for planes whose angle depends on orientation.</p></dd>
 
 <dt id="arg-vars">vars<a class="anchor" aria-label="anchor" href="#arg-vars"></a></dt>
 <dd><p>Other variables for formula values, see <code><a href="rule-formulas.html">eval_rule_value()</a></code>.</p></dd>
+
+
+<dt id="arg-slope-in">slope_in<a class="anchor" aria-label="anchor" href="#arg-slope-in"></a></dt>
+<dd><p>For planes on sloping ground: how fast the site's ground
+rises into the site from the boundary (metres per metre).</p></dd>
+
+
+<dt id="arg-base-height">base_height<a class="anchor" aria-label="anchor" href="#arg-base-height"></a></dt>
+<dd><p>The building's own height above the site's ground, where
+<code>height</code> has been adjusted to the boundary's ground; a plane's
+<code>max_setback_above</code> is tested against it.</p></dd>
 
 </dl></div>
     <div class="section level2">

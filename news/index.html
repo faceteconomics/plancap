@@ -41,6 +41,13 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="plancap-0009000">plancap 0.0.0.9000<a class="anchor" aria-label="anchor" href="#plancap-0009000"></a></h2>
 <div class="section level3">
+<h3 id="terrain-and-towers-stage-part-0-0-0-9000">Terrain and towers (stage 4, part 4)<a class="anchor" aria-label="anchor" href="#terrain-and-towers-stage-part-0-0-0-9000"></a></h3>
+<ul><li>Stepped terrain (the default, <code>defaults$terrain</code>): each site’s ground is a plane fitted to its boundaries’ ground; a recession plane is measured from the ground at its own boundary, taken over runs of near-straight pieces of one boundary, and the ground’s rise into the site slows the building’s gain on the plane. <code>terrain = "flat"</code> stands the building on one floor at the site’s mean ground.</li>
+<li>Ground levels may be supplied as tables (<code>scenario(ground = )</code>) instead of a DEM; a DEM is now sampled along each boundary, not at its midpoint.</li>
+<li>A tower floorplate limit caps storeys above the tower threshold; tower plan dimension and separation are counted in the run report as not modelled.</li>
+<li>Reproduces capacityengine with terrain and height surfaces on the gate tile to +0.034% of floor area (99.2% of sites exact).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="reproducing-capacityengine-stage-part-0-0-0-9000">Reproducing capacityengine (stage 4, part 3)<a class="anchor" aria-label="anchor" href="#reproducing-capacityengine-stage-part-0-0-0-9000"></a></h3>
 <ul><li>On a 2,680-site Auckland tile, on flat ground, plancap reproduces capacityengine’s floor area to +0.033% (99.4% of sites to 0.01 m2) and its dwellings to -0.5% (<code>data-raw/gate/</code>).</li>
 <li>
