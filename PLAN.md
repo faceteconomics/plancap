@@ -15,6 +15,28 @@ Status (20 November 2026):
   field; Auckland carries all 217 precincts but 13 fields remain, listed in
   its report and unmodelled register (see Stage 1 follow-ups below).
 
+- **Stage 2 built** (site preparation). `scenario()`, `scenario_change()`,
+  `prepare_sites()` with two hashed, session-cached steps (parcel geometry;
+  plan geometry); `find_*()` morphology helpers and `site_metrics()`;
+  `check_morphology()`, `plot_morphology()`. Gate: capacityengine's boundary
+  and adjacency cases ported (rectangle classes, winding indifference, thin
+  spike, corner by directions not spread, curved street not a corner,
+  internal boundary dissolves, far-side zone, carriageway probe, contiguous
+  reserve area) and pass; Exampleton prepares as built (9/9 through lots,
+  every rear lot's leg, area conserved, all morphology checks in range); a
+  zoning-only change reuses the parcel geometry, a rule-only change reuses
+  both. 222 expectations.
+
+  Stage 2 design notes for the engine: boundaries have one class (road,
+  side, rear) plus tags (reserve, riparian, coastal, lakeside,
+  zone_boundary); a rule naming a tag in `boundaries` matches it. Water yards
+  should be measured from the water feature (as capacityengine item 347),
+  the tag only says the boundary is near water. Corner sites keep the
+  ambiguous rear of capacityengine (flagged via `is_corner`). Overlay and area
+  membership are long tables with shares, so partial coverage (engine item
+  368) is resolvable in stage 4. Not yet: incremental (affected-site) runs,
+  which belong to stage 3/6; a disk cache.
+
 ### Stage 1 follow-ups (for stage 4, engine)
 
 - Auckland Height Variation Control: `class_field`, `height_conversion_table`,

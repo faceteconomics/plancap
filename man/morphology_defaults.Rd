@@ -9,12 +9,23 @@ morphology_defaults()
 \value{
 A named list:
 \describe{
-\item{\code{min_road_contact}}{Shortest length (m) of shared edge with a road
-parcel that makes a boundary a road frontage. 0.5.}
+\item{\code{min_road_contact}}{Shortest total road frontage (m) for a site to
+count as fronting a road. 0.5.}
+\item{\code{road_tolerance}}{Distance (m) within which a boundary counts as
+running along a road parcel, absorbing cadastral slivers. A boundary
+segment is a road frontage when at least half its length is within it.
+0.5.}
+\item{\code{boundary_probe_distance}}{How far (m) across a side or rear
+boundary to look for the zone opposite. 1.}
 \item{\code{road_probe_distance}}{How far (m) across a road boundary to look
 for the zone opposite, so the probe clears the carriageway. 25.}
 \item{\code{side_rear_angle_tolerance}}{Degrees from parallel to the frontage
 within which a boundary is a rear boundary. 30.}
+\item{\code{rear_depth_share}}{How far back (as a share of the site's depth
+from the frontage) a parallel boundary must sit to be a rear boundary.
+0.5.}
+\item{\code{rear_site_max_frontage}}{A site with less road frontage than this
+(m) is a rear site. 7.5.}
 \item{\code{corner_angle_tolerance}}{Degrees by which two frontages must differ
 in bearing for a corner site. 30.}
 \item{\code{corner_min_frontage}}{Shortest frontage (m) on each road for a

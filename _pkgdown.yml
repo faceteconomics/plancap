@@ -57,6 +57,23 @@ reference:
       - set_rule
       - convert_rulebook_units
       - rulebook_schema_path
+  - title: Scenarios and site preparation
+    desc: >
+      A scenario is a rulebook with its parcels and maps. Preparing it turns
+      parcels into sites with classified boundaries, ready for the engine;
+      prepared steps are reused across scenarios that share their inputs.
+    contents:
+      - scenario
+      - prepare_sites
+      - clear_site_cache
+  - title: Site and boundary types
+    desc: >
+      Road frontages, side and rear boundaries, corner, through and rear
+      sites, access legs, water boundaries and road widths, each with the
+      evidence for the call.
+    contents:
+      - morphology
+      - check_morphology
   - title: Values, defaults and assumptions
     contents:
       - rule-formulas

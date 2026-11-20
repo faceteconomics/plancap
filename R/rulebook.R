@@ -88,12 +88,23 @@ rulebook_defaults <- function() {
 #'
 #' @return A named list:
 #' \describe{
-#'   \item{`min_road_contact`}{Shortest length (m) of shared edge with a road
-#'     parcel that makes a boundary a road frontage. 0.5.}
+#'   \item{`min_road_contact`}{Shortest total road frontage (m) for a site to
+#'     count as fronting a road. 0.5.}
+#'   \item{`road_tolerance`}{Distance (m) within which a boundary counts as
+#'     running along a road parcel, absorbing cadastral slivers. A boundary
+#'     segment is a road frontage when at least half its length is within it.
+#'     0.5.}
+#'   \item{`boundary_probe_distance`}{How far (m) across a side or rear
+#'     boundary to look for the zone opposite. 1.}
 #'   \item{`road_probe_distance`}{How far (m) across a road boundary to look
 #'     for the zone opposite, so the probe clears the carriageway. 25.}
 #'   \item{`side_rear_angle_tolerance`}{Degrees from parallel to the frontage
 #'     within which a boundary is a rear boundary. 30.}
+#'   \item{`rear_depth_share`}{How far back (as a share of the site's depth
+#'     from the frontage) a parallel boundary must sit to be a rear boundary.
+#'     0.5.}
+#'   \item{`rear_site_max_frontage`}{A site with less road frontage than this
+#'     (m) is a rear site. 7.5.}
 #'   \item{`corner_angle_tolerance`}{Degrees by which two frontages must differ
 #'     in bearing for a corner site. 30.}
 #'   \item{`corner_min_frontage`}{Shortest frontage (m) on each road for a
@@ -119,8 +130,9 @@ rulebook_defaults <- function() {
 #' @examples
 #' morphology_defaults()$corner_angle_tolerance
 morphology_defaults <- function() {
-  list(min_road_contact = 0.5, road_probe_distance = 25,
-       side_rear_angle_tolerance = 30, corner_angle_tolerance = 30,
+  list(min_road_contact = 0.5, road_tolerance = 0.5, road_probe_distance = 25,
+       boundary_probe_distance = 1, side_rear_angle_tolerance = 30,
+       rear_depth_share = 0.5, rear_site_max_frontage = 7.5, corner_angle_tolerance = 30,
        corner_min_frontage = 3, through_min_bearing_difference = 135,
        access_leg_max_width = 7.5, access_leg_min_road_contact = 0.5,
        exclude_access_legs = TRUE, boundary_merge_angle = 5,

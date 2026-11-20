@@ -76,6 +76,7 @@ check_value <- function(x, arg = rlang::caller_arg(x), null_ok = TRUE,
 # Deep merge: `y` overrides `x`; named lists merge recursively, anything else
 # (including unnamed lists such as setback lists) is replaced whole.
 merge_lists <- function(x, y) {
+  if (is.list(y) && !length(y) && is.list(x)) return(x)  # nothing to change
   if (!is.list(x) || !is.list(y) || is.null(names(y)) || is.null(names(x))) return(y)
   for (nm in names(y)) {
     if (is.list(x[[nm]]) && is.list(y[[nm]]) && !is.null(names(y[[nm]])) &&

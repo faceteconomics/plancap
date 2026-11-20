@@ -21,6 +21,8 @@ Depends:
     R (>= 4.1)
 Imports:
     cli,
+    geos,
+    ggplot2,
     jsonlite,
     jsonvalidate,
     rlang,
@@ -28,6 +30,7 @@ Imports:
     stats,
     tools,
     utils,
+    wk,
     yaml
 Suggests:
     openxlsx2,
@@ -38,4 +41,4 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

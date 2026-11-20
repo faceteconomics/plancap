@@ -121,7 +121,15 @@
           "type": "number",
           "minimum": 0
         },
+        "road_tolerance": {
+          "type": "number",
+          "minimum": 0
+        },
         "road_probe_distance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "boundary_probe_distance": {
           "type": "number",
           "minimum": 0
         },
@@ -129,6 +137,15 @@
           "type": "number",
           "minimum": 0,
           "maximum": 90
+        },
+        "rear_depth_share": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "rear_site_max_frontage": {
+          "type": "number",
+          "minimum": 0
         },
         "corner_angle_tolerance": {
           "type": "number",

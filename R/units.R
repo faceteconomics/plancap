@@ -37,7 +37,8 @@ length_keys <- c(
   "max_building_depth", "min_building_width", "tower_above_height", "floor_value",
   "occupiable", "roof_allowance", "width", "depth", "min_road_contact",
   "road_probe_distance", "corner_min_frontage", "access_leg_max_width",
-  "access_leg_min_road_contact", "water_boundary_distance", "buffer", "vertical_above"
+  "access_leg_min_road_contact", "water_boundary_distance", "buffer", "vertical_above",
+  "road_tolerance", "boundary_probe_distance", "rear_site_max_frontage"
 )
 area_keys <- c(
   "min_site_area", "max_site_area", "site_area_per_dwelling", "vacant_site_min_area",
