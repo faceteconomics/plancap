@@ -208,6 +208,8 @@ estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = 
   out$envelope_binding <- ev$binding
   out$dwelling_binding <- binding
   out$removed_area <- removed
+  has_aw <- vapply(pz, function(z) !is.null(z$density$access_width), logical(1))
+  out$access_unmeasured <- has_aw & !is.na(s$frontage) & s$frontage <= 0 & dwell > 0
   out$flag <- ifelse(is.na(s$zone_key), "no_zone",
               ifelse(is.na(method), "no_rules",
               ifelse(method %in% "none", "no_capacity_zone",
@@ -314,14 +316,16 @@ floor_to_dwellings <- function(res_area, conv, min_size = NA) {
 }
 
 # The access width table: frontage (or the access leg's width at the road)
-# to the most dwellings it may serve.
+# to the most dwellings it may serve. A site with no road frontage has no
+# measurable access: unknown, not zero, so the cap does not apply and the
+# site is flagged (capacityengine item 260).
 access_width_cap <- function(pz, s) {
   out <- rep(NA_real_, length(pz))
   for (k in seq_along(pz)) {
     tab <- pz[[k]]$density$access_width
     if (is.null(tab)) next
     f <- s$frontage[k]
-    if (is.na(f)) next
+    if (is.na(f) || f <= 0) next
     for (b in tab) {
       if (f >= (b$min %||% 0) && f < (b$max %||% Inf)) {
         out[k] <- b$max_dwellings %||% NA_real_

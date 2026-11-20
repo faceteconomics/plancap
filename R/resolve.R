@@ -40,7 +40,10 @@ resolve_sites <- function(prep, rb, site_mods = NULL) {
   ids <- s$site_id
   areas <- prep$areas
   areas <- areas[areas$share >= 0.5, , drop = FALSE]
-  areas <- areas[order(areas$site_id, -areas$share), , drop = FALSE]
+  # One row per site and area: a site under both a precinct polygon and one of
+  # its sub-precinct polygons takes the sub-precinct.
+  areas <- areas[order(areas$site_id, areas$area, is.na(areas$sub_area), -areas$share), , drop = FALSE]
+  areas <- areas[!duplicated(areas[c("site_id", "area")]), , drop = FALSE]
   ovs <- prep$overlays
   pov <- names(Filter(function(o) identical(o$type, "parameters") && !isFALSE(o$enabled), rb$overlays))
   pov <- pov[order(vapply(rb$overlays[pov], function(o) o$precedence %||% 0, 0))]
@@ -141,10 +144,22 @@ resolve_one <- function(site_id, zk, rb, areas, pov, pv, hov, hv, mods = NULL) {
 # site's height (capacityengine item 245).
 zone_storey_height <- function(rb, z, zone_key) {
   base <- rb$zones[[zone_key]] %||% z
-  h <- base$height
+  storey_height_of(base, rb$defaults$storey_height %||% 3)
+}
+
+# A zone's own storey height (capacityengine item 245): stated, or its
+# occupiable height over its stated storeys, or its occupiable height divided
+# into as many default-height storeys as fit (20 m: six of 3.33 m), or the
+# default where the zone states no height.
+storey_height_of <- function(z, default) {
+  if (!is.null(z$storey_height)) return(z$storey_height)
+  h <- z$height
   occ <- h$occupiable %||% (if (is.numeric(h$value)) h$value - (h$roof_allowance %||% 0))
-  if (!is.null(h$storeys) && is.numeric(occ)) return(occ / h$storeys)
-  base$storey_height %||% rb$defaults$storey_height %||% 3
+  if (!is.null(occ) && !is.na(occ)) {
+    if (!is.null(h$storeys) && h$storeys > 0) return(occ / h$storeys)
+    if (occ >= default) return(occ / floor(occ / default))
+  }
+  default
 }
 
 # Variants a parameter set offers: none means one, "standard".

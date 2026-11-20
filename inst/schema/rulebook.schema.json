@@ -287,10 +287,41 @@
     "zone_families": {
       "type": "object",
       "additionalProperties": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "zones"
+            ],
+            "additionalProperties": false,
+            "description": "A family whose membership across a boundary also depends on the contiguous area of its zones there.",
+            "properties": {
+              "zones": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "min_area": {
+                "type": "number",
+                "minimum": 0
+              },
+              "max_area": {
+                "type": "number",
+                "minimum": 0
+              },
+              "source": {
+                "type": "string"
+              }
+            }
+          }
+        ]
       }
     },
     "zone_map": {

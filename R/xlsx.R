@@ -321,7 +321,9 @@ rulebook_tables <- function(rb) {
   )
 
   families <- data.frame(family = names(rb$zone_families),
-                         zones = vapply(rb$zone_families, paste, "", collapse = ", "),
+                         zones = vapply(rb$zone_families, function(f) paste(family_zones(f), collapse = ", "), ""),
+                         min_area = vapply(rb$zone_families, function(f) if (is.list(f)) f$min_area %||% NA_real_ else NA_real_, 0),
+                         max_area = vapply(rb$zone_families, function(f) if (is.list(f)) f$max_area %||% NA_real_ else NA_real_, 0),
                          stringsAsFactors = FALSE)
   ov_cols <- c("id", "label", "type", "layer", "combine", "value", "value_field", "value_map",
                "floor_value", "filter", "removes", "buffer", "applies_to_zones", "enabled",
@@ -508,7 +510,12 @@ tables_to_rulebook <- function(t) {
   if (length(m)) x$morphology <- m
 
   if (nrow(t$families)) {
-    x$zone_families <- stats::setNames(lapply(t$families$zones, split_list), t$families$family)
+    x$zone_families <- stats::setNames(lapply(seq_len(nrow(t$families)), function(i) {
+      z <- split_list(t$families$zones[i])
+      lo <- from_cell(t$families$min_area[i] %||% NA, "num")
+      hi <- from_cell(t$families$max_area[i] %||% NA, "num")
+      if (is.null(lo) && is.null(hi)) z else compact(list(zones = z, min_area = lo, max_area = hi))
+    }), t$families$family)
   }
   x$zones <- list()
   x$zone_map <- list()

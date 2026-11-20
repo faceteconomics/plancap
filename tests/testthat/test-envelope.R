@@ -130,8 +130,9 @@ test_that("a plane graded by orientation takes each boundary's own angle", {
   e <- build_envelopes(scenario("G", rb, parcels = fixture_parcels(), roads = fixture_road(),
                                 zoning = fixture_zoning()), keep_setbacks = TRUE)
   sb <- e$setbacks[e$setbacks$site_id == "P1" & e$setbacks$storey == 1, ]
-  # At 3 m: the rear (facing north) needs 1 / tan 55, the sides 1 / tan 45.
-  expect_equal(sort(round(sb$setback[sb$setback > 0], 4)), sort(round(c(1 / tan(55 * pi / 180), 1, 1), 4)))
+  # Zone A is 8 m in two 4 m storeys (capacityengine's storey height rule).
+  # At 4 m: the rear (facing north) needs 2 / tan 55, the sides 2 / tan 45.
+  expect_equal(sort(round(sb$setback[sb$setback > 0], 4)), sort(round(c(2 / tan(55 * pi / 180), 2, 2), 4)))
 })
 
 test_that("water yards are measured from the water, not from a boundary", {

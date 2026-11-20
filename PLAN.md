@@ -82,7 +82,21 @@ Status (20 November 2026):
   via an incremental second envelope. Auckland conversion now drops 9
   fields. 328 expectations.
 
-  **Stage 4, part 3 (next)**: stepped terrain (item 318) and boundary runs
+- **Stage 4 gate, flat ground: met** (20 Nov 2026, `data-raw/gate/README.md`).
+  Tile t_011_011 (2,680 sites): floor area +0.033%, 99.4% of sites exact to
+  0.01 m2; dwellings -0.51%, 97.9% exact. Every zone but Single House exact.
+  Remaining differences traced: 17 irregular special-character lots
+  (boundary classification), access width from easements (dwellings), the
+  neighbours'-setback front yard (not ported). Fixes made: zone storey height
+  rule, area-conditional zone families, unmeasured access uncapped, CfGS
+  large-site divisor, precinct name parsing.
+
+  **Stage 4, part 4 (next)**: stepped terrain (item 318) and boundary runs
+  (item 299), compared with tolerance against the published tile; then site
+  shape factor (item 324), tower controls, the measured front yard
+  (`value_from`, needs building outlines), and access width from easements.
+
+  *(Earlier note)* **Stage 4, part 3**: stepped terrain (item 318) and boundary runs
   (item 299); site shape factor (item 324); tower controls; then the tile
   reproduction: run plancap on a capacityengine tile's own sites, roads,
   zoning, overlays, DEM and water, compare per site against

@@ -355,8 +355,7 @@ storey_plan <- function(z, rb, dflt) {
   if (isTRUE(h$no_limit) && is.na(value)) value <- dflt$no_limit_height %||% NA_real_
   occ <- h$occupiable %||% (value - (h$roof_allowance %||% 0))
   if (is.null(occ) || is.na(occ)) return(list(n = NA, s = NA, g = NA, occ = NA))
-  s <- h$zone_storey_height %||%
-    (if (!is.null(h$storeys)) occ / h$storeys else z$storey_height %||% dflt$storey_height)
+  s <- h$zone_storey_height %||% storey_height_of(z, dflt$storey_height %||% 3)
   g <- z$ground_floor_height %||% dflt$ground_floor_height %||% s
   n <- if (occ < g - 1e-6) 0 else 1 + floor((occ - g) / s + 1e-6)
   list(n = n, s = s, g = g, occ = occ, total = value)

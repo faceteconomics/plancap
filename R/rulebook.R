@@ -316,11 +316,46 @@ set_zone_families <- function(rb, ...) {
   f <- list(...)
   if (is.null(names(f)) || any(!nzchar(names(f)))) cli::cli_abort("Families must be named.")
   for (nm in names(f)) {
-    check_character(f[[nm]], arg = nm, null_ok = FALSE)
-    rb$zone_families[[nm]] <- f[[nm]]
+    if (inherits(f[[nm]], "plancap_zone_family")) {
+      rb$zone_families[[nm]] <- unclass(f[[nm]])
+    } else {
+      check_character(f[[nm]], arg = nm, null_ok = FALSE)
+      rb$zone_families[[nm]] <- f[[nm]]
+    }
   }
   rb
 }
+
+#' A zone family that depends on the size of the land across a boundary
+#'
+#' Some rules apply next to a zone only where that zone's land is large or
+#' small: a recession plane against open space of less than 2,000 m2, an
+#' exemption next to a reserve over 2,000 m2. A family made with
+#' `zone_family()` counts across a boundary only where the contiguous area of
+#' its zones there (every touching polygon of those zones, dissolved) is within
+#' the bounds.
+#'
+#' @param zones Zone keys in the family.
+#' @param min_area,max_area Bounds on the contiguous area (m2): at least
+#'   `min_area`, less than `max_area`.
+#' @param source Citation.
+#' @return A list with class `plancap_zone_family`, for [set_zone_families()].
+#' @export
+#' @examples
+#' rb <- rulebook("Example") |>
+#'   add_zone(zone("OS", method = "none")) |>
+#'   set_zone_families(SMALL_OPEN_SPACE = zone_family("OS", max_area = 2000))
+#' rb$zone_families
+zone_family <- function(zones, min_area = NULL, max_area = NULL, source = NULL) {
+  check_character(zones, null_ok = FALSE)
+  check_number(min_area, lower = 0)
+  check_number(max_area, lower = 0)
+  structure(compact(list(zones = zones, min_area = min_area, max_area = max_area, source = source)),
+            class = "plancap_zone_family")
+}
+
+# The zone keys of a family, plain or conditional.
+family_zones <- function(f) if (is.list(f) && !is.null(f$zones)) f$zones else f
 
 #' @rdname set_rules
 #' @export

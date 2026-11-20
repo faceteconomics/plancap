@@ -45,7 +45,7 @@ area_keys <- c(
   "min_dwelling_size", "dwelling_size", "size", "max_floorplate", "min_floorplate",
   "max_tower_floorplate", "max_site_floorspace", "area_per_dwelling", "min_area",
   "max_average_area", "threshold", "max_floorspace", "min_sliver_area",
-  "parking_area_per_dwelling", "outdoor_area_per_dwelling", "min_one_dwelling_floor"
+  "parking_area_per_dwelling", "outdoor_area_per_dwelling", "min_one_dwelling_floor", "max_area"
 )
 by_dim <- c(site_area = "area", height = "length", road_width = "length",
             distance = "length", site_depth = "length", storey = NA, slope = NA)

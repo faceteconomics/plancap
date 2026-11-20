@@ -1,5 +1,6 @@
 # Height overlays, surfaces, building gaps and height bonuses on the fixture.
-# Zone A: 8 m, 3 m storeys (two storeys of 600 m2 on P1); zone B: 11 m.
+# Zone A: 8 m with no stated storeys, so 4 m storeys (8 m divided into as many
+# 3 m storeys as fit, capacityengine's rule): two storeys of 600 m2 on P1.
 
 with_overlay <- function(rb, layers, ...) {
   estimate_capacity(scenario("H", set_conversion(rb, conversion(dwelling_size = 100)),
@@ -15,7 +16,7 @@ test_that("a height cap lowers, an override replaces, a cap over no height does 
   expect_identical(p1(with_overlay(cap_rb, list(hm = hmap(20))))$storeys, 2L)    # a cap never raises
   ov_rb <- add_overlay(fixture_rulebook(), overlay("hc", "height", layer = "hm", value_field = "h",
                                                    combine = "replace", source = "x"))
-  expect_identical(p1(with_overlay(ov_rb, list(hm = hmap(15))))$storeys, 5L)
+  expect_identical(p1(with_overlay(ov_rb, list(hm = hmap(15))))$storeys, 3L)  # 15 m in the zone's 4 m storeys
   none <- set_rule(cap_rb, "zones.A.height", list(from_overlay = "hc", source = "z"))
   none <- set_rule(none, "overlays.hc.applies_to_zones", list("B"))
   expect_identical(p1(with_overlay(none, list(hm = hmap(9))))$storeys, 0L)
@@ -39,8 +40,8 @@ test_that("a mapped total height converts to occupiable height through the table
   rb <- add_overlay(fixture_rulebook(),
                     overlay("hvc", "height", layer = "hm", value_field = "h", combine = "replace",
                             height_conversion = conv, source = "x"))
-  # 13 m total is 11 m occupiable: three 3 m storeys, not four.
-  expect_identical(p1(with_overlay(rb, list(hm = hmap(13))))$storeys, 3L)
+  # 13 m total is 11 m occupiable: two 4 m storeys, where 13 m would hold three.
+  expect_identical(p1(with_overlay(rb, list(hm = hmap(13))))$storeys, 2L)
 })
 
 test_that("a height surface over a whole site caps it; over part, it takes land storey by storey", {
@@ -73,7 +74,7 @@ test_that("building length and separation cut gaps through the footprint", {
 })
 
 test_that("a height bonus is built and reported apart", {
-  rb <- add_bonus(fixture_rulebook(), bonus("tall", "height", 3, applies_to_zones = "A", source = "b"))
+  rb <- add_bonus(fixture_rulebook(), bonus("tall", "height", 4, applies_to_zones = "A", source = "b"))
   cap <- with_overlay(rb, list())
   x <- p1(cap)
   expect_equal(x$floor_area, 1200)

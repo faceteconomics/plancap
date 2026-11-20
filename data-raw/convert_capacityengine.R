@@ -159,7 +159,8 @@ handled_zone_fields <- c(
 # capacityengine's yards and hirb each replace the zone's whole set.
 conv_zone <- function(z, where, bundle, partial = FALSE, totals_env = NULL) {
   for (f in setdiff(names(z), handled_zone_fields)) drop(where, f, z[[f]])
-  if (!is.null(z[["cfgs_large_site_area_per_dwelling_m2"]])) {
+  if (!is.null(z[["cfgs_large_site_area_per_dwelling_m2"]]) &&
+      !identical(bundle[["defaults"]][["large_site_dwellings"]], "divisor")) {
     drop(where, "cfgs_large_site_area_per_dwelling_m2 (CfGS fidelity mode only)")
   }
   h <- z[["height"]]
@@ -220,7 +221,11 @@ conv_zone <- function(z, where, bundle, partial = FALSE, totals_env = NULL) {
     aw <- lapply(bundle[["access_width_table"]], function(r) compact(list(
       min = r[["min_m"]], max = r[["max_m"]], max_dwellings = r[["max_dwellings"]])))
   }
-  ls <- compact(list(area_per_dwelling = z[["large_site_area_per_dwelling_m2"]],
+  # capacityengine's region runs count large sites by divisor in "cfgs" mode,
+  # which takes the CfGS divisor where the bundle states one (yield_large_sites()).
+  by_div <- identical(bundle[["defaults"]][["large_site_dwellings"]], "divisor")
+  ls <- compact(list(area_per_dwelling = if (by_div) z[["cfgs_large_site_area_per_dwelling_m2"]] %||%
+                       z[["large_site_area_per_dwelling_m2"]] else z[["large_site_area_per_dwelling_m2"]],
                      min_area = z[["large_site_min_net_area_m2"]],
                      max_average_area = z[["large_site_max_average_net_area_m2"]]))
   density <- compact(list(
@@ -434,6 +439,13 @@ convert_bundle <- function(path, name) {
                                   setdiff(names(b[["unmodelled_zones"]]), names(b[["alias_map"]]))))
   # Families list codes in capacityengine; plancap families list zone keys.
   x[["zone_families"]] <- lapply(b[["zone_families"]], function(codes) unique(vapply(unlist(codes), zone_key_of, "")))
+  # capacityengine's zone_token_conditions(): these families count only where
+  # the contiguous open space across the boundary is over, or under, 2,000 m2.
+  cond <- list(OPEN_SPACE_OVER_2000_WIDE = list(min_area = 2000), OPEN_SPACE_UNDER_2000 = list(max_area = 2000))
+  for (fn in intersect(names(cond), names(x[["zone_families"]]))) {
+    x[["zone_families"]][[fn]] <- c(list(zones = x[["zone_families"]][[fn]]), cond[[fn]],
+                                    list(source = "capacityengine zone_token_conditions()"))
+  }
   # Families can also be used as adjacency tokens directly; keys of zones used
   # in conditions that are neither zones nor families are reported.
   for (adj in b[["zone_adjacency"]]) {

@@ -203,15 +203,28 @@ adjacency <- function(segments, sites, zoning, zg, rulebook, m) {
   # rules test set membership with a single grepl.
   fams <- rulebook$zone_families %||% list()
   keys <- unique(stats::na.omit(segments$adjacent_zone_key))
+  plain <- names(fams)[!vapply(fams, function(f) is.list(f) && !is.null(f$zones), logical(1))]
   tok <- vapply(keys, function(k) {
-    f <- names(fams)[vapply(fams, function(v) k %in% v, logical(1))]
+    f <- plain[vapply(fams[plain], function(v) k %in% v, logical(1))]
     paste0("|", paste(c(k, f), collapse = "|"), "|")
   }, "")
   segments$adjacent_tokens <- unname(tok[segments$adjacent_zone_key])
+  # Families conditional on the contiguous area of their zones across the
+  # boundary (capacityengine's OPEN_SPACE_UNDER_2000 and _OVER_2000_WIDE):
+  # component labelling on the touching features of those zones, never a
+  # region-wide union.
+  for (fn in setdiff(names(fams), plain)) {
+    f <- fams[[fn]]
+    w <- which(segments$adjacent_zone_key %in% f$zones)
+    if (!length(w)) next
+    area <- contiguous_area(zoning, zg, f$zones, feat[w])
+    ok <- !is.na(area) & area >= (f$min_area %||% 0) & area < (f$max_area %||% Inf)
+    segments$adjacent_tokens[w[ok]] <- paste0(segments$adjacent_tokens[w[ok]], fn, "|")
+  }
 
   # Reserve boundaries: across the boundary is a zone of a reserve family.
   # Recorded as a tag; the boundary keeps its side or rear class.
-  res_zones <- unique(unlist(fams[intersect(m$reserve_families, names(fams))]))
+  res_zones <- unique(unlist(lapply(fams[intersect(m$reserve_families, names(fams))], family_zones)))
   is_res <- !is_road & segments$adjacent_zone_key %in% res_zones
   segments$tags[is_res] <- paste0(segments$tags[is_res], "reserve|")
   # Contiguous area of the reserve across the boundary, for rules that depend
@@ -219,15 +232,23 @@ adjacency <- function(segments, sites, zoning, zg, rulebook, m) {
   # multi-site reserve counts as one).
   segments$adjacent_area <- NA_real_
   if (any(is_res)) {
-    ri <- which(zoning$zone_key %in% res_zones)
-    rg <- zg[ri]
-    comp <- components(length(ri), geos::geos_intersects_matrix(rg, rg))
-    comp_area <- tapply(geos::geos_area(rg), comp, sum)
     w <- which(is_res)
-    f <- match(feat[w], ri)
-    segments$adjacent_area[w] <- as.vector(comp_area[comp[f]])
+    segments$adjacent_area[w] <- contiguous_area(zoning, zg, res_zones, feat[w])
   }
   segments
+}
+
+# Area of the contiguous land of the given zones that each feature belongs to:
+# touching features of those zones are one piece (a commonly zoned reserve
+# across several titles counts as one).
+contiguous_area <- function(zoning, zg, zones, feat) {
+  ri <- which(zoning$zone_key %in% zones)
+  if (!length(ri)) return(rep(NA_real_, length(feat)))
+  rg <- zg[ri]
+  comp <- components(length(ri), geos::geos_intersects_matrix(rg, rg))
+  comp_area <- tapply(geos::geos_area(rg), comp, sum)
+  f <- match(feat, ri)
+  as.vector(comp_area[comp[f]])
 }
 
 # Site membership of overlays or areas: one row per site and overlapping

@@ -21,6 +21,7 @@ reference:
       - rulebook
       - add_rules
       - set_rules
+      - zone_family
       - read_rulebook
       - rulebook_template
       - rulebook_example

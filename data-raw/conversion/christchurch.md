@@ -1,7 +1,7 @@
 # Conversion report: christchurch
 
 Source: `../capacityengine/inst/plans/christchurch/ccc-dp-2025.yaml`  
-Converted: 2026-11-20 13:43
+Converted: 2026-11-20 14:07
 
 Validation: valid, 19 warnings.
 

@@ -1,7 +1,7 @@
 # Conversion report: auckland
 
 Source: `../capacityengine/inst/plans/auckland/aup-oip-2025.yaml`  
-Converted: 2026-11-20 13:43
+Converted: 2026-11-20 14:09
 
 Validation: valid, 97 warnings.
 
@@ -11,11 +11,8 @@ Validation: valid, 97 warnings.
 - `overlays/maunga_viewshaft :: class_field` ("viewshaft_significance")
 - `overlays/special_character/overrides/yards/front :: value_from (yard set from neighbours' existing setbacks; not representable)` ("existing_dwelling_setback_average")
 - `zones/RES_MHS :: cfgs_large_site_area_per_dwelling_m2` (300L)
-- `zones/RES_MHS :: cfgs_large_site_area_per_dwelling_m2 (CfGS fidelity mode only)` 
 - `zones/RES_MHU :: cfgs_large_site_area_per_dwelling_m2` (300L)
-- `zones/RES_MHU :: cfgs_large_site_area_per_dwelling_m2 (CfGS fidelity mode only)` 
 - `zones/RES_THAB :: cfgs_large_site_area_per_dwelling_m2` (300L)
-- `zones/RES_THAB :: cfgs_large_site_area_per_dwelling_m2 (CfGS fidelity mode only)` 
 
 ## Validation issues
 

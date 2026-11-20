@@ -156,7 +156,11 @@ json_shape <- function(x, key = "", depth = 0) {
     return(out)
   }
   if (key %in% array_parent_keys && is.list(x)) {
-    out <- lapply(x, function(e) if (is.atomic(e)) as.list(e) else e)
+    out <- lapply(x, function(e) {
+      if (is.atomic(e)) return(as.list(e))
+      if (!is.null(names(e)) && !is.null(e$zones)) e$zones <- as.list(e$zones)
+      e
+    })
     if (!length(out)) out <- structure(list(), names = character(0))
     return(out)
   }
@@ -193,7 +197,12 @@ normalise_rulebook <- function(x) {
             is.list(v) && all(vapply(v, is_string, logical(1)))) {
           y[[nm]] <- unlist(v)
         } else if (nm %in% array_parent_keys && is.list(v)) {
-          y[[nm]] <- lapply(v, function(e) if (is.list(e)) unlist(e) else e)
+          y[[nm]] <- lapply(v, function(e) {
+            if (is.list(e) && !is.null(names(e)) && !is.null(e$zones)) {
+              e$zones <- unlist(e$zones)
+              e
+            } else if (is.list(e)) unlist(e) else e
+          })
         } else if (nm == "facing" && is.list(v)) {
           y[[nm]] <- unlist(v)
         } else if (nm == "points") {

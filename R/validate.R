@@ -60,7 +60,7 @@ validate_rulebook <- function(rb) {
     }
   }
   for (f in fams) {
-    bad <- setdiff(rb$zone_families[[f]], zones)
+    bad <- setdiff(family_zones(rb$zone_families[[f]]), zones)
     if (length(bad)) {
       add("error", paste0("/zone_families/", f), paste0("unknown zone(s): ", paste(bad, collapse = ", ")))
     }
