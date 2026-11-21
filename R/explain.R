@@ -37,8 +37,11 @@ explain_site <- function(cap, site_id) {
   rb <- x$rulebook
   opts <- cap$options[intersect(names(cap$options), c("variant_choice", "max_storeys"))]
   env <- do.call(build_envelopes, c(list(x, include_density = TRUE, keep_setbacks = TRUE, .only = site_id), opts))
-  seg <- sf::st_drop_geometry(prep$segments)
-  seg <- seg[seg$site_id == site_id, , drop = FALSE]
+  # The segments as the engine used them: cut at any frontage-distance trigger.
+  res <- resolve_sites(prep, rb)
+  choice <- opts$variant_choice %||% rb$variant_choice %||% "max"
+  seg <- sf::st_drop_geometry(split_frontage_triggers(prep$segments[prep$segments$site_id == site_id, ], res,
+                                                      prep$sites$site_id, choice = choice))
   keep <- intersect(c("segment_id", "boundary_class", "tags", "length", "outward_bearing", "adjacent_zone_key",
                       "adjacent_zone_code", "road_shared_length", "water_distance", "ground",
                       "existing_front_setback"), names(seg))

@@ -1,0 +1,44 @@
+# Exampleton Plan Change 1 (as notified): the worked plan change.
+#
+# Fictional. Written as a set of changes to the operative plan
+# (exampleton.yaml), the way a plan change is: MDR's height rises from 12 m
+# to 16 m, and a new Terraced Housing zone is created for the blocks near the
+# station. The map changes (the rezoning, a wider flood plain and one block
+# re-subdivided) are in exampleton_pc1(); see the "Comparing plan changes"
+# vignette.
+
+extends: exampleton.yaml
+
+plan:
+  id: exampleton-pc1-2026
+  name: "Exampleton District Plan, Plan Change 1 (as notified)"
+  effective_date: "2026-09-01"
+  source: "Exampleton Plan Change 1 (fictional), notified 1 September 2026"
+
+zone_map:
+  THZ: THZ
+
+zone_families:
+  RESIDENTIAL: [LDR, MDR, THZ, HDR]
+
+zones:
+  MDR:
+    height: {value: 16, occupiable: 15, roof_allowance: 1, storeys: 4,
+             source: "PC1 MDR-S1: 15 m, plus 1 m for a pitched roof"}
+
+  THZ:
+    label: Terraced Housing
+    method: volumetric
+    height: {value: 14, occupiable: 13, roof_allowance: 1, storeys: 4,
+             source: "PC1 THZ-S1: 13 m, plus 1 m for a pitched roof"}
+    setbacks:
+      - {kind: yard, distance: 1.5, boundaries: [road], source: "PC1 THZ-S3"}
+      - {kind: yard, distance: 20, boundaries: [riparian], source: "EDP NATC-S1"}
+      - {kind: plane, angle_deg: 60, start_height: 6, boundaries: [side, rear],
+         when: {beyond_frontage: 20}, source: "PC1 THZ-S2: beyond 20 m of the road"}
+    ratios:
+      coverage_max: {value: 0.6, source: "PC1 THZ-S4"}
+      landscaping_min: {value: 0.15, source: "PC1 THZ-S5"}
+    density: {min_dwelling_size: 35, source: "PC1 THZ-S8"}
+    use: {residential: true, business: false, residential_share: 1}
+    source: "PC1 Chapter THZ"

@@ -1,6 +1,6 @@
 # Wellington City District Plan 2024 (Wellington)
 #
-# Converted from capacityengine's wcc-dp-2024.yaml on 2026-11-20.
+# Converted from capacityengine's wcc-dp-2024.yaml on 2026-11-21.
 # A dated worked example, maintained by the package author: check the plan
 # itself before relying on any value. Values carry their rule citation where
 # the source bundle recorded one (validate_rulebook() lists those without).
@@ -19,7 +19,7 @@ plan:
   source: Wellington City 2024 District Plan, ePlan revision 154 (16 October 2026),
     read 29 October 2026
   notes: Converted from the capacityengine bundle wcc-dp-2024.yaml by plancap data-raw/convert_capacityengine.R
-    on 2026-11-20. Precinct areas match a precinct_key column holding the normalised
+    on 2026-11-21. Precinct areas match a precinct_key column holding the normalised
     precinct name.
 defaults:
   storey_height: 3.0

@@ -124,8 +124,25 @@ Status (20 November 2026):
   Vignettes "Getting started" and "Summaries" drafted (knit locally; CI
   builds them). 444 expectations.
 
-  **Next: stage 6** (scenarios and comparison: compare_scenarios(),
-  crosswalk, attribution, Exampleton PC1, AKL PC120 test-only).
+- **Stage 6 built**: scenario_set(), run_scenarios() (incremental),
+  read_scenarios() (YAML manifests), compare_scenarios() (landholding units:
+  matched sites with reason codes, changed parcels apportioned by area,
+  scenario-only land kept; zone transitions; by zone / height / areas /
+  grid; land reconciliation; sequential or Shapley attribution over rules,
+  zoning, layers, parcels, with a warning where an intermediate scenario
+  zones land to a zone its rulebook lacks; per-rule split of the rules
+  driver), diff_inputs(), check_comparison(); Exampleton PC1
+  (data-raw/exampleton_pc1.R, inst/extdata/exampleton_pc1.gpkg and
+  _scenarios.yaml, inst/rulebooks/exampleton_pc1.yaml); vignette "Comparing
+  plan changes". Engine: frontage-trigger splits (item 321), per-site
+  exclusion signatures. **Gates met**: on Exampleton PC1 an incremental run
+  equals a full run and drivers sum to the change; on Auckland, operative
+  against PC120 (data-raw/gate/export_ce_pc120.R, compare_pc120.R; PC120
+  rulebook converted test-only into data-raw/cache) matches capacityengine's
+  change exactly on all 2,668 landholdings (+75,092 m2, +387 dwellings), and
+  the operative tile is still exact in all four modes. 494 expectations.
+
+  **Next: stage 7** (plots and theme, including comparison plots).
 
   *(Earlier note)* **Stage 4, part 3**: stepped terrain (item 318) and boundary runs
   (item 299); site shape factor (item 324); tower controls; then the tile

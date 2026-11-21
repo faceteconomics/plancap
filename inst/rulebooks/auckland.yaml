@@ -1,6 +1,6 @@
 # Auckland Unitary Plan (Operative in part) (Auckland)
 #
-# Converted from capacityengine's aup-oip-2025.yaml on 2026-11-20.
+# Converted from capacityengine's aup-oip-2025.yaml on 2026-11-21.
 # A dated worked example, maintained by the package author: check the plan
 # itself before relying on any value. Values carry their rule citation where
 # the source bundle recorded one (validate_rulebook() lists those without).
@@ -18,7 +18,7 @@ plan:
   hemisphere: south
   source: Auckland Unitary Plan (Operative in Part), chapter text July 2026
   notes: Converted from the capacityengine bundle aup-oip-2025.yaml by plancap data-raw/convert_capacityengine.R
-    on 2026-11-20. Precinct areas match a precinct_key column holding the normalised
+    on 2026-11-21. Precinct areas match a precinct_key column holding the normalised
     precinct name.
 defaults:
   storey_height: 3.0

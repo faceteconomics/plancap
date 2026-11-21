@@ -1,7 +1,7 @@
 # Conversion report: auckland
 
 Source: `../capacityengine/inst/plans/auckland/aup-oip-2025.yaml`  
-Converted: 2026-11-20 20:32
+Converted: 2026-11-21 16:45
 
 Validation: valid, 97 warnings.
 

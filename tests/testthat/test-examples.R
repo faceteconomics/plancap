@@ -1,5 +1,5 @@
 test_that("every shipped rulebook is valid", {
-  expect_setequal(rulebook_examples(), c("auckland", "christchurch", "exampleton", "wellington"))
+  expect_setequal(rulebook_examples(), c("auckland", "christchurch", "exampleton", "exampleton_pc1", "wellington"))
   for (nm in rulebook_examples()) {
     rb <- rulebook_example(nm)
     v <- validate_rulebook(rb)

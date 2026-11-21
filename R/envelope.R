@@ -104,7 +104,9 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
                    version = as.character(utils::packageVersion("plancap")))
 
   excl <- exclusion_layers(rb, layers, sf::st_crs(prep$sites))
-  settings$exclusion_hash <- rlang::hash(lapply(excl, function(e) wk::as_wkb(e$geom)))
+  # Exclusion land enters each site's signature as the land on that site, so
+  # a changed exclusion layer reaches only the sites it touches.
+  settings$exclusion_hash <- rlang::hash(lapply(excl, function(e) e[setdiff(names(e), "geom")]))
   surf <- sample_surfaces(prep, rb, layers, dflt)
   mods <- surf$mods
   if (!is.null(height_add) && length(height_add)) {
@@ -121,9 +123,12 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
     prep$segments$existing_front_setback <- front$values$setback[match(prep$segments$segment_id,
                                                                        front$values$segment_id)]
   }
+  # Side and rear boundaries are cut where they cross a distance from the
+  # road that a rule switches at, so each part takes its own rule.
+  prep$segments <- split_frontage_triggers(prep$segments, res, prep$sites$site_id, choice = choice)
   sites <- prep$sites
   s_df <- sf::st_drop_geometry(sites)
-  sig <- site_signatures(prep, res, settings, surf$bands)
+  sig <- site_signatures(prep, res, settings, surf$bands, excl)
 
   todo <- seq_len(nrow(sites))
   if (!is.null(.only)) todo <- which(sites$site_id %in% .only)
@@ -138,7 +143,8 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
                         keep_setbacks = keep_setbacks)
   if (length(copied)) {
     ids <- sites$site_id[copied]
-    core$stack <- rbind(core$stack, baseline$stack[baseline$stack$site_id %in% ids, names(core$stack)])
+    cols <- intersect(names(core$stack), names(baseline$stack))
+    core$stack <- rbind(core$stack[cols], baseline$stack[baseline$stack$site_id %in% ids, cols])
     core$variants <- rbind(core$variants, baseline$variants[baseline$variants$site_id %in% ids, names(core$variants)])
     if (is.null(core$removed)) core$removed <- stats::setNames(rep(0, nrow(sites)), sites$site_id)
     core$removed[ids] <- baseline$sites$removed_area[match(ids, baseline$sites$site_id)]
@@ -166,7 +172,7 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
 
 # ---- Signatures --------------------------------------------------------------
 
-site_signatures <- function(prep, res, settings, bands = NULL) {
+site_signatures <- function(prep, res, settings, bands = NULL, excl = list()) {
   s <- prep$sites
   seg <- sf::st_drop_geometry(prep$segments)
   cols <- intersect(c("boundary_class", "tags", "x0", "y0", "x1", "y1", "outward_bearing",
@@ -186,10 +192,18 @@ site_signatures <- function(prep, res, settings, bands = NULL) {
   w_sig <- rlang::hash(prep$water)
   band_by <- if (!is.null(bands) && nrow(bands)) split(paste(bands$upper, round(geos::geos_area(bands$geom), 3)),
                                                       factor(bands$site_id, levels = s$site_id)) else list()
+  ex_by <- vector("list", nrow(s))
+  if (length(excl)) {
+    sg <- as_geos(s)
+    for (e in excl) {
+      hit <- which(geos::geos_intersects(sg, rep(e$geom, length(sg))))
+      for (i in hit) ex_by[[i]] <- c(ex_by[[i]], round(geos::geos_area(geos::geos_intersection(sg[i], e$geom)), 3))
+    }
+  }
   vapply(seq_len(nrow(s)), function(i) {
     if (is.na(res$param_id[i])) return(NA_character_)
     rlang::hash(list(unclass(wkb[[i]]), seg_by[[i]], attrs[i, ], leg_by[[i]], dist_by[[i]],
-                     res$param_id[i], env_settings, w_sig, band_by[[s$site_id[i]]]))
+                     res$param_id[i], env_settings, w_sig, band_by[[s$site_id[i]]], ex_by[[i]]))
   }, "")
 }
 
@@ -199,7 +213,7 @@ envelope_core <- function(prep, res, rb, settings, idx, excl = list(), bands = N
                           keep_setbacks) {
   sites <- prep$sites
   s_df <- sf::st_drop_geometry(sites)
-  empty <- list(stack = empty_stack_df(), variants = data.frame(site_id = character(),
+  empty <- list(stack = cbind(empty_stack_df(), residential_excluded = numeric()), variants = data.frame(site_id = character(),
            variant = character(), floor_area = numeric(), stringsAsFactors = FALSE),
            geometry = NULL, setbacks = NULL, report = list())
   params <- res$params
@@ -935,6 +949,8 @@ surface_bands <- function(sites, r, ground, floor_value) {
   val <- ex[[2]]
   ex <- ex[!is.na(val), , drop = FALSE]
   if (!nrow(ex)) return(NULL)
+  ex <- ex[!is.na(ground[ex$ID]), , drop = FALSE]
+  if (!nrow(ex)) return(NULL)
   above <- pmax(ex[[2]] - ground[ex$ID], floor_value %||% 0)
   upper <- floor(above * 2) / 2
   h <- terra::res(r) / 2
@@ -1172,4 +1188,88 @@ ground_planes <- function(geom, site_idx, z, site_geom, max_slope = 0.5) {
     out$gy[over] <- out$gy[over] * max_slope / mag[over]
   }
   out
+}
+
+# ---- Frontage-distance triggers ---------------------------------------------------
+
+# Cut each side or rear segment whose ends lie either side of a distance from
+# the road that one of its site's rules switches at (`within_frontage`,
+# `beyond_frontage`), at the point where its straight-line distance to the
+# site's road boundary equals it (bisection). The pieces keep the parent's
+# attributes and ground, take ids "<parent>~1" and "<parent>~2", and get
+# their own midpoint distance (capacityengine item 321).
+split_frontage_triggers <- function(segments, res, site_ids, choice = "max", iterations = 30L) {
+  if (!nrow(segments)) return(segments)
+  # Only the standards being built: all of them where each site takes the
+  # most (or least) enabling, otherwise the one named.
+  in_play <- function(s) is.null(s$variant) || choice %in% c("max", "min") || identical(s$variant, choice)
+  thr <- lapply(res$params, function(z) {
+    v <- unlist(lapply(Filter(in_play, z$setbacks %||% list()), function(s) c(s$when$within_frontage, s$when$beyond_frontage)))
+    unique(as.numeric(v))
+  })
+  if (!any(lengths(thr))) return(segments)
+  is_road <- segments$boundary_class %in% "road"
+  if (!any(is_road)) return(segments)
+  for (T in sort(unique(unlist(thr)))) {
+    g <- as_geos(segments)
+    is_road <- segments$boundary_class %in% "road"
+    rs <- segments$site_id[is_road]
+    ord <- order(rs)
+    us <- unique(rs[ord])
+    fronts <- geos::geos_make_collection(g[is_road][ord], feature_id = match(rs[ord], us))
+    pid <- res$param_id[match(segments$site_id, site_ids)]
+    has_t <- vapply(pid, function(p) !is.na(p) && T %in% thr[[p]], TRUE)
+    front_of <- match(segments$site_id, us)
+    cand <- which(has_t & segments$boundary_class %in% c("side", "rear") & !is.na(front_of))
+    if (!length(cand)) next
+    fr <- fronts[front_of[cand]]
+    x0 <- segments$x0[cand]; y0 <- segments$y0[cand]; x1 <- segments$x1[cand]; y1 <- segments$y1[cand]
+    pt <- function(x, y) geos::geos_make_point(x, y, crs = wk::wk_crs(g))
+    d0 <- geos::geos_distance(pt(x0, y0), fr)
+    d1 <- geos::geos_distance(pt(x1, y1), fr)
+    cross <- (d0 - T) * (d1 - T) < 0 & pmin(abs(d0 - T), abs(d1 - T)) > 0.05
+    if (!any(cross)) next
+    k <- cand[cross]
+    fr <- fr[cross]
+    x0 <- x0[cross]; y0 <- y0[cross]; x1 <- x1[cross]; y1 <- y1[cross]
+    up <- d1[cross] > d0[cross]
+    lo <- rep(0, length(k))
+    hi <- rep(1, length(k))
+    for (it in seq_len(iterations)) {
+      t <- (lo + hi) / 2
+      d <- geos::geos_distance(pt(x0 + t * (x1 - x0), y0 + t * (y1 - y0)), fr)
+      below <- d < T
+      go_up <- below == up
+      lo[go_up] <- t[go_up]
+      hi[!go_up] <- t[!go_up]
+    }
+    t <- (lo + hi) / 2
+    xm <- x0 + t * (x1 - x0)
+    ym <- y0 + t * (y1 - y0)
+    a <- segments[k, ]
+    b <- segments[k, ]
+    a$x1 <- xm; a$y1 <- ym
+    b$x0 <- xm; b$y0 <- ym
+    a$segment_id <- paste0(segments$segment_id[k], "~1")
+    b$segment_id <- paste0(segments$segment_id[k], "~2")
+    line <- function(xa, ya, xb, yb) {
+      n <- length(xa)
+      geos::geos_make_linestring(c(rbind(xa, xb)), c(rbind(ya, yb)), feature_id = rep(seq_len(n), each = 2),
+                                 crs = wk::wk_crs(g))
+    }
+    ga <- line(x0, y0, xm, ym)
+    gb <- line(xm, ym, x1, y1)
+    a$length <- geos::geos_length(ga)
+    b$length <- geos::geos_length(gb)
+    a$dist_from_frontage <- geos::geos_distance(geos::geos_interpolate_normalized(ga, 0.5), fr)
+    b$dist_from_frontage <- geos::geos_distance(geos::geos_interpolate_normalized(gb, 0.5), fr)
+    sf::st_geometry(a) <- sf::st_as_sfc(ga)
+    sf::st_geometry(b) <- sf::st_as_sfc(gb)
+    # Pieces in place of their parent, in boundary order.
+    keep <- segments[-k, ]
+    pos <- c(seq_len(nrow(segments))[-k], k, k + 0.5)
+    segments <- rbind(keep, a, b)[order(pos), ]
+  }
+  rownames(segments) <- NULL
+  segments
 }

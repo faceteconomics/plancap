@@ -34,6 +34,34 @@ plancap's totals equal capacityengine's in each mode, and every site matches
 floor area to 0.01 m2 and dwellings exactly. A run takes 36 s flat and 50 s
 with terrain and surfaces.
 
+## Stage 6: operative against PC120
+
+`export_ce_pc120.R` (in capacityengine) writes capacityengine's PC120
+residential bundle with its `extends:` merged, and the tile under PC120's
+zone map with capacityengine's result; `convert_capacityengine.R
+../capacityengine pc120` converts the bundle into `data-raw/cache` (test
+only, not shipped); `compare_pc120.R` runs both scenarios with
+`run_scenarios()` and `compare_scenarios()` (terrain, surfaces and the
+measured front yard on) and checks the change landholding by landholding.
+
+| | capacityengine | plancap |
+|---|---|---|
+| Floor area, operative to PC120 | 1,645,691 to 1,720,783 m2 (+75,092) | the same |
+| Dwellings | 6,178 to 6,565 (+387) | the same |
+| Landholdings whose change matches | | 2,668 of 2,668 |
+
+Drivers (sequential): rules +65,061 m2, zoning +10,383 m2, parcels -352 m2
+(capacityengine's zone-split pieces differ between the two maps). Every view
+of the comparison reconciles (`check_comparison()`).
+
+Found and fixed on the way: a side or rear boundary is cut where it crosses
+a frontage-distance trigger, so PC120's planes within and beyond 21.5 m (and
+MHU's within and beyond 20 m) each take their part (capacityengine item
+321), for the standards being built only; the converter now carries
+`applies_to_rear_sites: true` as "rear sites only" (it had applied PC120's
+rear-site plane to every site); zone transitions divide by the overlaps
+where a site's overlaps exceed its area.
+
 ## What the gate found and fixed in plancap
 
 Stage 4, part 3 (flat ground):

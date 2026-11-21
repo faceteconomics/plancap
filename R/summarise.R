@@ -123,6 +123,8 @@ by_columns <- function(by) {
 site_frame <- function(cap, by, areas, area_id, grid, breaks) {
   s <- cap$sites
   d <- sf::st_drop_geometry(s)
+  # Land area under its own name, so a grouping called "area" cannot replace it.
+  d$.land <- d$area
   br <- utils::modifyList(band_defaults(), breaks)
   if ("height_band" %in% by) d$height_band <- make_band(ifelse(is.na(d$height), 0, d$height), br$height, " m")
   if ("site_size_band" %in% by) d$site_size_band <- make_band(d$area, br$site_size, " m2")
@@ -177,13 +179,13 @@ group_measures <- function(d, keys, measures) {
   for (m in measures) {
     out[[m]] <- switch(m,
       sites = lengths(idx),
-      land_area = sm("area"),
+      land_area = sm(".land"),
       floor_area_mean = vapply(idx, function(i) mean(d$floor_area[i]), 0),
       floor_area_median = vapply(idx, function(i) stats::median(d$floor_area[i]), 0),
       dwellings_mean = vapply(idx, function(i) mean(d$dwellings[i]), 0),
-      far = sm("floor_area") / pmax(sm("area"), 1e-9),
-      floor_area_per_ha = sm("floor_area") / pmax(sm("area"), 1e-9) * 10000,
-      dwellings_per_ha = sm("dwellings") / pmax(sm("area"), 1e-9) * 10000,
+      far = sm("floor_area") / pmax(sm(".land"), 1e-9),
+      floor_area_per_ha = sm("floor_area") / pmax(sm(".land"), 1e-9) * 10000,
+      dwellings_per_ha = sm("dwellings") / pmax(sm(".land"), 1e-9) * 10000,
       floor_area_share = if (tot_fa > 0) sm("floor_area") / tot_fa else 0,
       dwellings_share = if (tot_dw > 0) sm("dwellings") / tot_dw else 0,
       sm(m))
@@ -206,7 +208,7 @@ summarise_by_storey <- function(cap, by, measures, breaks) {
                   residential_floor_area = st$residential_area, business_floor_area = st$business_area)
   for (k in keys) x[[k]] <- d[[k]][i]
   x$dwellings <- 0
-  x$area <- 0
+  x$.land <- 0
   out <- group_measures(x, c(keys, "storey"), measures)
   structure_summary(out, c(keys, "storey"), measures, cap)
 }

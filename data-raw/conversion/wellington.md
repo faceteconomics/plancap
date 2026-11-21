@@ -1,7 +1,7 @@
 # Conversion report: wellington
 
 Source: `../capacityengine/inst/plans/wellington/wcc-dp-2024.yaml`  
-Converted: 2026-11-20 20:32
+Converted: 2026-11-21 16:45
 
 Validation: valid, 6 warnings.
 

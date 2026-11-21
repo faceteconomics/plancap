@@ -33,11 +33,20 @@ bundles <- c(
   auckland = file.path(ce, "inst/plans/auckland/aup-oip-2025.yaml")
 )
 if (length(args) > 1) bundles <- bundles[args[-1]]
+# Test-only: Auckland PC120 (residential standards), from the merged bundle
+# data-raw/gate/export_ce_pc120.R writes; converted into data-raw/cache, not
+# shipped. Rscript data-raw/convert_capacityengine.R ../capacityengine pc120
+out_dir <- "inst/rulebooks"
+if (identical(args[-1], "pc120")) {
+  bundles <- c(auckland_pc120 = "data-raw/cache/pc120_res_bundle.yaml")
+  out_dir <- "data-raw/cache"
+}
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
 plan_names <- c(wellington = "Wellington City District Plan 2024",
                 christchurch = "Christchurch District Plan",
-                auckland = "Auckland Unitary Plan (Operative in part)")
+                auckland = "Auckland Unitary Plan (Operative in part)",
+                auckland_pc120 = "Auckland Unitary Plan, PC120 residential standards (test only)")
 compact <- function(x) x[!vapply(x, is.null, logical(1))]
 
 # ---- Report of what could not be carried across ------------------------------
@@ -53,7 +62,9 @@ drop <- function(where, field, value = NULL) {
 conv_when <- function(r, where) {
   w <- compact(list(
     min_site_area = r[["min_site_area_m2"]], max_site_area = r[["max_site_area_m2"]],
-    rear_sites = if (isFALSE(r[["applies_to_rear_sites"]])) "exclude",
+    # capacityengine tests applies_to_rear_sites for equality: true means rear
+    # sites only, false all but rear sites.
+    rear_sites = if (isFALSE(r[["applies_to_rear_sites"]])) "exclude" else if (isTRUE(r[["applies_to_rear_sites"]])) "only",
     within_frontage = r[["from_frontage_max_m"]], beyond_frontage = r[["from_frontage_min_m"]],
     frontage_depth_share = r[["frontage_depth_share"]],
     adjacent_zones = r[["adjacent_zones"]], not_adjacent_zones = r[["except_adjacent_zones"]],
@@ -495,7 +506,7 @@ for (nm in names(bundles)) {
   rb <- res[["rulebook"]]
   v <- validate_rulebook(rb)
   print(v)
-  out <- file.path("inst/rulebooks", paste0(nm, ".yaml"))
+  out <- file.path(out_dir, paste0(nm, ".yaml"))
   write_rulebook(rb, out)
   hdr <- c(
     paste0("# ", rb[["plan"]][["name"]], " (", rb[["plan"]][["jurisdiction"]], ")"),
@@ -517,7 +528,7 @@ for (nm in names(bundles)) {
            if (length(res[["dropped"]])) paste0("- `", names(res[["dropped"]]), "` ", ifelse(nzchar(res[["dropped"]]), paste0("(", res[["dropped"]], ")"), "")) else "None.",
            "", "## Validation issues", "",
            if (nrow(v[["issues"]])) paste0("- ", v[["issues"]][["severity"]], ": `", v[["issues"]][["path"]], "` ", v[["issues"]][["message"]]) else "None.")
-  writeLines(rep, file.path("data-raw/conversion", paste0(nm, ".md")))
+  writeLines(rep, file.path(if (out_dir == "inst/rulebooks") "data-raw/conversion" else out_dir, paste0(nm, ".md")))
   cat(length(res[["dropped"]]), "fields dropped;", length(rb[["zones"]]), "zones,", length(rb[["overlays"]]),
       "overlays,", length(rb[["areas"]]), "areas\n")
 }

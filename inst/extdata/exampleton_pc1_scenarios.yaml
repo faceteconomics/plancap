@@ -1,0 +1,26 @@
+# Exampleton's operative plan and Plan Change 1, as a scenario manifest.
+# Read with read_scenarios(); compare with compare_scenarios(run_scenarios(set)).
+
+scenarios:
+  - name: Operative
+    rulebook: example:exampleton
+    parcels: {path: exampleton.gpkg, layer: parcels, filter: {parcel_type: land}}
+    roads: {path: exampleton.gpkg, layer: parcels, filter: {parcel_type: road}}
+    zoning: {path: exampleton.gpkg, layer: zoning}
+    water: {path: exampleton.gpkg, layer: water}
+    centrelines: {path: exampleton.gpkg, layer: road_centrelines}
+    layers:
+      height_areas: {path: exampleton.gpkg, layer: height_areas}
+      flood_hazard: {path: exampleton.gpkg, layer: flood_hazard}
+      heritage: {path: exampleton.gpkg, layer: heritage}
+      trees: {path: exampleton.gpkg, layer: trees}
+      precincts: {path: exampleton.gpkg, layer: precincts}
+      transit: {path: exampleton.gpkg, layer: transit}
+
+  - name: PC1 as notified
+    changes: Operative
+    rulebook: example:exampleton_pc1
+    zoning: {path: exampleton_pc1.gpkg, layer: zoning}
+    parcels: {path: exampleton_pc1.gpkg, layer: parcels, filter: {parcel_type: land}}
+    layers:
+      flood_hazard: {path: exampleton_pc1.gpkg, layer: flood_hazard}

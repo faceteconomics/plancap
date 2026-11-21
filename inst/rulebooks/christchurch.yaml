@@ -1,6 +1,6 @@
 # Christchurch District Plan (Christchurch)
 #
-# Converted from capacityengine's ccc-dp-2025.yaml on 2026-11-20.
+# Converted from capacityengine's ccc-dp-2025.yaml on 2026-11-21.
 # A dated worked example, maintained by the package author: check the plan
 # itself before relying on any value. Values carry their rule citation where
 # the source bundle recorded one (validate_rulebook() lists those without).
@@ -19,7 +19,7 @@ plan:
   source: Christchurch District Plan, ePlan text as updated 19 September 2025, read
     26 October 2026
   notes: Converted from the capacityengine bundle ccc-dp-2025.yaml by plancap data-raw/convert_capacityengine.R
-    on 2026-11-20. Precinct areas match a precinct_key column holding the normalised
+    on 2026-11-21. Precinct areas match a precinct_key column holding the normalised
     precinct name.
 defaults:
   storey_height: 3.0
