@@ -5,7 +5,7 @@ template:
   light-switch: true
 
 home:
-  title: plancap — plan-enabled development capacity
+  title: "plancap: plan-enabled development capacity"
 
 navbar:
   structure:
@@ -78,6 +78,21 @@ reference:
     contents:
       - estimate_capacity
       - site_shape_factor
+  - title: Summaries and checks
+    desc: >
+      Capacity by zone, height, site size, location or binding constraint;
+      the floor area each kind of rule removes; one site explained; a rule
+      swept through values; reconciliation; the register of rules not
+      modelled.
+    contents:
+      - summarise_capacity
+      - summary.plancap_capacity
+      - capacity_table
+      - constraint_breakdown
+      - explain_site
+      - sensitivity
+      - check_capacity
+      - unmodelled_report
   - title: Site and boundary types
     desc: >
       Road frontages, side and rear boundaries, corner, through and rear

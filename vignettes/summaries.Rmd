@@ -1,0 +1,102 @@
+---
+title: "Summaries"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Summaries}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+Every breakdown of a capacity result comes from one function,
+`summarise_capacity()`, with a `by` argument for what to group by and a
+`measures` argument for what to report. Each site is counted once, in one
+group, so groups always add to the total. (Plots of these summaries come in
+a later version.)
+
+```{r setup}
+library(plancap)
+town <- exampleton()
+sc <- scenario("Operative", rulebook_example("exampleton"),
+               parcels = town$parcels[town$parcels$parcel_type == "land", ],
+               roads = town$parcels[town$parcels$parcel_type == "road", ],
+               zoning = town$zoning,
+               layers = town[c("height_areas", "flood_hazard", "heritage", "trees",
+                               "precincts", "transit")],
+               water = town$water, centrelines = town$road_centrelines)
+cap <- estimate_capacity(sc)
+```
+
+## By zone
+
+```{r}
+summarise_capacity(cap, by = "zone")
+```
+
+The measures available are listed in `?summarise_capacity`; per hectare
+measures are of land:
+
+```{r}
+summarise_capacity(cap, by = "zone",
+                   measures = c("sites", "dwellings", "dwellings_per_ha", "floor_area_mean"))
+```
+
+## By height, site size and storey
+
+`height_band`, `site_size_band` and `far_band` group sites into bands
+(`breaks` changes them). `by = "storey"` is different: it is floor area **by
+storey level**, so it shows where capacity sits vertically.
+
+```{r}
+summarise_capacity(cap, by = c("zone", "height_band"), measures = c("sites", "floor_area"))
+summarise_capacity(cap, by = "storey")
+```
+
+## By location
+
+Give polygons as `areas` (each site goes to the area covering most of it),
+or a cell size as `grid`. A spatial summary comes back with the areas'
+geometry, ready to map.
+
+```{r}
+cells <- summarise_capacity(cap, by = "grid", grid = 250, measures = c("sites", "floor_area"))
+cells[order(-cells$floor_area), ][1:5, ]
+```
+
+## What limits capacity
+
+`by = "binding"` groups sites by the rule that limits their dwellings, and
+`constraint_breakdown()` follows the floor area from a theoretical maximum
+(every site built over its whole area to every storey its height allows)
+down to what is enabled, rule by rule. The steps add up exactly.
+
+```{r}
+summarise_capacity(cap, by = "binding", measures = c("sites", "dwellings"))
+constraint_breakdown(cap)
+```
+
+## Sweeping a rule
+
+`sensitivity()` runs capacity with a rule at each of a set of values; runs
+after the first rebuild only the sites the rule reaches.
+
+```{r}
+sensitivity(sc, "zones.MDR.ratios.coverage_max.value", c(0.4, 0.5, 0.6))
+```
+
+## For a report
+
+`capacity_table()` formats any summary as a table with a note on what the
+figures are, and `unmodelled_report()` lists the rules the rulebook does
+not model, with the likely direction of their effect.
+
+```{r, eval = requireNamespace("gt", quietly = TRUE)}
+capacity_table(summarise_capacity(cap, by = "zone", measures = c("sites", "floor_area", "dwellings")))
+```
+
+```{r}
+unmodelled_report(cap)[, c("rule", "likely_effect")]
+```

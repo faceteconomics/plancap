@@ -1,0 +1,97 @@
+---
+title: "Getting started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+plancap estimates the floor area and dwellings that planning rules enable on
+each parcel of land. You give it three things:
+
+1. a **rulebook**: every zone, overlay and precinct rule, each with its
+   citation;
+2. the **parcels**, with the roads around them;
+3. the **maps** the rules refer to: zoning, and any overlay or area layers.
+
+It returns, for every site, the stack of storeys the rules allow, its floor
+area and the dwellings that floor area holds, with the rule that limited
+each. This vignette runs the whole chain on Exampleton, a synthetic town
+that ships with the package.
+
+```{r setup}
+library(plancap)
+```
+
+## The town and its plan
+
+```{r}
+town <- exampleton()
+names(town)
+rb <- rulebook_example("exampleton")
+rb
+```
+
+`rule_table()` lists every rule with its source:
+
+```{r}
+head(rule_table(rb)[, c("zone", "rule", "value", "source")], 8)
+```
+
+## A scenario
+
+A **scenario** is everything that determines capacity: the rulebook, the
+parcels, roads and water, the zoning, and the layers the rulebook's
+overlays and areas refer to.
+
+```{r}
+sc <- scenario("Operative", rb,
+               parcels = town$parcels[town$parcels$parcel_type == "land", ],
+               roads = town$parcels[town$parcels$parcel_type == "road", ],
+               zoning = town$zoning,
+               layers = town[c("height_areas", "flood_hazard", "heritage", "trees",
+                               "precincts", "transit")],
+               water = town$water, centrelines = town$road_centrelines)
+sc
+```
+
+## Capacity
+
+```{r}
+cap <- estimate_capacity(sc)
+cap
+summary(cap)
+```
+
+## Checking the result
+
+`check_capacity()` reconciles the run: every parcel accounted for, land in
+equal to land out, floor area by storey adding to floor area by site, and
+any warnings from the engine.
+
+```{r}
+check_capacity(cap)
+```
+
+## Why a site has what it has
+
+`explain_site()` gives the account for one site: the rules that apply, each
+boundary with the setback set at each storey and its citation, and what
+bound each storey.
+
+```{r}
+explain_site(cap, "P00001")
+```
+
+## Next
+
+- *Summaries* (`vignette("summaries", package = "plancap")`): capacity by
+  zone, height, site size, location and binding constraint, the constraint
+  breakdown, and sweeping a rule with `sensitivity()`.
+- Plan changes are compared as scenarios: `scenario_change()` describes a
+  change from a base scenario.

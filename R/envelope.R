@@ -56,6 +56,8 @@
 #'   storey, so meant for a few sites, not a region.
 #' @param baseline An earlier `plancap_envelope` to copy unchanged sites from.
 #' @param max_storeys Guard against a runaway height (not a plan rule).
+#' @param .only Internal: site ids to build (others are left out), as
+#'   [explain_site()] uses to rebuild one site.
 #' @param height_add Optional named numeric vector, by site id: metres of
 #'   extra height (as a height bonus gives), added to total and occupiable
 #'   height.
@@ -76,7 +78,7 @@
 #' head(env$sites)
 build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_density = FALSE,
                             keep_geometry = FALSE, keep_setbacks = FALSE, baseline = NULL,
-                            max_storeys = 60, height_add = NULL) {
+                            max_storeys = 60, height_add = NULL, .only = NULL) {
   layers <- list()
   if (inherits(x, "plancap_scenario")) {
     rulebook <- x$rulebook
@@ -124,6 +126,7 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
   sig <- site_signatures(prep, res, settings, surf$bands)
 
   todo <- seq_len(nrow(sites))
+  if (!is.null(.only)) todo <- which(sites$site_id %in% .only)
   copied <- integer()
   if (!is.null(baseline)) {
     same <- !is.na(sig) & sig == baseline$signatures[sites$site_id]
@@ -141,6 +144,8 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
     core$removed[ids] <- baseline$sites$removed_area[match(ids, baseline$sites$site_id)]
     if (is.null(core$water_share)) core$water_share <- stats::setNames(rep(0, nrow(sites)), sites$site_id)
     core$water_share[ids] <- baseline$sites$water_yard_share[match(ids, baseline$sites$site_id)]
+    if (is.null(core$allowed)) core$allowed <- stats::setNames(rep(0, nrow(sites)), sites$site_id)
+    core$allowed[ids] <- baseline$sites$storeys_allowed[match(ids, baseline$sites$site_id)]
     if (keep_geometry && !is.null(baseline$geometry)) {
       core$geometry <- rbind(core$geometry, baseline$geometry[baseline$geometry$site_id %in% ids, ])
     }
@@ -360,7 +365,8 @@ envelope_core <- function(prep, res, rb, settings, idx, excl = list(), bands = N
   }
   list(stack = out_stack, variants = variants, geometry = geometry, setbacks = setbacks, report = report,
        removed = stats::setNames(removed, s_df$site_id),
-       water_share = stats::setNames(water_share, s_df$site_id))
+       water_share = stats::setNames(water_share, s_df$site_id),
+       allowed = stats::setNames(runs$n_storeys[chosen], s_df$site_id[runs$site[chosen]]))
 }
 
 empty_stack_df <- function() {
@@ -798,6 +804,9 @@ finish_envelope <- function(core, s_df, res, sig, settings) {
   sites$water_yard_share[is.na(sites$water_yard_share)] <- 0
   sites$removed_area <- as.vector(core$removed[s_df$site_id] %||% 0)
   sites$removed_area[is.na(sites$removed_area)] <- 0
+  # The storeys the height allows (before setbacks and caps end the stack).
+  sites$storeys_allowed <- as.vector(core$allowed[s_df$site_id] %||% 0)
+  sites$storeys_allowed[is.na(sites$storeys_allowed)] <- 0
   structure(list(stack = st, sites = sites, variants = core$variants, geometry = core$geometry,
                  setbacks = core$setbacks, report = core$report,
                  signatures = stats::setNames(sig, s_df$site_id), settings = settings),

@@ -113,8 +113,19 @@ Status (20 November 2026):
   2,680 sites. The 17 "irregular special-character lots" were the J1 rear
   site rule, not classification. 393 expectations.
 
-  **Next: stage 5** (summaries: summarise_capacity, explain_site,
-  sensitivity).
+- **Stage 5 built**: summarise_capacity() (site columns, zone, storeys,
+  height / site size / FAR bands, binding, areas by majority, square grid,
+  floor area by storey level; sf for spatial units), summary(),
+  capacity_table() (gt), constraint_breakdown() (exact waterfall),
+  explain_site() (one-site rebuild with setbacks), sensitivity() (incremental
+  sweep; whole rules as values), check_capacity(), unmodelled_report().
+  Gate: check_capacity() reconciles Exampleton and the Auckland gate tile
+  (parcels, land, storeys, uses all ok); the breakdown adds exactly.
+  Vignettes "Getting started" and "Summaries" drafted (knit locally; CI
+  builds them). 444 expectations.
+
+  **Next: stage 6** (scenarios and comparison: compare_scenarios(),
+  crosswalk, attribution, Exampleton PC1, AKL PC120 test-only).
 
   *(Earlier note)* **Stage 4, part 3**: stepped terrain (item 318) and boundary runs
   (item 299); site shape factor (item 324); tower controls; then the tile

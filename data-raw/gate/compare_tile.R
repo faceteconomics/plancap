@@ -78,3 +78,8 @@ print(table(ce = m$ce_path, plancap = m$path, useNA = "ifany"))
 cat("\nLargest floor area differences:\n")
 print(utils::head(m[order(-abs(m$d_floor)), c("site_id", "zone_key", "ce_floor", "floor_area", "ce_storeys",
                                               "storeys", "envelope_binding", "path")], 15), row.names = FALSE)
+
+cat("\nReconciliation (check_capacity):\n")
+print(check_capacity(cap))
+cat("\nConstraint breakdown:\n")
+print(constraint_breakdown(cap))

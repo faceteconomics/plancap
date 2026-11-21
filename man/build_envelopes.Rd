@@ -13,7 +13,8 @@ build_envelopes(
   keep_setbacks = FALSE,
   baseline = NULL,
   max_storeys = 60,
-  height_add = NULL
+  height_add = NULL,
+  .only = NULL
 )
 }
 \arguments{
@@ -39,6 +40,9 @@ storey, so meant for a few sites, not a region.}
 \item{height_add}{Optional named numeric vector, by site id: metres of
 extra height (as a height bonus gives), added to total and occupiable
 height.}
+
+\item{.only}{Internal: site ids to build (others are left out), as
+\code{\link[=explain_site]{explain_site()}} uses to rebuild one site.}
 }
 \value{
 A \code{plancap_envelope}: a list with \code{stack} (one row per site and

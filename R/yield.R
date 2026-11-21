@@ -214,6 +214,7 @@ estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = 
   out$path <- path
   out$variant <- ev$variant
   out$storeys <- ev$storeys
+  out$storeys_allowed <- ev$storeys_allowed %||% rep(NA_integer_, nrow(s))
   out$height <- ev$height
   out$footprint <- ev$footprint
   out$floor_area <- floor_area
@@ -238,7 +239,8 @@ estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = 
               ifelse(floor_area == 0 & dwell == 0, "no_capacity", "ok"))))
   report$envelope <- envelope$report
   structure(list(sites = out, stack = st, envelope = envelope, rulebook = rb,
-                 conversion = conv, scenario = x$name, report = report),
+                 conversion = conv, scenario = x$name, report = report,
+                 inputs = x, options = list(...)),
             class = "plancap_capacity")
 }
 

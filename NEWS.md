@@ -1,5 +1,29 @@
 # plancap 0.0.0.9000
 
+## Summaries (stage 5)
+
+* `summarise_capacity()`: capacity by any site column or by zone, storeys,
+  height, site size or floor area ratio bands, binding constraint, polygons
+  (`areas`), a square grid, or floor area by storey level; measures include
+  floor area by use, dwellings, means and medians, floor area ratio, per
+  hectare figures and shares. Spatial summaries return `sf`.
+* `summary()` of a capacity result: headline, by zone, flags and what limits
+  dwellings. `capacity_table()` formats any summary with gt.
+* `constraint_breakdown()`: a waterfall from the theoretical maximum (whole
+  site, every storey the height allows) to the enabled floor area: storeys
+  not reached, setbacks and land, each cap, floor area ratio and maximum
+  site floorspace. The steps add up exactly.
+* `explain_site()`: one site's rules, boundaries, setbacks at every storey
+  with their citations, storeys and dwellings.
+* `sensitivity()`: a rule swept through values (or whole rules), with
+  incremental reruns.
+* `check_capacity()`: reconciliation (parcels, land, storeys against sites,
+  uses against floor area) and diagnostics; `unmodelled_report()`: the
+  register of rules not modelled.
+* Envelopes record `storeys_allowed`; capacity results keep their scenario
+  and options.
+* Vignettes: "Getting started" and "Summaries".
+
 ## Shape, access and the measured front yard (stage 4, part 5)
 
 * `site_shape_factor()`: a zone's `site_shape` rectangle must fit clear of
