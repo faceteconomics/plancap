@@ -3,80 +3,74 @@
 Tile `t_011_011` of capacityengine's operative region run: 2,680 sites, nine
 zones (Single House, MHS, MHU, THAB, Neighbourhood, Local and Town Centre,
 Mixed Use, Light Industry), the Devonport Peninsula precinct, the Height
-Variation Control, height and building sensitive areas, special character.
-Run 20 November 2026.
+Variation Control, height and building sensitive areas, special character,
+coastal water. Run 21 November 2026.
 
 ## How
 
 1. `export_ce_tile.R` (run in the capacityengine folder) saves the tile's own
-   sites, road parcels, zoning, overlay layers, precincts and water, and
-   capacityengine's results for the tile: on flat ground (the cached datum
-   switched off), on flat ground without the special character front yard
-   measured from the neighbours' houses (`nofront`), and as published.
-2. `compare_tile.R` (run in plancap) runs `estimate_capacity()` on those
-   inputs with the converted Auckland rulebook and compares site by site.
+   sites (with each zone-split piece's parent), road parcels, zoning,
+   overlay layers, precincts, water, ground levels and height surface
+   rasters; the context capacityengine reads within 150 m (easement areas,
+   the other primary parcels, building outlines, named road sections, and
+   the region's sites as the front yard's neighbours); and capacityengine's
+   results for the tile in four runs (below), plus the published rows.
+2. `compare_tile.R [tile] [mode]` (run in plancap) runs `estimate_capacity()`
+   on those inputs with the converted Auckland rulebook and compares site by
+   site.
 3. `debug_sites_ce.R` and `debug_sites_pc.R` print one site's storeys and
-   setbacks in each engine.
+   setbacks in each engine (`TERRAIN=1` for terrain).
 
-## Result (flat ground, like for like)
+## Result: exact in every mode
 
-| | capacityengine | plancap | difference |
-|---|---|---|---|
-| Floor area | 1,670,543 m2 | 1,671,099 m2 | +0.033% |
-| Dwellings | 6,221 | 6,189 | -0.51% |
-| Sites matching floor area to 0.01 m2 | | | 2,663 of 2,680 (99.4%) |
-| Sites matching dwellings exactly | | | 2,623 (97.9%) |
+| mode | capacityengine run | floor area | dwellings | sites exact (floor area, dwellings) |
+|---|---|---|---|---|
+| `nofront` | flat ground, no measured front yard | 1,670,543 m2 | 6,221 | 2,680, 2,680 |
+| `flat` | flat ground, measured front yard | 1,654,391 m2 | 6,214 | 2,680, 2,680 |
+| `terrain` | stepped terrain and height surfaces, no measured front yard | 1,661,340 m2 | 6,185 | 2,680, 2,680 |
+| `full` | terrain, surfaces and the measured front yard (the published settings) | 1,645,691 m2 | 6,178 | 2,680, 2,680 |
 
-Every zone but Single House matches floor area to rounding. What is left,
-each traced to its cause:
-
-- **Floor area, +557 m2 on 17 small special-character Single House lots.**
-  Boundary classification (side or rear) differs on irregular lots between
-  capacityengine's precomputed segments and plancap's.
-- **Dwellings, -32, all at the access width cap.** capacityengine measures
-  access width from easements and rights of way (its item 259); plancap reads
-  road frontage. Where neither can measure access the site is left uncapped
-  and flagged in both.
-- **Not like for like: the special character front yard set from the
-  neighbours' existing houses** (`value_from`, capacityengine item 314/362).
-  Not carried by the conversion; with it, capacityengine's flat figure is
-  1,654,391 m2 (plancap +1.0%).
-
-## Result with terrain and height surfaces (stage 4, part 4)
-
-capacityengine with its cached ground datum (stepped terrain, item 318) and
-its height surfaces (maunga and museum viewshafts, Whenuapai airspace), the
-front yard still off; plancap given the same ground levels (`ground`
-argument) and the surface rasters:
-
-| | capacityengine | plancap | difference |
-|---|---|---|---|
-| Floor area | 1,661,340 m2 | 1,661,898 m2 | +0.034% |
-| Dwellings | 6,185 | 6,153 | -0.52% |
-| Sites matching floor area to 0.01 m2 | | | 2,658 of 2,680 (99.2%) |
-
-The same residuals as on flat ground (the 17 to 21 irregular special
-character lots, access width from easements) and one Neighbourhood Centre
-site 9.6 m2 apart. Terrain and surfaces themselves reproduce: every MHU, MHS
-and THAB site matches. Surfaces need ground levels because they are absolute
-elevations; a maunga viewshaft at 18.5 m over ground at 28.2 m leaves only its
-9 m floor height.
+plancap's totals equal capacityengine's in each mode, and every site matches
+floor area to 0.01 m2 and dwellings exactly. A run takes 36 s flat and 50 s
+with terrain and surfaces.
 
 ## What the gate found and fixed in plancap
 
+Stage 4, part 3 (flat ground):
+
 1. A zone's storey height where it states no storey count: occupiable height
-   divided into as many default-height storeys as fit (20 m: six of 3.33 m),
-   capacityengine's rule; plancap had used the default.
+   divided into as many default-height storeys as fit (20 m: six of 3.33 m).
 2. Zone families conditional on the contiguous area of the land across the
    boundary (`zone_family(min_area, max_area)`): capacityengine's
-   `OPEN_SPACE_UNDER_2000` and `OPEN_SPACE_OVER_2000_WIDE`. Without it the
-   "next to small open space" plane applied beside every reserve (59 MHU
-   sites).
-3. A site with no road frontage has no measurable access: the access cap does
-   not apply and the site is flagged (capacityengine item 260), not capped at
-   zero.
-4. Large sites count by capacityengine's CfGS divisor where its region run
-   does (`large_site_dwellings: divisor`); the converter had dropped it.
-5. Precinct names carry their sub-precinct ("Devonport Peninsula
-   sub-precinct E"): the data adapter splits them, as capacityengine does,
-   and a site under a precinct and its sub-precinct counts once.
+   `OPEN_SPACE_UNDER_2000` and `OPEN_SPACE_OVER_2000_WIDE`.
+3. A site with no measurable access is not capped by the access width table,
+   and is flagged (capacityengine item 260).
+4. Large sites count by the CfGS divisor where the region run does.
+5. Precinct names carry their sub-precinct; a site under a precinct and its
+   sub-precinct counts once.
+
+Part 4 (terrain): stepped terrain, boundary runs and ground planes; ground
+levels supplied as tables; height surfaces need ground levels because they
+are absolute elevations (a maunga viewshaft at 18.5 m over ground at 28.2 m
+leaves only its 9 m floor height).
+
+Part 5:
+
+6. The 17 irregular special character lots that differed were not a
+   classification difference: capacityengine gives a rear site's side
+   boundaries the rear yard (AUP J1, item 319: 1.2 m side against 3 m rear in
+   Special Character). Now the morphology setting `rear_site_sides_as_rear`,
+   on in the converted rulebooks; boundary runs and the shape factor still
+   read those boundaries as sides, as capacityengine does.
+7. The measured front yard needs capacityengine's neighbours: its region
+   sites, not every primary parcel. With all parcels a reserve or school
+   whose building stands 350 m back became a "dwelling on an adjacent site"
+   (`scenario(neighbours = )`).
+8. Access width: measured from easements and access lots (item 259), and
+   shared by the pieces of one landholding (`scenario(landholding = )`).
+9. The shape factor measured water yards from the boundary as well as from
+   the water; now from the water only, as the envelope does.
+10. Ground tables are matched by segment midpoint: a zone-split piece's
+    boundary starts at a different vertex in the two engines.
+11. Height surface banding for all partly covered sites in one pass: the
+    terrain run fell from 158 s to 50 s.

@@ -23,6 +23,9 @@ the ground at its own boundary) or \code{"flat"} (one floor at the site's
 mean ground).}
 \item{\code{max_ground_slope}}{Steepest fitted ground slope (rise over run)
 accepted; steeper fits are scaled back. 0.5.}
+\item{\code{site_shape_factor}}{Whether a zone's \code{site_shape} rectangle caps
+the dwellings a site creates by subdivision (\code{\link[=site_shape_factor]{site_shape_factor()}}).
+\code{TRUE}.}
 \item{\code{no_limit_height}}{Stand-in height (m) for zones with no height
 limit; \code{NULL} means such zones are flagged and given no stand-in.}
 \item{\code{large_site}}{Large-site treatment: \code{threshold} (m2, 10,000),

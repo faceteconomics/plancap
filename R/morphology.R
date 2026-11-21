@@ -65,7 +65,7 @@ find_road_frontages <- function(sites, roads, rulebook = NULL, morphology = list
 find_side_rear <- function(sites, roads, rulebook = NULL, morphology = list()) {
   pg <- parcel_geometry(sites, roads = roads, rulebook = rulebook, morphology = morphology,
                         legs = FALSE, widths = FALSE)
-  pg$segments[, c("site_id", "segment_id", "boundary_class", "length", "angle_to_frontage",
+  pg$segments[, c("site_id", "segment_id", "boundary_class", "tags", "length", "angle_to_frontage",
                   "dist_from_frontage", "outward_bearing", "geometry")]
 }
 
@@ -148,7 +148,7 @@ morphology_settings <- function(rulebook = NULL, overrides = list(), call = rlan
 # water and centrelines: no zoning, no rules. One vectorised pass.
 parcel_geometry <- function(sites, roads = NULL, water = NULL, centrelines = NULL,
                             width_field = "width_m", rulebook = NULL, morphology = list(),
-                            legs = TRUE, widths = TRUE) {
+                            legs = TRUE, widths = TRUE, easements = NULL, other_parcels = NULL) {
   check_projected(sites)
   if (!"site_id" %in% names(sites)) sites$site_id <- sprintf("S%06d", seq_len(nrow(sites)))
   if (anyDuplicated(sites$site_id)) cli::cli_abort("{.field site_id} values must be unique.")
@@ -184,6 +184,7 @@ parcel_geometry <- function(sites, roads = NULL, water = NULL, centrelines = NUL
 
   out <- sites[, "site_id"]
   if ("parcel_ids" %in% names(sites)) out$parcel_ids <- sites$parcel_ids
+  if ("landholding" %in% names(sites)) out$landholding <- sites$landholding
   out$area <- geos::geos_area(sg)
   out$perimeter <- geos::geos_length(geos::geos_boundary(sg))
   out$frontage <- frontage
@@ -198,6 +199,25 @@ parcel_geometry <- function(sites, roads = NULL, water = NULL, centrelines = NUL
   out$width <- ifelse(!is.na(out$depth) & out$depth > 0, out$area / out$depth, NA_real_)
   out$compactness <- 4 * pi * out$area / out$perimeter^2
   out$flag <- ifelse(frontage == 0, "no_road_frontage", "ok")
+  # Where the plan says a rear site's yards are all rear yards.
+  if (isTRUE(m$rear_site_sides_as_rear)) {
+    to_rear <- seg$boundary_class %in% "side" & out$is_rear[si]
+    seg$boundary_class[to_rear] <- "rear"
+    seg$tags[to_rear] <- paste0(seg$tags[to_rear], "rear_site_side|")
+  }
+
+  # Access width: frontage, or a rear site's measured access.
+  to_g <- function(x) {
+    if (is.null(x) || !nrow(x)) return(NULL)
+    if (sf::st_crs(x) != sf::st_crs(sites)) x <- sf::st_transform(x, sf::st_crs(sites))
+    as_geos(x)
+  }
+  acc <- measure_access(sg, frontage, rg, to_g(easements), to_g(other_parcels), m)
+  out$access_contact <- acc$contact
+  out$easement_width <- acc$easement
+  out$access_lot_width <- acc$lot
+  out$access_width <- acc$width
+  out$access_method <- acc$method
 
   # Access legs of rear sites.
   out$access_leg_area <- 0

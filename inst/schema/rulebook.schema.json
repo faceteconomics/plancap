@@ -96,6 +96,9 @@
           "type": "number",
           "minimum": 0
         },
+        "site_shape_factor": {
+          "type": "boolean"
+        },
         "no_limit_height": {
           "type": "number",
           "exclusiveMinimum": 0
@@ -200,6 +203,37 @@
         "min_sliver_area": {
           "type": "number",
           "minimum": 0
+        },
+        "access_touch_distance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "access_contact_tolerance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "access_max_strip_width": {
+          "type": "number",
+          "minimum": 0
+        },
+        "access_lot_max_area": {
+          "type": "number",
+          "minimum": 0
+        },
+        "front_setback_neighbours": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "front_setback_min_dwelling_area": {
+          "type": "number",
+          "minimum": 0
+        },
+        "front_setback_max_offset": {
+          "type": "number",
+          "minimum": 0
+        },
+        "rear_site_sides_as_rear": {
+          "type": "boolean"
         }
       }
     },
@@ -757,6 +791,11 @@
             "road_centreline"
           ]
         },
+        "value_from": {
+          "enum": [
+            "existing_front_setback"
+          ]
+        },
         "when": {
           "$ref": "#/definitions/conditions"
         },
@@ -780,8 +819,17 @@
             }
           },
           "then": {
-            "required": [
-              "distance"
+            "anyOf": [
+              {
+                "required": [
+                  "distance"
+                ]
+              },
+              {
+                "required": [
+                  "value_from"
+                ]
+              }
             ]
           }
         },

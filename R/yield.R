@@ -133,8 +133,26 @@ estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = 
   env_large <- over & !is_large & path %in% "volumetric"
   if (deduction > 0 && any(env_large)) dwell[env_large] <- floor(dwell[env_large] * (1 - deduction))
 
-  # No buildable envelope: no dwelling, unless a water yard emptied the lot.
+  # The site shape factor: a site creating vacant sites must hold the zone's
+  # rectangle clear of its yards; one that cannot keeps one dwelling, and none
+  # creates more sites than its developable area holds rectangles.
+  shape_fits <- rep(NA, nrow(s))
   sub_path <- path %in% c("density", "hybrid_density", "large_site")
+  if (any(sub_path) && !identical(dflt$site_shape_factor, FALSE)) {
+    excl <- exclusion_layers(rb, x$layers, sf::st_crs(prep$sites))
+    sh <- shape_factor_core(prep, res, excl)
+    k <- match(s$site_id, sh$site_id)
+    on <- sub_path & !is.na(k) & !is.na(sh$fits[k])
+    shape_fits[on] <- sh$fits[k[on]]
+    cap <- ifelse(sh$fits[k], pmax(1L, sh$max_lots[k]), 1L)
+    cut <- on & cap < dwell
+    dwell[cut] <- cap[cut]
+    binding[cut] <- "site_shape_factor"
+    report$site_shape_tested <- nrow(sh)
+    report$site_shape_binding <- sum(cut)
+  }
+
+  # No buildable envelope: no dwelling, unless a water yard emptied the lot.
   no_env <- sub_path & ev$floor_area %in% 0 & !(ev$water_yard_share %||% rep(0, nrow(s)) >= 0.5)
   dwell[no_env] <- 0
   binding[no_env] <- "no_buildable_envelope"
@@ -208,8 +226,12 @@ estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = 
   out$envelope_binding <- ev$binding
   out$dwelling_binding <- binding
   out$removed_area <- removed
+  out$site_shape_fits <- shape_fits
   has_aw <- vapply(pz, function(z) !is.null(z$density$access_width), logical(1))
-  out$access_unmeasured <- has_aw & !is.na(s$frontage) & s$frontage <= 0 & dwell > 0
+  aw <- if (!is.null(s$access_width)) s$access_width else ifelse(s$frontage > 0, s$frontage, NA)
+  out$access_width <- aw
+  out$access_method <- s$access_method %||% ifelse(is.na(aw), "none", "frontage")
+  out$access_unmeasured <- has_aw & is.na(aw) & dwell > 0
   out$flag <- ifelse(is.na(s$zone_key), "no_zone",
               ifelse(is.na(method), "no_rules",
               ifelse(method %in% "none", "no_capacity_zone",
@@ -315,19 +337,20 @@ floor_to_dwellings <- function(res_area, conv, min_size = NA) {
   n
 }
 
-# The access width table: frontage (or the access leg's width at the road)
-# to the most dwellings it may serve. A site with no road frontage has no
-# measurable access: unknown, not zero, so the cap does not apply and the
-# site is flagged (capacityengine item 260).
+# The access width table: the measured access width (frontage, or a rear
+# site's entrance strip, easements and access lots; find_access_widths()) to
+# the most dwellings it may serve. A site with no measurable access is
+# unknown, not zero, so the cap does not apply and the site is flagged
+# (capacityengine item 260).
 access_width_cap <- function(pz, s) {
   out <- rep(NA_real_, length(pz))
   for (k in seq_along(pz)) {
     tab <- pz[[k]]$density$access_width
     if (is.null(tab)) next
-    f <- s$frontage[k]
+    f <- if (!is.null(s$access_width)) s$access_width[k] else s$frontage[k]
     if (is.na(f) || f <= 0) next
     for (b in tab) {
-      if (f >= (b$min %||% 0) && f < (b$max %||% Inf)) {
+      if (f >= (b[["min"]] %||% 0) && f < (b[["max"]] %||% Inf)) {
         out[k] <- b$max_dwellings %||% NA_real_
         break
       }

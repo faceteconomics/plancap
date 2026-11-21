@@ -32,6 +32,7 @@ defaults:
     deduction: 0.25
 morphology:
   reserve_families: OPEN_SPACE_ANY
+  rear_site_sides_as_rear: yes
 conversion:
   dwelling_size: 120.0
   efficiency: 0.8

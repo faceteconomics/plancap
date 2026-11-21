@@ -77,13 +77,17 @@ reference:
     desc: Floor area and dwellings, by the path each zone's method sets.
     contents:
       - estimate_capacity
+      - site_shape_factor
   - title: Site and boundary types
     desc: >
       Road frontages, side and rear boundaries, corner, through and rear
       sites, access legs, water boundaries and road widths, each with the
-      evidence for the call.
+      evidence for the call; the access width of rear sites; the front
+      setbacks of the dwellings along a street.
     contents:
       - morphology
+      - find_access_widths
+      - find_existing_front_setbacks
       - check_morphology
   - title: Values, defaults and assumptions
     contents:

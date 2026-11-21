@@ -16,6 +16,13 @@ scenario(
   centrelines = NULL,
   dem = NULL,
   ground = NULL,
+  easements = NULL,
+  other_parcels = NULL,
+  buildings = NULL,
+  streets = NULL,
+  street_field = "name",
+  neighbours = NULL,
+  landholding = NULL,
   zone_field = "zone",
   site_id = NULL,
   group_by = NULL,
@@ -54,7 +61,30 @@ rulebook names them.}
 (from a survey, or another model): a list with \code{sites} (a data frame of
 \code{site_id} and \code{ground_mean}) and \code{segments} (a data frame of \code{site_id},
 \code{seq}, the segment's position in its site's boundary counting from 1, and
-\code{ground}, the mean ground level along it).}
+\code{ground}, the mean ground level along it). Give the segment's midpoint
+as \code{x} and \code{y} instead of \code{seq} to match segments by position.}
+
+\item{easements}{Optional easement areas (rights of way), for the access
+width of rear sites (\code{\link[=find_access_widths]{find_access_widths()}}).}
+
+\item{other_parcels}{Optional parcels that are not sites (and not roads),
+among which jointly owned access lots are found.}
+
+\item{buildings}{Optional building outlines, for yards set from the
+neighbours' existing setbacks (\code{\link[=find_existing_front_setbacks]{find_existing_front_setbacks()}}).}
+
+\item{streets}{Optional named street centre lines for the same; default
+\code{centrelines}.}
+
+\item{street_field}{Column of \code{streets} holding the street name.}
+
+\item{neighbours}{Optional parcels beyond \code{parcels} that may be neighbours
+for a measured front yard (default \code{other_parcels}). Leave out parcels
+whose buildings are not dwellings, such as reserves and schools.}
+
+\item{landholding}{Optional column of \code{parcels} naming the landholding
+each parcel belongs to, where parcels held together are still separate
+sites: pieces of one landholding share their best access width.}
 
 \item{zone_field}{Column of \code{zoning} holding zone codes.}
 

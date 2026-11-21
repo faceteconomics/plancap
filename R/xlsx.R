@@ -107,7 +107,7 @@ zone_spec <- function() {
 setback_cols <- c("target", "kind", "name", "boundaries", "distance", "from_storey",
                   "above_height", "angle_deg", "start_height", "set_in", "datum",
                   "ratio", "min", "max", "points", "angle_by_bearing", "angle_by_orientation",
-                  "vertical_above", "max_setback_above", "origin")
+                  "vertical_above", "max_setback_above", "origin", "value_from")
 condition_cols <- c("min_site_area", "max_site_area", "rear_sites", "corner_sites",
                     "within_frontage", "beyond_frontage", "frontage_depth_share",
                     "adjacent_zones", "not_adjacent_zones", "facing", "min_road_width",
@@ -200,7 +200,7 @@ rulebook_tables <- function(rb) {
     for (s in z$setbacks) add_setback_row(s, target)
     for (a in z$density$access_width) {
       aw_rows[[length(aw_rows) + 1]] <<- data.frame(
-        target = target, min = a$min %||% NA, max = a$max %||% NA,
+        target = target, min = a[["min"]] %||% NA, max = a[["max"]] %||% NA,
         max_dwellings = a$max_dwellings %||% NA)
     }
     for (v in names(z$variants)) {
@@ -214,7 +214,7 @@ rulebook_tables <- function(rb) {
     for (i in seq_along(b$bands)) {
       x <- b$bands[[i]]
       bands_rows[[length(bands_rows) + 1]] <<- data.frame(
-        target = target, rule = rule, by = b$by, upper = x$max %||% NA,
+        target = target, rule = rule, by = b$by, upper = x[["max"]] %||% NA,
         value = as.character(x$value), source = if (i == 1) b$source %||% NA else NA,
         stringsAsFactors = FALSE)
     }
@@ -225,7 +225,7 @@ rulebook_tables <- function(rb) {
                 from_storey = cell(s$from_storey), above_height = cell(s$above_height),
                 angle_deg = cell(s$angle_deg), start_height = cell(s$start_height),
                 set_in = cell(s$set_in), datum = cell(s$datum), ratio = cell(s$ratio),
-                min = cell(s$min), max = cell(s$max),
+                min = cell(s[["min"]]), max = cell(s[["max"]]),
                 points = if (!is.null(s$points)) paste(vapply(s$points, function(p)
                   paste(unlist(p), collapse = ":"), ""), collapse = "; ") else NA,
                 angle_by_bearing = if (!is.null(s$angle_by_bearing)) paste(vapply(
@@ -234,7 +234,7 @@ rulebook_tables <- function(rb) {
                 angle_by_orientation = fmt_kv(s$angle_by_orientation),
                 vertical_above = cell(s$vertical_above),
                 max_setback_above = fmt_kv(s$max_setback_above),
-                origin = cell(s$origin))
+                origin = cell(s$origin), value_from = cell(s$value_from))
     for (cc in condition_cols) row[[cc]] <- cell(s$when[[cc]])
     row$variant <- cell(s$variant)
     row$activity_status <- cell(s$activity_status)
@@ -464,7 +464,7 @@ tables_to_rulebook <- function(t) {
     aw <- t$access_width[t$access_width$target %in% target, , drop = FALSE]
     if (nrow(aw)) {
       z$density$access_width <- lapply(seq_len(nrow(aw)), function(i) compact(list(
-        min = from_cell(aw$min[i], "num"), max = from_cell(aw$max[i], "num"),
+        min = from_cell(aw[["min"]][i], "num"), max = from_cell(aw[["max"]][i], "num"),
         max_dwellings = from_cell(aw$max_dwellings[i], "num"))))
     }
     va <- t$variants[t$variants$target %in% target, , drop = FALSE]
@@ -488,6 +488,7 @@ tables_to_rulebook <- function(t) {
   d <- lapply(get_kv("defaults"), num_or_chr)
   ls_keys <- grep("^large_site_", names(d), value = TRUE)
   x$defaults <- compact(d[setdiff(names(d), ls_keys)])
+  if (!is.null(x$defaults$site_shape_factor)) x$defaults$site_shape_factor <- from_cell(x$defaults$site_shape_factor, "lgl")
   if (length(ls_keys)) x$defaults$large_site <- compact(stats::setNames(d[ls_keys], sub("^large_site_", "", ls_keys)))
   conv <- compact(lapply(get_kv("conversion"), num_or_chr))
   if (!is.null(conv$min_one_dwelling)) conv$min_one_dwelling <- from_cell(conv$min_one_dwelling, "lgl")
@@ -506,6 +507,7 @@ tables_to_rulebook <- function(t) {
   }
   m <- compact(lapply(get_kv("morphology"), num_or_chr))
   if (!is.null(m$exclude_access_legs)) m$exclude_access_legs <- from_cell(m$exclude_access_legs, "lgl")
+  if (!is.null(m$rear_site_sides_as_rear)) m$rear_site_sides_as_rear <- from_cell(m$rear_site_sides_as_rear, "lgl")
   if (!is.null(m$reserve_families)) m$reserve_families <- split_list(m$reserve_families)
   if (length(m)) x$morphology <- m
 
@@ -654,7 +656,7 @@ setback_from_row <- function(sb, i) {
     angle_by_orientation = parse_kv(g("angle_by_orientation")),
     vertical_above = g("vertical_above", "num"),
     max_setback_above = parse_kv(g("max_setback_above")),
-    boundaries = split_list(g("boundaries")), origin = g("origin"),
+    boundaries = split_list(g("boundaries")), origin = g("origin"), value_from = g("value_from"),
     when = if (length(when)) when, variant = g("variant"),
     activity_status = g("activity_status"), source = g("source")
   ))

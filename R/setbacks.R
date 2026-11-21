@@ -23,6 +23,12 @@
 #'   `setback_profile()`, the distances (m) required at each of `height`.
 #' @param boundaries Boundary classes the rule applies to, e.g. `"road"`,
 #'   `"side"`, `"rear"`. See [boundary_classes()].
+#' @param value_from Instead of `distance`, a yard set by what is already
+#'   there: `"existing_front_setback"` is the average setback of the dwellings
+#'   on the neighbouring sites along the street (as the Auckland Unitary
+#'   Plan's Special Character Areas front yard, D18.6.1.3.1), measured from
+#'   building outlines ([find_existing_front_setbacks()]). Where nothing could
+#'   be measured the rule is reported as not applied, never read as no yard.
 #' @param from_storey Applies only from this storey up (1 = ground).
 #' @param above_height Applies only to the part of a building above this
 #'   height (m).
@@ -45,12 +51,17 @@
 #' proportional_setback(0.4, min = 3, boundaries = c("side", "rear"))
 #' setback_profile(height = c(0, 3.6, 6.9, 30), distance = c(1, 1, 2, 25.1),
 #'                 boundaries = c("side", "rear"))
-yard <- function(distance, boundaries, from_storey = NULL, above_height = NULL,
+yard <- function(distance = NULL, boundaries, from_storey = NULL, above_height = NULL,
                  origin = "boundary", when = NULL, variant = NULL, name = NULL,
-                 source = NULL, activity_status = NULL) {
-  check_value(distance, null_ok = FALSE)
-  if (is.numeric(distance)) check_number(distance, lower = 0)
-  new_setback("yard", list(distance = distance, from_storey = from_storey,
+                 source = NULL, activity_status = NULL, value_from = NULL) {
+  if (is.null(value_from)) {
+    check_value(distance, null_ok = FALSE)
+    if (is.numeric(distance)) check_number(distance, lower = 0)
+  } else {
+    check_choice(value_from, "existing_front_setback")
+    if (!is.null(distance)) cli::cli_abort("Give {.arg distance} or {.arg value_from}, not both.")
+  }
+  new_setback("yard", list(distance = distance, value_from = value_from, from_storey = from_storey,
                            above_height = above_height),
               boundaries, origin, when, variant, name, source, activity_status)
 }
@@ -221,6 +232,8 @@ new_setback <- function(kind, fields, boundaries, origin, when, variant, name,
 #' @param base_height The building's own height above the site's ground, where
 #'   `height` has been adjusted to the boundary's ground; a plane's
 #'   `max_setback_above` is tested against it.
+#' @param measured For a yard with `value_from`: the measured distance (m)
+#'   per height (`NA` where nothing was measured).
 #' @return Numeric vector of required distances (m), one per height.
 #' @export
 #' @examples
@@ -228,13 +241,14 @@ new_setback <- function(kind, fields, boundaries, origin, when, variant, name,
 #' setback_distance(p, c(2, 3, 6, 9))
 #' setback_distance(proportional_setback(0.4, "side", min = 3), c(3, 10, 20))
 setback_distance <- function(rule, height, storey = NA_integer_, bearing = NA_real_,
-                             vars = list(), slope_in = 0, base_height = height) {
+                             vars = list(), slope_in = 0, base_height = height, measured = NULL) {
   n <- length(height)
   storey <- rep_len(storey, n)
   vars$H <- height
   if (!is.null(vars$storey)) storey <- rep_len(vars$storey, n)
   d <- switch(rule$kind,
-    yard = ,
+    yard = if (!is.null(rule$value_from)) rep_len(measured %||% NA_real_, n) else
+      rep_len(eval_rule_value(rule$distance, vars), n),
     upper_level = rep_len(eval_rule_value(rule$distance, vars), n),
     plane = {
       bearing <- rep_len(bearing, n)
@@ -267,8 +281,8 @@ setback_distance <- function(rule, height, storey = NA_integer_, bearing = NA_re
     },
     proportional = {
       x <- rule$ratio * height
-      x <- pmax(x, rule$min %||% 0)
-      if (!is.null(rule$max)) x <- pmin(x, rule$max)
+      x <- pmax(x, rule[["min"]] %||% 0)
+      if (!is.null(rule[["max"]])) x <- pmin(x, rule[["max"]])
       x
     },
     profile = {

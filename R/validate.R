@@ -214,8 +214,8 @@ check_formula_field <- function(v, path, add) {
 }
 
 check_bands <- function(b, path, add) {
-  mins <- vapply(b$bands, function(x) x$min %||% 0, numeric(1))
-  maxs <- vapply(b$bands, function(x) x$max %||% Inf, numeric(1))
+  mins <- vapply(b$bands, function(x) x[["min"]] %||% 0, numeric(1))
+  maxs <- vapply(b$bands, function(x) x[["max"]] %||% Inf, numeric(1))
   if (is.unsorted(maxs, strictly = TRUE)) add("error", path, "band upper bounds must ascend")
   if (length(maxs) > 1 && any(abs(mins[-1] - maxs[-length(maxs)]) > 1e-9)) {
     add("error", path, "bands must be contiguous (each band's min equals the previous max)")

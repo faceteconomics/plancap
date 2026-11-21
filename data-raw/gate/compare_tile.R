@@ -2,7 +2,13 @@
 # inputs and compare site by site with capacityengine's results.
 #
 # Run from the plancap folder, after export_ce_tile.R:
-#   Rscript data-raw/gate/compare_tile.R [tile_id] [flat|published]
+#   Rscript data-raw/gate/compare_tile.R [tile_id] [flat|nofront|terrain|full|published]
+#
+# Modes (capacityengine run compared): flat (flat ground, front yard measured
+# from the neighbours' houses), nofront (flat, no measured front yard),
+# terrain (terrain and height surfaces, no measured front yard), full
+# (terrain, surfaces and the measured front yard), published (the published
+# region run's rows).
 #
 # Writes data-raw/cache/gate_<tile>_<mode>.csv (one row per site) and prints a
 # reconciliation summary.
@@ -13,22 +19,28 @@ tile <- if (length(args)) args[1] else "t_011_011"
 mode <- if (length(args) > 1) args[2] else "flat"
 g <- readRDS(file.path("data-raw/cache", paste0("gate_", tile, ".rds")))
 ce <- switch(mode, flat = g$ce_flat, nofront = g$ce_flat_nofront, published = g$ce_published,
-             terrain = g$ce_terrain_nofront)
+             terrain = g$ce_terrain_nofront, full = g$ce_terrain)
+terrain <- mode %in% c("published", "terrain", "full")
+front <- mode %in% c("flat", "published", "full")
 
 rb <- rulebook_example("auckland")
 parcels <- g$sites
 names(parcels)[names(parcels) == "site_id"] <- "parcel_id"
 # Height surfaces need terrain (they are absolute elevations): with ground
 # levels, swap each surface's extent polygons for its raster.
-if (mode %in% c("published", "terrain")) {
+if (terrain) {
   for (nm in names(g$surface_files)) {
     g$layers[[nm]] <- terra::rast(file.path("data-raw/cache", g$surface_files[[nm]]))
   }
 }
 # Published results include terrain: give plancap the same ground levels.
-sc <- scenario(paste("AKL", tile), rb, parcels = parcels[, "parcel_id"], roads = g$roads,
+# capacityengine's zone-split pieces of one parcel are one landholding.
+parcels$landholding <- parcels$site_id_parent %||% parcels$parcel_id
+sc <- scenario(paste("AKL", tile), rb, parcels = parcels[, c("parcel_id", "landholding")], roads = g$roads,
                zoning = g$zoning, layers = g$layers, water = g$water,
-               ground = if (mode %in% c("published", "terrain")) g$ground)
+               ground = if (terrain) g$ground, easements = g$easements, other_parcels = g$other_parcels,
+               buildings = if (front) g$buildings, streets = if (front) g$streets,
+               street_field = "full_road_name", neighbours = g$neighbours, landholding = "landholding")
 t0 <- Sys.time()
 cap <- suppressWarnings(estimate_capacity(sc, variant_choice = "standard"))
 secs <- round(as.numeric(Sys.time() - t0, units = "secs"), 1)

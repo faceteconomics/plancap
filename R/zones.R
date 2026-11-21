@@ -292,7 +292,7 @@ density <- function(site_area_per_dwelling = NULL, dwellings_per_ha = NULL,
     }
     access_width <- lapply(seq_len(nrow(access_width)), function(i) {
       r <- access_width[i, ]
-      compact(list(min = r$min, max = if (!is.na(r$max)) r$max,
+      compact(list(min = r[["min"]], max = if (!is.na(r[["max"]])) r[["max"]],
                    max_dwellings = if (!is.na(r$max_dwellings)) r$max_dwellings))
     })
   }

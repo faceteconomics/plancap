@@ -71,8 +71,16 @@ conv_when <- function(r, where) {
 conv_yard <- function(name, y, where) {
   w <- paste0(where, "/yards/", name)
   if (!is.null(y[["value_from"]])) {
-    drop(w, "value_from (yard set from neighbours' existing setbacks; not representable)", y[["value_from"]])
-    return(NULL)
+    if (!identical(y[["value_from"]], "existing_dwelling_setback_average")) {
+      drop(w, "value_from", y[["value_from"]])
+      return(NULL)
+    }
+    # The neighbours' average setback (D18.6.1.3.1), measured by plancap from
+    # building outlines.
+    return(compact(list(kind = "yard", name = name, value_from = "existing_front_setback",
+                        from_storey = y[["above_storey"]], boundaries = as.character(unlist(y[["boundaries"]])),
+                        when = conv_when(y, w), variant = y[["variant"]],
+                        activity_status = y[["activity_status"]], source = y[["source"]])))
   }
   if (!is.null(y[["max_value"]])) drop(w, "max_value", y[["max_value"]])
   compact(list(kind = "yard", name = name, distance = y[["value"]],
@@ -412,7 +420,9 @@ convert_bundle <- function(path, name) {
                                 deduction = d[["large_site_infrastructure_deduction"]],
                                 method = if (identical(d[["large_site_dwellings"]], "divisor")) "divisor"
                                          else if (!is.null(d[["large_site_dwellings"]])) "envelope")))),
-    morphology = list(reserve_families = list("OPEN_SPACE_ANY")),
+    # capacityengine gives a rear site's side boundaries the rear yard in every
+    # plan (AUP J1: a rear yard "Includes: all yards on a rear site"; item 319).
+    morphology = list(reserve_families = list("OPEN_SPACE_ANY"), rear_site_sides_as_rear = TRUE),
     conversion = compact(list(
       dwelling_size = conv[["dwelling_size_m2"]] %||% 120,
       efficiency = 1 / (1 + (conv[["circulation_allowance"]] %||% 0.2) + (conv[["storage_allowance"]] %||% 0.05)),

@@ -108,3 +108,17 @@ test_that("a tower floorplate limit caps the storeys above the tower threshold",
                                  zoning = fixture_zoning()))
   expect_identical(e2$report$tower_controls_unmodelled, 3L)
 })
+
+test_that("ground tables may match segments by position instead of sequence", {
+  g <- ground_of(function(x, y) 10 + 0.1 * x)
+  p <- fixture_parcels()
+  names(p)[1] <- "site_id"
+  seg <- parcel_geometry(p)$segments
+  # The same levels keyed by midpoint, with the sequence numbers scrambled.
+  pos <- data.frame(site_id = seg$site_id, seq = rev(g$segments$seq),
+                    x = (seg$x0 + seg$x1) / 2, y = (seg$y0 + seg$y1) / 2, ground = g$segments$ground)
+  by_seq <- scenario("S", plane_rb(), parcels = fixture_parcels(), roads = fixture_road(),
+                     zoning = fixture_zoning(), ground = g)
+  by_pos <- scenario_change(by_seq, "P", ground = list(sites = g$sites, segments = pos))
+  expect_equal(prepare_sites(by_pos)$segments$ground, prepare_sites(by_seq)$segments$ground)
+})

@@ -145,3 +145,17 @@ test_that("geographic coordinates are refused", {
   names(p)[1] <- "site_id"
   expect_error(parcel_geometry(p), "geographic")
 })
+
+test_that("a rear site's side boundaries can be rear boundaries, where the plan says so", {
+  # P6 has no frontage, so it is a rear site.
+  s <- fixture_parcels()
+  names(s)[1] <- "site_id"
+  plain <- find_side_rear(s, fixture_road())
+  expect_true("side" %in% plain$boundary_class[plain$site_id == "P6"])
+  rr <- find_side_rear(s, fixture_road(), morphology = list(rear_site_sides_as_rear = TRUE))
+  p6 <- rr[rr$site_id == "P6", ]
+  expect_false("side" %in% p6$boundary_class)
+  expect_true(any(grepl("rear_site_side", p6$tags, fixed = TRUE)))
+  # A site with frontage keeps its sides.
+  expect_true("side" %in% rr$boundary_class[rr$site_id == "P1"])
+})

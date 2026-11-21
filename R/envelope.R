@@ -110,6 +110,15 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
                                    value = as.numeric(height_add), stringsAsFactors = FALSE))
   }
   res <- resolve_sites(prep, rb, mods)
+  # Yards set from the neighbours' existing setbacks, measured per road
+  # boundary where a site's rules carry one.
+  front <- NULL
+  if (inherits(x, "plancap_scenario")) front <- measure_front_yards(x, prep, res)
+  prep$segments$existing_front_setback <- NA_real_
+  if (!is.null(front$values) && nrow(front$values)) {
+    prep$segments$existing_front_setback <- front$values$setback[match(prep$segments$segment_id,
+                                                                       front$values$segment_id)]
+  }
   sites <- prep$sites
   s_df <- sf::st_drop_geometry(sites)
   sig <- site_signatures(prep, res, settings, surf$bands)
@@ -140,6 +149,12 @@ build_envelopes <- function(x, rulebook = NULL, variant_choice = NULL, include_d
   out$report$copied_from_baseline <- length(copied)
   out$report$surfaces_missing <- surf$missing
   out$report$surface_partial <- length(unique(surf$bands$site_id))
+  if (any(needs_front_measure(res))) {
+    need_ids <- sites$site_id[needs_front_measure(res)]
+    rd <- prep$segments$boundary_class %in% "road" & prep$segments$site_id %in% need_ids
+    out$report$front_yard_unmeasured <- length(unique(prep$segments$site_id[rd & is.na(prep$segments$existing_front_setback)]))
+    if (isTRUE(front$missing_inputs)) out$report$front_yard_inputs_missing <- TRUE
+  }
   out$scenario <- prep$scenario
   out
 }
@@ -150,7 +165,8 @@ site_signatures <- function(prep, res, settings, bands = NULL) {
   s <- prep$sites
   seg <- sf::st_drop_geometry(prep$segments)
   cols <- intersect(c("boundary_class", "tags", "x0", "y0", "x1", "y1", "outward_bearing",
-                      "dist_from_frontage", "adjacent_tokens", "adjacent_area", "ground"), names(seg))
+                      "dist_from_frontage", "adjacent_tokens", "adjacent_area", "ground",
+                      "existing_front_setback"), names(seg))
   seg_by <- split(seg[cols], factor(seg$site_id, levels = s$site_id))
   wkb <- wk::as_wkb(sf::st_geometry(s))
   legs <- prep$access_legs
@@ -499,7 +515,8 @@ required_setbacks <- function(pairs, rs_seg, rs_run, level, n, seg, s_df, distan
                  road_width = st$road_width, slope = st$slope %||% rep(NA_real_, length(k)),
                  corner = as.numeric(st$is_corner), storey = rep(n, length(k)))
     dd <- setback_distance(rule, h, storey = n, bearing = seg$outward_bearing[rs_seg[rs]], vars = vars,
-                           slope_in = sl, base_height = bh)
+                           slope_in = sl, base_height = bh,
+                           measured = seg$existing_front_setback[rs_seg[rs]])
     origin <- rule$origin %||% "boundary"
     if (origin == "road_far_side") dd <- dd - st$road_width
     if (origin == "road_centreline") dd <- dd - st$road_width / 2
@@ -863,8 +880,14 @@ sample_surfaces <- function(prep, rb, layers, dflt, covered_min = 0.99) {
     sel <- which(!is.na(sd$zone_key) & (is.null(d$applies_to_zones) | sd$zone_key %in% d$applies_to_zones))
     if (!length(sel)) next
     v <- terra::vect(sf::st_transform(s[sel, ], terra::crs(r)))
-    lo <- terra::extract(r, v, fun = min, na.rm = TRUE)[, 2]
-    n <- terra::extract(r, v, fun = function(x, ...) sum(!is.na(x)))[, 2]
+    # One extract: each site's cells (centres inside), for the lowest point
+    # and the share covered.
+    ex <- terra::extract(r, v)
+    val <- ex[[2]]
+    ok <- !is.na(val)
+    f <- factor(ex$ID[ok], levels = seq_along(sel))
+    lo <- suppressWarnings(as.vector(tapply(val[ok], f, min)))
+    n <- as.vector(table(f))
     cell <- prod(terra::res(r))
     cov <- pmin(1, n * cell / sd$area[sel])
     ground <- if (absolute) sd$ground_mean[sel] else 0
@@ -876,8 +899,9 @@ sample_surfaces <- function(prep, rb, layers, dflt, covered_min = 0.99) {
                                              value = above[full], stringsAsFactors = FALSE)
     }
     part <- sel[!is.na(lo) & cov > 0 & cov < covered_min]
-    for (i in part) {
-      b <- surface_bands(s[i, ], r, if (absolute) sd$ground_mean[i] else 0, d$floor_value)
+    if (length(part)) {
+      b <- surface_bands(s[part, ], r, if (absolute) sd$ground_mean[part] else rep(0, length(part)),
+                         d$floor_value)
       if (!is.null(b)) bands[[length(bands) + 1]] <- b
     }
   }
@@ -891,28 +915,41 @@ sample_surfaces <- function(prep, rb, layers, dflt, covered_min = 0.99) {
        missing = unique(missing))
 }
 
-# The parts of one site under a surface, by the height the surface allows
-# there, as polygons: each comes off every storey whose level reaches it.
-surface_bands <- function(site, r, ground, floor_value) {
-  v <- terra::vect(sf::st_transform(site, terra::crs(r)))
-  rc <- tryCatch(terra::crop(r, terra::ext(v) + 2 * max(terra::res(r)), snap = "out"), error = function(e) NULL)
-  if (is.null(rc)) return(NULL)
-  above <- terra::clamp(rc - ground, lower = floor_value %||% 0, values = TRUE)
-  # Bands of 0.5 m: fine enough for any storey height, coarse enough to stay
-  # few polygons.
-  q <- floor(above * 2) / 2
-  pv <- terra::as.polygons(q, dissolve = TRUE)
-  if (!nrow(pv)) return(NULL)
-  b <- sf::st_as_sf(pv)
-  names(b)[1] <- "upper"
-  b <- suppressWarnings(sf::st_intersection(sf::st_make_valid(sf::st_transform(b, sf::st_crs(site))),
-                                            sf::st_geometry(site)))
-  b <- b[!sf::st_is_empty(b), ]
-  b <- b[sf::st_dimension(b) %in% 2, ]
-  b <- b[as.numeric(sf::st_area(b)) > 0.01, ]
-  if (!nrow(b)) return(NULL)
-  data.frame(site_id = site$site_id, upper = b$upper) |>
-    (\(d) { d$geom <- as_geos(b); d })()
+# The parts of sites under a surface, by the height the surface allows there
+# (0.5 m bands, above each site's own ground and at least the floor value), as
+# polygons: each comes off every storey whose level reaches it. All sites in
+# one pass: every raster cell touching a site becomes a square, squares are
+# unioned by site and band, and the result is clipped to the site.
+surface_bands <- function(sites, r, ground, floor_value) {
+  v <- terra::vect(sf::st_transform(sites, terra::crs(r)))
+  ex <- terra::extract(r, v, cells = TRUE, xy = TRUE, touches = TRUE)
+  val <- ex[[2]]
+  ex <- ex[!is.na(val), , drop = FALSE]
+  if (!nrow(ex)) return(NULL)
+  above <- pmax(ex[[2]] - ground[ex$ID], floor_value %||% 0)
+  upper <- floor(above * 2) / 2
+  h <- terra::res(r) / 2
+  sq <- wk::rct(ex$x - h[1], ex$y - h[2], ex$x + h[1], ex$y + h[2])
+  sq <- sf::st_as_sfc(sq)
+  sf::st_crs(sq) <- sf::st_crs(terra::crs(r))
+  if (sf::st_crs(sq) != sf::st_crs(sites)) sq <- sf::st_transform(sq, sf::st_crs(sites))
+  sq <- geos::as_geos_geometry(sq)
+  key <- paste(ex$ID, upper, sep = "\r")
+  u <- unique(key)
+  grp <- match(key, u)
+  o <- order(grp)
+  merged <- geos::geos_unary_union(geos::geos_make_collection(sq[o], feature_id = grp[o]))
+  gid <- as.integer(sub("\r.*$", "", u))
+  site_g <- as_geos(sites)
+  piece <- geos::geos_intersection(merged, site_g[gid])
+  # Mixed results (a polygon touching the site along a line) keep their area.
+  mixed <- geos::geos_type(piece) == "geometrycollection"
+  if (any(mixed)) piece[mixed] <- geos::geos_buffer(piece[mixed], 0)
+  keep <- !geos::geos_is_empty(piece) & geos::geos_area(piece) > 0.01
+  if (!any(keep)) return(NULL)
+  out <- data.frame(site_id = sites$site_id[gid[keep]], upper = as.numeric(sub("^[^\r]*\r", "", u[keep])))
+  out$geom <- piece[keep]
+  out
 }
 
 # ---- Building length and separation ----------------------------------------------
@@ -992,7 +1029,9 @@ terrain_terms <- function(seg, seg_geom, s_df, site_geom, settings) {
   zero <- list(offset = rep(0, n), slope = rep(0, n))
   if (!"ground" %in% names(seg) || !"ground_mean" %in% names(s_df) || !n) return(zero)
   merge <- settings$morphology$boundary_merge_angle %||% 5
-  run <- boundary_runs(seg_geom, seg$site, seg$boundary_class, merge)
+  # Runs follow the boundary's own class: a rear site's side reclassified as
+  # rear (rear_site_sides_as_rear) is still the side it is on the ground.
+  run <- boundary_runs(seg_geom, seg$site, ground_class(seg), merge)
   len <- geos::geos_length(seg_geom)
   has <- !is.na(seg$ground)
   num <- rowsum(ifelse(has, seg$ground * len, 0), run)

@@ -63,11 +63,13 @@ plan_geometry <- function(pg, zoning, rulebook, layers = list(), zone_field = "z
     sf::st_crs(part_sf) <- crs
     ppg <- parcel_geometry(part_sf, roads = inputs$roads, water = inputs$water,
                            centrelines = inputs$centrelines, width_field = inputs$width_field %||% "width_m",
-                           rulebook = rulebook, morphology = morphology)
+                           rulebook = rulebook, morphology = morphology,
+                           easements = inputs$easements, other_parcels = inputs$other_parcels)
     if (!is.null(inputs$dem)) ppg <- attach_terrain(ppg, inputs$dem)
     if (!is.null(inputs$ground)) ppg <- attach_ground(ppg, inputs$ground)
     new_sites <- ppg$sites
     if ("parcel_ids" %in% names(sites)) new_sites$parcel_ids <- sites$parcel_ids[parts$site]
+    if ("landholding" %in% names(sites)) new_sites$landholding <- sites$landholding[parts$site]
     new_sites$zone_key <- ifelse(startsWith(parts$key, "?"), NA_character_, parts$key)
     new_sites$zone_code <- ifelse(startsWith(parts$key, "?"), substring(parts$key, 2),
                                   names(zmap)[match(parts$key, zmap)])
@@ -86,6 +88,7 @@ plan_geometry <- function(pg, zoning, rulebook, layers = list(), zone_field = "z
     if (nrow(ppg$access_legs)) legs <- if (nrow(legs)) rbind(legs, ppg$access_legs) else ppg$access_legs
     report$sites_split <- length(multi)
   }
+  sites <- inherit_access(sites, m$rear_site_max_frontage)
   sites$flag[is.na(sites$zone_key) & sites$flag == "ok"] <- "no_zone"
   if (length(unzoned)) report$unzoned_sites <- length(unzoned)
 

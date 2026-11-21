@@ -11,7 +11,8 @@ setback_distance(
   bearing = NA_real_,
   vars = list(),
   slope_in = 0,
-  base_height = height
+  base_height = height,
+  measured = NULL
 )
 }
 \arguments{
@@ -34,6 +35,9 @@ rises into the site from the boundary (metres per metre).}
 \item{base_height}{The building's own height above the site's ground, where
 \code{height} has been adjusted to the boundary's ground; a plane's
 \code{max_setback_above} is tested against it.}
+
+\item{measured}{For a yard with \code{value_from}: the measured distance (m)
+per height (\code{NA} where nothing was measured).}
 }
 \value{
 Numeric vector of required distances (m), one per height.

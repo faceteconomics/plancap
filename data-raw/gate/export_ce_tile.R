@@ -104,18 +104,45 @@ assign("cached_datum", real_datum, envir = ns)
 # Terrain on, front yard still off: plancap's like-for-like with terrain.
 terrain_nofront <- suppressWarnings(run_region_tile(tile, ctx))
 assign("needs_existing_front_setbacks", real_front, envir = ns)
+# Terrain on and the front yard on: everything (the published run's settings).
+terrain <- suppressWarnings(run_region_tile(tile, ctx))
 
 # Ground levels from the tile cache, for plancap's `ground` argument: the
 # mean ground along each boundary segment and over each site.
 segs <- read_region_tile(tile, "segments", cache_dir = scen$precomputed, site_ids = sites$site_id)
+mid <- sf::st_coordinates(sf::st_line_sample(sf::st_cast(sf::st_geometry(segs), "LINESTRING"), sample = 0.5))
 ground <- list(
   sites = data.frame(site_id = sites$site_id, ground_mean = sites$ground_mean_m),
   segments = data.frame(site_id = segs$site_id,
                         seq = as.integer(sub("^.*-s", "", segs$segment_id)),
+                        x = mid[, 1], y = mid[, 2],
                         ground = segs$ground_mean_m))
-out <- list(tile = tile, sites = sites[, c("site_id", "zone_key")], ground = ground, roads = roads[, 0], zoning = zoning,
+# Context for rear-site access (item 259) and the special character front
+# yard measured from the neighbours' houses (item 314), within 150 m: easement
+# areas, the other primary parcels (access lots and neighbours), building
+# outlines and named road sections. Read as capacityengine's region run does.
+halo_wkt <- sf::st_as_text(box(150))
+rd <- function(f) sf::st_read(file.path("data/cache/region", f), wkt_filter = halo_wkt, quiet = TRUE)
+ease <- rd("linz_non_primary_parcels.gpkg")
+ease <- ease[ease$parcel_intent == "Easement", 0]
+prim <- rd("linz_primary_parcels.gpkg")
+prim <- prim[!prim$parcel_intent %in% c("Road", "Railway", "Hydro"), 0]
+buildings <- rd("linz_building_outlines.gpkg")[, 0]
+# The front yard's neighbours, as capacityengine's region_tile() takes them:
+# the region's sites within 150 m of the tile.
+idx <- ctx$idx
+tb <- idx[idx$tile_id == tile, , drop = FALSE]
+near <- idx$tile_id[idx$xmax >= tb$xmin - 150 & idx$xmin <= tb$xmax + 150 &
+                      idx$ymax >= tb$ymin - 150 & idx$ymin <= tb$ymax + 150]
+nb <- do.call(rbind, lapply(setdiff(near, tile), function(t)
+  read_region_tile(t, "sites", cache_dir = scen$precomputed)[, "site_id"]))
+nb <- if (is.null(nb)) NULL else nb[lengths(sf::st_intersects(nb, box(150))) > 0, 0]
+streets <- rd("linz_road_sections.gpkg")[, "full_road_name"]
+out <- list(tile = tile, sites = sites[, intersect(c("site_id", "zone_key", "site_id_parent"), names(sites))],
+            neighbours = nb, ground = ground, roads = roads[, 0], zoning = zoning,
+            easements = ease, other_parcels = prim, buildings = buildings, streets = streets,
             layers = layers, water = water, ce_flat = flat$sites, ce_flat_nofront = flat_nofront$sites,
-            ce_terrain_nofront = terrain_nofront$sites,
+            ce_terrain_nofront = terrain_nofront$sites, ce_terrain = terrain$sites,
             ce_published = as.data.frame(published[published$tile_id == tile, ]),
             exported = Sys.time())
 dir.create("../plancap/data-raw/cache", showWarnings = FALSE)

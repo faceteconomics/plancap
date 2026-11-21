@@ -38,14 +38,17 @@ length_keys <- c(
   "occupiable", "roof_allowance", "width", "depth", "min_road_contact",
   "road_probe_distance", "corner_min_frontage", "access_leg_max_width",
   "access_leg_min_road_contact", "water_boundary_distance", "buffer", "vertical_above",
-  "road_tolerance", "boundary_probe_distance", "rear_site_max_frontage"
+  "road_tolerance", "boundary_probe_distance", "rear_site_max_frontage",
+  "access_touch_distance", "access_contact_tolerance", "access_max_strip_width",
+  "front_setback_max_offset"
 )
 area_keys <- c(
   "min_site_area", "max_site_area", "site_area_per_dwelling", "vacant_site_min_area",
   "min_dwelling_size", "dwelling_size", "size", "max_floorplate", "min_floorplate",
   "max_tower_floorplate", "max_site_floorspace", "area_per_dwelling", "min_area",
   "max_average_area", "threshold", "max_floorspace", "min_sliver_area",
-  "parking_area_per_dwelling", "outdoor_area_per_dwelling", "min_one_dwelling_floor", "max_area"
+  "parking_area_per_dwelling", "outdoor_area_per_dwelling", "min_one_dwelling_floor", "max_area",
+  "access_lot_max_area", "front_setback_min_dwelling_area"
 )
 by_dim <- c(site_area = "area", height = "length", road_width = "length",
             distance = "length", site_depth = "length", storey = NA, slope = NA)
@@ -94,8 +97,8 @@ unit_walk <- function(x, k, key = "", value_dim = NA) {
   if (!is.null(x$by) && !is.null(x$bands)) {
     bd <- by_dim[[x$by]]
     x$bands <- lapply(x$bands, function(b) {
-      b$min <- unit_scale(b$min, bd, k)
-      b$max <- unit_scale(b$max, bd, k)
+      b$min <- unit_scale(b[["min"]], bd, k)
+      b$max <- unit_scale(b[["max"]], bd, k)
       b$value <- unit_scale(b$value, value_dim, k)
       b
     })

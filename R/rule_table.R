@@ -83,7 +83,7 @@ fmt_value <- function(v) {
 
 fmt_bands <- function(b) {
   parts <- vapply(b$bands, function(x) {
-    paste0(if (is.null(x$max)) paste0(">", format(x$min %||% 0)) else paste0("<=", format(x$max)),
+    paste0(if (is.null(x[["max"]])) paste0(">", format(x[["min"]] %||% 0)) else paste0("<=", format(x[["max"]])),
            ": ", fmt_value(x$value))
   }, "")
   paste0("by ", b$by, " [", paste(parts, collapse = "; "), "]")
@@ -91,15 +91,15 @@ fmt_bands <- function(b) {
 
 describe_setback <- function(s) {
   switch(s$kind,
-    yard = paste0(fmt_value(s$distance), " m"),
+    yard = if (!is.null(s$value_from)) "neighbours' existing setback" else paste0(fmt_value(s$distance), " m"),
     upper_level = paste0(fmt_value(s$distance), " m",
                          if (!is.null(s$above_height)) paste0(" above ", s$above_height, " m"),
                          if (!is.null(s$from_storey)) paste0(" from storey ", s$from_storey)),
     plane = paste0(if (!is.null(s$angle_by_bearing)) "angle by bearing" else paste0(round(s$angle_deg, 2), " deg"),
                    " from ", fmt_value(s$start_height), " m",
                    if (!is.null(s$set_in)) paste0(", set in ", s$set_in, " m")),
-    proportional = paste0(s$ratio, " x H", if (!is.null(s$min)) paste0(", min ", s$min),
-                          if (!is.null(s$max)) paste0(", max ", s$max)),
+    proportional = paste0(s$ratio, " x H", if (!is.null(s[["min"]])) paste0(", min ", s[["min"]]),
+                          if (!is.null(s[["max"]])) paste0(", max ", s[["max"]])),
     profile = paste0("profile of ", length(s$points), " points"),
     NA_character_
   )

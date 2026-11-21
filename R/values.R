@@ -51,7 +51,7 @@ bands <- function(by = c("site_area", "height", "storey", "slope", "road_width",
 #' @param vars Variables for any formula values, see [eval_rule_value()].
 #' @export
 band_value <- function(x, at, vars = list()) {
-  uppers <- vapply(x$bands, function(b) b$max %||% Inf, numeric(1))
+  uppers <- vapply(x$bands, function(b) b[["max"]] %||% Inf, numeric(1))
   idx <- findInterval(at, uppers, left.open = TRUE) + 1
   idx[idx > length(uppers)] <- NA
   out <- rep(NA_real_, length(at))

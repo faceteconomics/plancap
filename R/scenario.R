@@ -26,7 +26,23 @@
 #'   (from a survey, or another model): a list with `sites` (a data frame of
 #'   `site_id` and `ground_mean`) and `segments` (a data frame of `site_id`,
 #'   `seq`, the segment's position in its site's boundary counting from 1, and
-#'   `ground`, the mean ground level along it).
+#'   `ground`, the mean ground level along it). Give the segment's midpoint
+#'   as `x` and `y` instead of `seq` to match segments by position.
+#' @param easements Optional easement areas (rights of way), for the access
+#'   width of rear sites ([find_access_widths()]).
+#' @param other_parcels Optional parcels that are not sites (and not roads),
+#'   among which jointly owned access lots are found.
+#' @param buildings Optional building outlines, for yards set from the
+#'   neighbours' existing setbacks ([find_existing_front_setbacks()]).
+#' @param streets Optional named street centre lines for the same; default
+#'   `centrelines`.
+#' @param street_field Column of `streets` holding the street name.
+#' @param neighbours Optional parcels beyond `parcels` that may be neighbours
+#'   for a measured front yard (default `other_parcels`). Leave out parcels
+#'   whose buildings are not dwellings, such as reserves and schools.
+#' @param landholding Optional column of `parcels` naming the landholding
+#'   each parcel belongs to, where parcels held together are still separate
+#'   sites: pieces of one landholding share their best access width.
 #' @param zone_field Column of `zoning` holding zone codes.
 #' @param site_id Column of `parcels` to use as the site id. Default
 #'   `"parcel_id"` if present, otherwise row numbers.
@@ -52,7 +68,9 @@
 #' taller <- scenario_change(base, "MDR at 16 m",
 #'   rulebook = set_rule(base$rulebook, "zones.MDR.height.value", 16))
 scenario <- function(name, rulebook, parcels, zoning, roads = NULL, layers = list(),
-                     water = NULL, centrelines = NULL, dem = NULL, ground = NULL, zone_field = "zone",
+                     water = NULL, centrelines = NULL, dem = NULL, ground = NULL,
+                     easements = NULL, other_parcels = NULL, buildings = NULL, streets = NULL,
+                     street_field = "name", neighbours = NULL, landholding = NULL, zone_field = "zone",
                      site_id = NULL, group_by = NULL, width_field = "width_m",
                      morphology = list(), notes = NULL) {
   check_string(name, null_ok = FALSE)
@@ -68,6 +86,9 @@ scenario <- function(name, rulebook, parcels, zoning, roads = NULL, layers = lis
   if (!is.null(site_id) && !site_id %in% names(parcels)) {
     cli::cli_abort("{.arg parcels} has no {.field {site_id}} column.")
   }
+  if (!is.null(landholding) && !landholding %in% names(parcels)) {
+    cli::cli_abort("{.arg parcels} has no {.field {landholding}} column.")
+  }
   if (!is.null(group_by) && !group_by %in% names(parcels)) {
     cli::cli_abort("{.arg parcels} has no {.field {group_by}} column.")
   }
@@ -76,7 +97,10 @@ scenario <- function(name, rulebook, parcels, zoning, roads = NULL, layers = lis
   }
   structure(list(name = name, rulebook = rulebook, parcels = parcels, zoning = zoning,
                  roads = roads, layers = layers, water = water, centrelines = centrelines,
-                 dem = dem, ground = ground, zone_field = zone_field, site_id = site_id, group_by = group_by,
+                 dem = dem, ground = ground, easements = easements, other_parcels = other_parcels,
+                 buildings = buildings, streets = streets, street_field = street_field,
+                 neighbours = neighbours, landholding = landholding,
+                 zone_field = zone_field, site_id = site_id, group_by = group_by,
                  width_field = width_field, morphology = morphology, notes = notes),
             class = "plancap_scenario")
 }
@@ -156,7 +180,8 @@ prepare_sites <- function(x, cache = TRUE) {
   m <- morphology_settings(x$rulebook, x$morphology)
   h_parcels <- rlang::hash(list(
     parcels = x$parcels, roads = x$roads, water = x$water, centrelines = x$centrelines,
-    dem = dem_signature(x$dem), ground = x$ground, site_id = x$site_id, group_by = x$group_by,
+    dem = dem_signature(x$dem), ground = x$ground, easements = x$easements,
+    other_parcels = x$other_parcels, landholding = x$landholding, site_id = x$site_id, group_by = x$group_by,
     width_field = x$width_field, morphology = m, version = utils::packageVersion("plancap")))
   rb <- x$rulebook
   plan_rules <- list(zone_map = rb$zone_map, zone_families = rb$zone_families,
@@ -177,10 +202,11 @@ prepare_sites <- function(x, cache = TRUE) {
     if (!is.null(pg)) {
       reused["parcel_geometry"] <- TRUE
     } else {
-      sites <- make_sites(x$parcels, x$site_id, x$group_by)
+      sites <- make_sites(x$parcels, x$site_id, x$group_by, x$landholding)
       pg <- parcel_geometry(sites, roads = x$roads, water = x$water,
                             centrelines = x$centrelines, width_field = x$width_field,
-                            rulebook = x$rulebook, morphology = x$morphology)
+                            rulebook = x$rulebook, morphology = x$morphology,
+                            easements = x$easements, other_parcels = x$other_parcels)
       if (!is.null(x$dem)) pg <- attach_terrain(pg, x$dem)
       if (!is.null(x$ground)) pg <- attach_ground(pg, x$ground)
       if (cache) cache_set(h_parcels, pg)
@@ -188,6 +214,7 @@ prepare_sites <- function(x, cache = TRUE) {
     plan <- plan_geometry(pg, x$zoning, x$rulebook, layers = x$layers,
                           zone_field = x$zone_field,
                           inputs = list(roads = x$roads, water = x$water, dem = x$dem, ground = x$ground,
+                                        easements = x$easements, other_parcels = x$other_parcels,
                                         centrelines = x$centrelines, width_field = x$width_field),
                           morphology = x$morphology)
     if (cache) cache_set(h_plan, plan)
@@ -217,13 +244,14 @@ print.plancap_sites <- function(x, ...) {
 }
 
 # Sites from parcels: one per parcel, or parcels dissolved by a grouping column.
-make_sites <- function(parcels, site_id = NULL, group_by = NULL) {
+make_sites <- function(parcels, site_id = NULL, group_by = NULL, landholding = NULL) {
   ids <- if (!is.null(site_id)) as.character(parcels[[site_id]]) else
     sprintf("P%06d", seq_len(nrow(parcels)))
   if (anyDuplicated(ids)) cli::cli_abort("Site ids must be unique; {.field {site_id}} has duplicates.")
   if (is.null(group_by)) {
     out <- sf::st_sf(site_id = ids, geometry = sf::st_geometry(parcels))
     out$parcel_ids <- as.list(ids)
+    if (!is.null(landholding)) out$landholding <- as.character(parcels[[landholding]])
     return(out)
   }
   grp <- as.character(parcels[[group_by]])
@@ -238,6 +266,7 @@ make_sites <- function(parcels, site_id = NULL, group_by = NULL) {
   sf::st_crs(out) <- sf::st_crs(parcels)
   out$parcel_ids <- split(ids, factor(fid, levels = seq_along(u)))
   names(out$parcel_ids) <- NULL
+  if (!is.null(landholding)) out$landholding <- as.character(parcels[[landholding]])[match(u, grp)]
   out
 }
 
@@ -275,7 +304,20 @@ attach_ground <- function(pg, ground) {
   seq_of <- as.integer(sub("^.*-", "", seg$segment_id))
   key <- paste(seg$site_id, seq_of)
   g <- ground$segments
-  seg$ground <- g$ground[match(key, paste(g$site_id, g$seq))]
+  if (all(c("x", "y") %in% names(g))) {
+    # By position: each segment takes the ground of the nearest supplied
+    # midpoint of its own site, wherever its boundary is taken to start.
+    mx <- (seg$x0 + seg$x1) / 2
+    my <- (seg$y0 + seg$y1) / 2
+    by_site <- split(seq_len(nrow(g)), g$site_id)
+    seg$ground <- vapply(seq_len(nrow(seg)), function(i) {
+      k <- by_site[[seg$site_id[i]]]
+      if (is.null(k)) return(NA_real_)
+      g$ground[k[which.min((g$x[k] - mx[i])^2 + (g$y[k] - my[i])^2)]]
+    }, 0)
+  } else {
+    seg$ground <- g$ground[match(key, paste(g$site_id, g$seq))]
+  }
   pg$sites$ground_mean <- ground$sites$ground_mean[match(pg$sites$site_id, ground$sites$site_id)]
   pg$segments <- seg
   pg

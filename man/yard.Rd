@@ -9,7 +9,7 @@
 \title{Setback rules: yards, planes and everything that keeps a building back}
 \usage{
 yard(
-  distance,
+  distance = NULL,
   boundaries,
   from_storey = NULL,
   above_height = NULL,
@@ -18,7 +18,8 @@ yard(
   variant = NULL,
   name = NULL,
   source = NULL,
-  activity_status = NULL
+  activity_status = NULL,
+  value_from = NULL
 )
 
 plane(
@@ -104,6 +105,13 @@ of different variants are alternatives, never combined.}
 \item{source}{Citation (plan, chapter, rule number).}
 
 \item{activity_status}{Optional activity status of the standard.}
+
+\item{value_from}{Instead of \code{distance}, a yard set by what is already
+there: \code{"existing_front_setback"} is the average setback of the dwellings
+on the neighbouring sites along the street (as the Auckland Unitary
+Plan's Special Character Areas front yard, D18.6.1.3.1), measured from
+building outlines (\code{\link[=find_existing_front_setbacks]{find_existing_front_setbacks()}}). Where nothing could
+be measured the rule is reported as not applied, never read as no yard.}
 
 \item{angle_deg}{Plane angle from horizontal, degrees.}
 
