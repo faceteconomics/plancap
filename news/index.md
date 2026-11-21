@@ -2,6 +2,49 @@
 
 ## plancap 0.0.0.9000
 
+### Comparing scenarios (stage 6)
+
+- [`scenario_set()`](https://faceteconomics.github.io/plancap/reference/scenario_set.md)
+  and
+  [`run_scenarios()`](https://faceteconomics.github.io/plancap/reference/scenario_set.md):
+  scenarios run together, the baseline in full and the others
+  incrementally from it.
+  [`read_scenarios()`](https://faceteconomics.github.io/plancap/reference/read_scenarios.md)
+  reads a whole comparison from a YAML manifest.
+- [`compare_scenarios()`](https://faceteconomics.github.io/plancap/reference/compare_scenarios.md):
+  totals and change; every baseline site’s change with a reason
+  (`rezoned`, `rule_changed`, `overlay_added`, `overlay_removed`,
+  `area_changed`, `neighbour_effect`, `parcel_changed`, `unchanged`),
+  with changed parcels apportioned to the baseline’s by area; zone
+  transitions; by zone, height band, area and grid; land reconciliation;
+  and attribution of the change to its drivers (rules, zoning, layers,
+  parcels), sequential or Shapley, with the rules driver split by each
+  zone, overlay or area whose rules changed. Sites are compared by
+  landholding (`scenario(landholding = )`).
+- [`diff_inputs()`](https://faceteconomics.github.io/plancap/reference/diff_inputs.md):
+  the rule changes as a table, and the land rezoned, the layer land
+  added or removed and the parcels changed as polygons.
+  [`check_comparison()`](https://faceteconomics.github.io/plancap/reference/check_comparison.md)
+  reconciles every view.
+- Exampleton Plan Change 1
+  ([`exampleton_pc1()`](https://faceteconomics.github.io/plancap/reference/exampleton_pc1.md),
+  `rulebook_example( "exampleton_pc1")`, and a manifest in `extdata`): a
+  rulebook that `extends:` the operative one, a rezoning, a wider flood
+  plain and a re-subdivided block. Vignette “Comparing plan changes”.
+- Boundaries are cut where they cross a distance from the road that a
+  rule switches at (`within_frontage`, `beyond_frontage`), so each part
+  takes its own rule (capacityengine item 321), for the standards being
+  built. This changes Exampleton’s figures: MDR’s front exemption
+  standard now applies its plane behind 20 m on every side boundary.
+- Incremental runs: an exclusion layer’s change reaches only the sites
+  it touches; a run copying every site keeps its storey stack’s columns.
+- Fixed: `summarise_capacity(by = "area")` replaced the land area with
+  the area names.
+- The capacityengine converter carries `applies_to_rear_sites: true`
+  (rear sites only).
+- Gate: operative against PC120 (residential standards) on the Auckland
+  tile reproduces capacityengine’s change exactly, on every landholding.
+
 ### Summaries (stage 5)
 
 - [`summarise_capacity()`](https://faceteconomics.github.io/plancap/reference/summarise_capacity.md):

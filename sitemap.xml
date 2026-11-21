@@ -6,6 +6,7 @@
 <url><loc>https://faceteconomics.github.io/plancap/LICENSE.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/PLAN.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/RULES-RESEARCH.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/articles/comparing.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/articles/index.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/articles/plancap.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/articles/summaries.html</loc></url>
@@ -21,17 +22,21 @@
 <url><loc>https://faceteconomics.github.io/plancap/reference/building_form.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/capacity_table.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/check_capacity.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/check_comparison.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/check_morphology.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/clear_site_cache.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/compare_scenarios.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/conditions.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/constraint_breakdown.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/conversion.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/convert_rulebook_units.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/density.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/diff_inputs.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/estimate_capacity.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/exampleton.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/exampleton_dem.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/exampleton_path.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/exampleton_pc1.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/explain_site.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/find_access_widths.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/find_existing_front_setbacks.html</loc></url>
@@ -44,6 +49,7 @@
 <url><loc>https://faceteconomics.github.io/plancap/reference/prepare_sites.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/ratio.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/read_rulebook.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/read_scenarios.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rule-formulas.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rule_table.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rulebook.html</loc></url>
@@ -52,6 +58,7 @@
 <url><loc>https://faceteconomics.github.io/plancap/reference/rulebook_schema_path.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rulebook_template.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/scenario.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/scenario_set.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/sensitivity.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/set_rule.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/set_rules.html</loc></url>

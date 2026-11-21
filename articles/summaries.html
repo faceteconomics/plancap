@@ -33,7 +33,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
+<li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -101,12 +102,12 @@ the total. (Plots of these summaries come in a later version.)</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summarise_capacity.html">summarise_capacity</a></span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="st">"zone"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;plancap summary&gt; Operative, by zone_key: 6 rows</span></span>
 <span><span class="co">#&gt;  zone_key sites land_area floor_area dwellings  far floor_area_share</span></span>
-<span><span class="co">#&gt;       HDR   272   215,500    510,439     5,225 2.37            25.2%</span></span>
+<span><span class="co">#&gt;       HDR   272   215,500    510,439     5,225 2.37            25.0%</span></span>
 <span><span class="co">#&gt;       IND    24    48,000     97,673         0 2.03             4.8%</span></span>
 <span><span class="co">#&gt;       LDR   108    96,000     64,707       102 0.67             3.2%</span></span>
-<span><span class="co">#&gt;       MDR   714   512,500    714,195     7,397 1.39            35.2%</span></span>
-<span><span class="co">#&gt;        MU   176   128,000    383,313     2,131 2.99            18.9%</span></span>
-<span><span class="co">#&gt;        TC    85    64,000    256,000     1,342 4.00            12.6%</span></span></code></pre></div>
+<span><span class="co">#&gt;       MDR   714   512,500    727,969     7,545 1.42            35.7%</span></span>
+<span><span class="co">#&gt;        MU   176   128,000    383,313     2,131 2.99            18.8%</span></span>
+<span><span class="co">#&gt;        TC    85    64,000    256,000     1,342 4.00            12.5%</span></span></code></pre></div>
 <p>The measures available are listed in
 <code><a href="../reference/summarise_capacity.html">?summarise_capacity</a></code>; per hectare measures are of land:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -117,7 +118,7 @@ the total. (Plots of these summaries come in a later version.)</p>
 <span><span class="co">#&gt;       HDR   272     5,225            242.5         1,876.6</span></span>
 <span><span class="co">#&gt;       IND    24         0              0.0         4,069.7</span></span>
 <span><span class="co">#&gt;       LDR   108       102             10.6           599.1</span></span>
-<span><span class="co">#&gt;       MDR   714     7,397            144.3         1,000.3</span></span>
+<span><span class="co">#&gt;       MDR   714     7,545            147.2         1,019.6</span></span>
 <span><span class="co">#&gt;        MU   176     2,131            166.5         2,177.9</span></span>
 <span><span class="co">#&gt;        TC    85     1,342            209.7         3,011.8</span></span></code></pre></div>
 </div>
@@ -141,15 +142,15 @@ vertically.</p>
 <span><span class="co">#&gt;       IND     12-16 m    24     97,673</span></span>
 <span><span class="co">#&gt;       LDR       0-9 m   108     64,707</span></span>
 <span><span class="co">#&gt;       MDR       0-9 m     7        315</span></span>
-<span><span class="co">#&gt;       MDR      9-12 m   707    713,881</span></span>
+<span><span class="co">#&gt;       MDR      9-12 m   707    727,654</span></span>
 <span><span class="co">#&gt;        MU     12-16 m   176    383,313</span></span>
 <span><span class="co">#&gt;        TC     22-30 m    85    256,000</span></span>
 <span><span class="fu"><a href="../reference/summarise_capacity.html">summarise_capacity</a></span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="st">"storey"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;plancap summary&gt; Operative, by storey: 6 rows</span></span>
 <span><span class="co">#&gt;  storey sites floor_area floor_area_share</span></span>
-<span><span class="co">#&gt;       1 1,371    626,004            30.9%</span></span>
-<span><span class="co">#&gt;       2 1,369    623,166            30.8%</span></span>
-<span><span class="co">#&gt;       3 1,259    570,574            28.2%</span></span>
+<span><span class="co">#&gt;       1 1,371    626,004            30.7%</span></span>
+<span><span class="co">#&gt;       2 1,369    624,082            30.6%</span></span>
+<span><span class="co">#&gt;       3 1,259    583,431            28.6%</span></span>
 <span><span class="co">#&gt;       4   354    147,953             7.3%</span></span>
 <span><span class="co">#&gt;       5   241     42,920             2.1%</span></span>
 <span><span class="co">#&gt;       6   138     15,710             0.8%</span></span></code></pre></div>
@@ -172,7 +173,7 @@ summary comes back with the areas’ geometry, ready to map.</p>
 <span><span class="co">#&gt; 14 8803_22401    77   193352.3 POLYGON ((2200750 5600250, ...</span></span>
 <span><span class="co">#&gt; 10 8802_22401    68   172252.9 POLYGON ((2200500 5600250, ...</span></span>
 <span><span class="co">#&gt; 15 8803_22402    60   139045.1 POLYGON ((2200750 5600500, ...</span></span>
-<span><span class="co">#&gt; 6  8801_22401    73   118958.3 POLYGON ((2200250 5600250, ...</span></span>
+<span><span class="co">#&gt; 6  8801_22401    73   119582.2 POLYGON ((2200250 5600250, ...</span></span>
 <span><span class="co">#&gt; 11 8802_22402    50   117333.8 POLYGON ((2200500 5600500, ...</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -190,16 +191,16 @@ rule. The steps add up exactly.</p>
 <span><span class="co">#&gt;        area_total    19       288</span></span>
 <span><span class="co">#&gt;           density   108       102</span></span>
 <span><span class="co">#&gt;       entitlement     6        18</span></span>
-<span><span class="co">#&gt;        floor_area 1,246    15,789</span></span>
+<span><span class="co">#&gt;        floor_area 1,246    15,937</span></span>
 <span><span class="fu"><a href="../reference/constraint_breakdown.html">constraint_breakdown</a></span><span class="op">(</span><span class="va">cap</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;plancap constraint breakdown&gt; Operative</span></span>
 <span><span class="co">#&gt;                 step floor_area remaining</span></span>
 <span><span class="co">#&gt;          theoretical  4,117,898 4,117,898</span></span>
 <span><span class="co">#&gt;  storeys_not_reached    110,429 4,007,469</span></span>
-<span><span class="co">#&gt;    setbacks_and_land  1,308,533 2,698,935</span></span>
-<span><span class="co">#&gt;             coverage    372,514 2,326,422</span></span>
-<span><span class="co">#&gt;                  far    300,094 2,026,327</span></span>
-<span><span class="co">#&gt;              enabled  2,026,327 2,026,327</span></span></code></pre></div>
+<span><span class="co">#&gt;    setbacks_and_land  1,276,117 2,731,352</span></span>
+<span><span class="co">#&gt;             coverage    391,158 2,340,195</span></span>
+<span><span class="co">#&gt;                  far    300,094 2,040,100</span></span>
+<span><span class="co">#&gt;              enabled  2,040,100 2,040,100</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sweeping-a-rule">Sweeping a rule<a class="anchor" aria-label="anchor" href="#sweeping-a-rule"></a>
@@ -211,9 +212,9 @@ reaches.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/sensitivity.html">sensitivity</a></span><span class="op">(</span><span class="va">sc</span>, <span class="st">"zones.MDR.ratios.coverage_max.value"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;plancap sensitivity&gt; Operative: <span style="color: #00BB00;">zones.MDR.ratios.coverage_max.value</span></span></span>
 <span><span class="co">#&gt;  value floor_area dwellings floor_area_change dwellings_change</span></span>
-<span><span class="co">#&gt;    0.4  1,899,311    14,821                 0                0</span></span>
-<span><span class="co">#&gt;    0.5  2,026,327    16,197           127,017            1,376</span></span>
-<span><span class="co">#&gt;    0.6  2,134,933    17,350           235,622            2,529</span></span></code></pre></div>
+<span><span class="co">#&gt;    0.4  1,903,286    14,867                 0                0</span></span>
+<span><span class="co">#&gt;    0.5  2,040,100    16,345           136,814            1,478</span></span>
+<span><span class="co">#&gt;    0.6  2,168,004    17,717           264,718            2,850</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="for-a-report">For a report<a class="anchor" aria-label="anchor" href="#for-a-report"></a>
@@ -712,8 +713,8 @@ their effect.</p>
 <th id="stub_1_4" scope="row" class="gt_row gt_left gt_stub"></th>
 <td headers="stub_1_4 zone_key" class="gt_row gt_left">MDR</td>
 <td headers="stub_1_4 sites" class="gt_row gt_right">714</td>
-<td headers="stub_1_4 floor_area" class="gt_row gt_right">714,195</td>
-<td headers="stub_1_4 dwellings" class="gt_row gt_right">7,397</td>
+<td headers="stub_1_4 floor_area" class="gt_row gt_right">727,969</td>
+<td headers="stub_1_4 dwellings" class="gt_row gt_right">7,545</td>
 </tr>
 <tr>
 <th id="stub_1_5" scope="row" class="gt_row gt_left gt_stub"></th>
@@ -733,8 +734,8 @@ their effect.</p>
 <th id="grand_summary_stub_1" scope="row" class="gt_row gt_left gt_stub gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">Total</th>
 <td headers="grand_summary_stub_1 zone_key" class="gt_row gt_left gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">—</td>
 <td headers="grand_summary_stub_1 sites" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">1,379</td>
-<td headers="grand_summary_stub_1 floor_area" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">2,026,327</td>
-<td headers="grand_summary_stub_1 dwellings" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">16,197</td>
+<td headers="grand_summary_stub_1 floor_area" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">2,040,100</td>
+<td headers="grand_summary_stub_1 dwellings" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">16,345</td>
 </tr>
 </tbody>
 <tfoot><tr class="gt_sourcenotes">

@@ -149,8 +149,27 @@ GitHub). Status (20 November 2026):
   breakdown adds exactly. Vignettes “Getting started” and “Summaries”
   drafted (knit locally; CI builds them). 444 expectations.
 
-  **Next: stage 6** (scenarios and comparison: compare_scenarios(),
-  crosswalk, attribution, Exampleton PC1, AKL PC120 test-only).
+- **Stage 6 built**: scenario_set(), run_scenarios() (incremental),
+  read_scenarios() (YAML manifests), compare_scenarios() (landholding
+  units: matched sites with reason codes, changed parcels apportioned by
+  area, scenario-only land kept; zone transitions; by zone / height /
+  areas / grid; land reconciliation; sequential or Shapley attribution
+  over rules, zoning, layers, parcels, with a warning where an
+  intermediate scenario zones land to a zone its rulebook lacks;
+  per-rule split of the rules driver), diff_inputs(),
+  check_comparison(); Exampleton PC1 (data-raw/exampleton_pc1.R,
+  inst/extdata/exampleton_pc1.gpkg and \_scenarios.yaml,
+  inst/rulebooks/exampleton_pc1.yaml); vignette “Comparing plan
+  changes”. Engine: frontage-trigger splits (item 321), per-site
+  exclusion signatures. **Gates met**: on Exampleton PC1 an incremental
+  run equals a full run and drivers sum to the change; on Auckland,
+  operative against PC120 (data-raw/gate/export_ce_pc120.R,
+  compare_pc120.R; PC120 rulebook converted test-only into
+  data-raw/cache) matches capacityengine’s change exactly on all 2,668
+  landholdings (+75,092 m2, +387 dwellings), and the operative tile is
+  still exact in all four modes. 494 expectations.
+
+  **Next: stage 7** (plots and theme, including comparison plots).
 
   *(Earlier note)* **Stage 4, part 3**: stepped terrain (item 318) and
   boundary runs (item 299); site shape factor (item 324); tower
@@ -264,7 +283,7 @@ What is ported, generalised:
 | `apply_zone_adjacency` | `resolve_adjacency()` | unchanged method (probe far side of midpoint) |
 | `build_envelope`, `apply_caps`, `enforce_stack_rules` | [`build_envelopes()`](https://faceteconomics.github.io/plancap/reference/build_envelopes.md) | hemisphere-aware orientation rules; units parameter |
 | yield paths | `estimate_yield()` | conversion assumptions explicit and required |
-| `aggregate_results`, `diff_scenarios` | [`summarise_capacity()`](https://faceteconomics.github.io/plancap/reference/summarise_capacity.md), `compare_scenarios()` | much richer, see sections 5A and 6 |
+| `aggregate_results`, `diff_scenarios` | [`summarise_capacity()`](https://faceteconomics.github.io/plancap/reference/summarise_capacity.md), [`compare_scenarios()`](https://faceteconomics.github.io/plancap/reference/compare_scenarios.md) | much richer, see sections 5A and 6 |
 | explorer `site_rules_scene()` | [`explain_site()`](https://faceteconomics.github.io/plancap/reference/explain_site.md), `plot_site()` | static ggplot first, interactive optional |
 
 ------------------------------------------------------------------------
@@ -660,10 +679,11 @@ run exactly.
 ### Why did capacity change? (attribution)
 
 A plan change usually moves several things at once.
-`compare_scenarios()` splits the total change (and each area’s change)
-into its **drivers**: rule values, zone extents, overlay and precinct
-extents, and parcels. It does this by running intermediate scenarios
-that switch one driver at a time:
+[`compare_scenarios()`](https://faceteconomics.github.io/plancap/reference/compare_scenarios.md)
+splits the total change (and each area’s change) into its **drivers**:
+rule values, zone extents, overlay and precinct extents, and parcels. It
+does this by running intermediate scenarios that switch one driver at a
+time:
 
 - **Sequential** (default; one extra run for each driver): apply the
   drivers in a stated order. Cheap, but the split depends on the order.
@@ -688,10 +708,12 @@ A `cap_comparison` object:
   `overlay_added`, `overlay_removed`, `area_changed`, `parcel_changed`,
   `neighbour_effect`;
 - the attribution table;
-- an input diff (`diff_inputs()`): the rule changes as a table, and the
-  map changes as polygons (land rezoned, overlay added or removed,
-  parcels changed);
-- reconciliation checks (`check_comparison()`).
+- an input diff
+  ([`diff_inputs()`](https://faceteconomics.github.io/plancap/reference/diff_inputs.md)):
+  the rule changes as a table, and the map changes as polygons (land
+  rezoned, overlay added or removed, parcels changed);
+- reconciliation checks
+  ([`check_comparison()`](https://faceteconomics.github.io/plancap/reference/check_comparison.md)).
 
 Summaries and plots built on it: `summary(cmp)`, `plot_comparison()`
 (dumbbell or bars by zone, area or height band), `plot_change_map()`
@@ -751,8 +773,9 @@ Other summary functions:
 - `constraint_breakdown(cap)` â€” floor area lost to each rule, in
   sequence from a theoretical maximum (zoned land Ã— height) down to
   enabled. Feeds the waterfall plot.
-- `compare_scenarios()`: scenario differences, including where the
-  zones, overlays or parcels differ. See section 5A.
+- [`compare_scenarios()`](https://faceteconomics.github.io/plancap/reference/compare_scenarios.md):
+  scenario differences, including where the zones, overlays or parcels
+  differ. See section 5A.
 - `sensitivity(sites, rb, rule = "MRZ$height", values = c(11, 14, 16))`
   â€” sweeps a rule and returns a tidy table.
 - `explain_site(cap, site_id)` â€” boundary-by-boundary table: class,
@@ -864,7 +887,7 @@ Everything optional is checked with
 | 3 | Envelope engine; accepts prepared parts; affected-site runs | Hand-checked cases reproduce exactly (S039789 etc.); benchmark |
 | 4 | Yield paths, overlays, areas, variants, conversion | A capacityengine region tile reproduces to the mÂ² |
 | 5 | Summaries, sensitivity, explain_site | Reconciliation checks; vignettes 1, 5 draft |
-| 6 | **Scenarios and comparison**: [`scenario_change()`](https://faceteconomics.github.io/plancap/reference/scenario.md), `scenario_set()`, manifests, `run_scenarios()`, `compare_scenarios()`, crosswalk, transitions, attribution, `diff_inputs()`; Exampleton PC1 | On Exampleton PC1: an incremental run equals a full run; drivers sum to the total change; land reconciles. On Auckland: operative vs PC120 matches capacityengine’s difference on a tile. “Comparing plan changes” vignette drafted |
+| 6 | **Scenarios and comparison**: [`scenario_change()`](https://faceteconomics.github.io/plancap/reference/scenario.md), [`scenario_set()`](https://faceteconomics.github.io/plancap/reference/scenario_set.md), manifests, [`run_scenarios()`](https://faceteconomics.github.io/plancap/reference/scenario_set.md), [`compare_scenarios()`](https://faceteconomics.github.io/plancap/reference/compare_scenarios.md), crosswalk, transitions, attribution, [`diff_inputs()`](https://faceteconomics.github.io/plancap/reference/diff_inputs.md); Exampleton PC1 | On Exampleton PC1: an incremental run equals a full run; drivers sum to the total change; land reconciles. On Auckland: operative vs PC120 matches capacityengine’s difference on a tile. “Comparing plan changes” vignette drafted |
 | 7 | Plots (including comparison plots) and a theme design pass | Rendered gallery reviewed by you |
 | 8 | XLSX template entry, new-jurisdiction vignette, docs, pkgdown | A fresh jurisdiction entered from the template end to end |
 | 9 | Release: public repo, pkgdown live, (CRAN submission if Q8) | R CMD check 0/0/0; you sign off |

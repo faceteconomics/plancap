@@ -33,7 +33,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
+<li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -171,8 +172,8 @@ the rulebook’s overlays and areas refer to.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_capacity.html">estimate_capacity</a></span><span class="op">(</span><span class="va">sc</span><span class="op">)</span></span>
 <span><span class="va">cap</span></span>
-<span><span class="co">#&gt; &lt;plancap capacity&gt; Operative: 1379 sites, 2,026,327 m2 floor area (1,622,053 m2</span></span>
-<span><span class="co">#&gt; residential), 16,197 dwellings (+102 minor).</span></span>
+<span><span class="co">#&gt; &lt;plancap capacity&gt; Operative: 1379 sites, 2,040,100 m2 floor area (1,635,826 m2</span></span>
+<span><span class="co">#&gt; residential), 16,345 dwellings (+102 minor).</span></span>
 <span><span class="co">#&gt; <span style="font-style: italic;">Plan-enabled, gross, blank-slate capacity; dwellings at 78 m2 and 85%</span></span></span>
 <span><span class="co">#&gt; <span style="font-style: italic;">efficiency.</span></span></span>
 <span><span class="co">#&gt; Paths: hybrid_density 108, volumetric 1271.</span></span>
@@ -181,19 +182,19 @@ the rulebook’s overlays and areas refer to.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Capacity: Operative</span> ──</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 1,379 sites on 106.4 ha: 2,026,327 m2 of floor area (1,622,053 m2 residential,</span></span>
-<span><span class="co">#&gt; 404,275 m2 business), 16,197 dwellings and 102 minor dwellings.</span></span>
+<span><span class="co">#&gt; 1,379 sites on 106.4 ha: 2,040,100 m2 of floor area (1,635,826 m2 residential,</span></span>
+<span><span class="co">#&gt; 404,275 m2 business), 16,345 dwellings and 102 minor dwellings.</span></span>
 <span><span class="co">#&gt; <span style="font-style: italic;">Plan-enabled, gross, blank-slate capacity; dwellings at 78 m2 and 85%</span></span></span>
 <span><span class="co">#&gt; <span style="font-style: italic;">efficiency.</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── By zone</span></span>
 <span><span class="co">#&gt;  zone_key sites land_area floor_area dwellings  far floor_area_share</span></span>
-<span><span class="co">#&gt;       HDR   272   215,500    510,439     5,225 2.37            25.2%</span></span>
+<span><span class="co">#&gt;       HDR   272   215,500    510,439     5,225 2.37            25.0%</span></span>
 <span><span class="co">#&gt;       IND    24    48,000     97,673         0 2.03             4.8%</span></span>
 <span><span class="co">#&gt;       LDR   108    96,000     64,707       102 0.67             3.2%</span></span>
-<span><span class="co">#&gt;       MDR   714   512,500    714,195     7,397 1.39            35.2%</span></span>
-<span><span class="co">#&gt;        MU   176   128,000    383,313     2,131 2.99            18.9%</span></span>
-<span><span class="co">#&gt;        TC    85    64,000    256,000     1,342 4.00            12.6%</span></span>
+<span><span class="co">#&gt;       MDR   714   512,500    727,969     7,545 1.42            35.7%</span></span>
+<span><span class="co">#&gt;        MU   176   128,000    383,313     2,131 2.99            18.8%</span></span>
+<span><span class="co">#&gt;        TC    85    64,000    256,000     1,342 4.00            12.5%</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Flags</span></span>
 <span><span class="co">#&gt; no_capacity 8, ok 1,371</span></span>
@@ -211,7 +212,7 @@ floor area by site, and any warnings from the engine.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/check_capacity.html">check_capacity</a></span><span class="op">(</span><span class="va">cap</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> parcels accounted for: 1377 of 1377 (every input parcel is in a site)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> land in equals land out: 1064000 of 1064000 m2 (site areas add to parcel areas (overlaps aside))</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> storeys add to sites: 2026327 m2 (floor area by storey equals floor area by site)</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> storeys add to sites: 2040100 m2 (floor area by storey equals floor area by site)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> uses add to floor area:  (residential plus business equals floor area)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> no missing or negative values: 0 (floor area and dwellings)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> within the height's storeys: 0 (no site above its area times its storeys)</span></span>

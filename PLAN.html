@@ -19,7 +19,8 @@
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="articles/summaries.html">Summaries</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="articles/comparing.html">Comparing plan changes</a></li>
+    <li><a class="dropdown-item" href="articles/summaries.html">Summaries</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -62,9 +63,10 @@
 <li><p><strong>Stage 4 gate, flat ground: met</strong> (20 Nov 2026, <code>data-raw/gate/README.md</code>). Tile t_011_011 (2,680 sites): floor area +0.033%, 99.4% of sites exact to 0.01 m2; dwellings -0.51%, 97.9% exact. Every zone but Single House exact. Remaining differences traced: 17 irregular special-character lots (boundary classification), access width from easements (dwellings), the neighbours’-setback front yard (not ported). Fixes made: zone storey height rule, area-conditional zone families, unmeasured access uncapped, CfGS large-site divisor, precinct name parsing.</p></li>
 <li><p><strong>Stage 4, part 4 built</strong>: stepped terrain (item 318) with boundary runs (item 299) and ground planes; ground levels from a DEM (sampled along each boundary) or supplied as tables; tower floorplate cap; tower dimension and separation flagged. Gate with terrain and height surfaces: floor area +0.034%, 99.2% of sites exact (data-raw/gate/README.md). 344 expectations.</p></li>
 <li><p><strong>Stage 4, part 5 built (stage 4 complete)</strong>: site shape factor (item 324, stage 1: yards, water yards and exclusions; <code><a href="reference/site_shape_factor.html">site_shape_factor()</a></code>); access width of rear sites from entrance strips, easements and access lots, shared across a landholding (item 259; <code><a href="reference/find_access_widths.html">find_access_widths()</a></code>, <code>scenario(easements, other_parcels, landholding)</code>); the front yard set from the neighbours’ existing setbacks (items 314, 317, 325; <code>yard(value_from = "existing_front_setback")</code>, <code><a href="reference/find_existing_front_setbacks.html">find_existing_front_setbacks()</a></code>, <code>scenario(buildings, streets, neighbours)</code>); a rear site’s sides as rear boundaries where the plan says so (item 319; morphology <code>rear_site_sides_as_rear</code>); surface banding vectorised (141 s to 11 s); ground tables matched by segment midpoint. <strong>Gate: plancap reproduces capacityengine exactly on tile t_011_011 in every mode</strong> (flat or terrain, with or without the measured front yard): floor area and dwellings on all 2,680 sites. The 17 “irregular special-character lots” were the J1 rear site rule, not classification. 393 expectations.</p></li>
+<li><p><strong>Stage 5 built</strong>: summarise_capacity() (site columns, zone, storeys, height / site size / FAR bands, binding, areas by majority, square grid, floor area by storey level; sf for spatial units), summary(), capacity_table() (gt), constraint_breakdown() (exact waterfall), explain_site() (one-site rebuild with setbacks), sensitivity() (incremental sweep; whole rules as values), check_capacity(), unmodelled_report(). Gate: check_capacity() reconciles Exampleton and the Auckland gate tile (parcels, land, storeys, uses all ok); the breakdown adds exactly. Vignettes “Getting started” and “Summaries” drafted (knit locally; CI builds them). 444 expectations.</p></li>
 <li>
-<p><strong>Stage 5 built</strong>: summarise_capacity() (site columns, zone, storeys, height / site size / FAR bands, binding, areas by majority, square grid, floor area by storey level; sf for spatial units), summary(), capacity_table() (gt), constraint_breakdown() (exact waterfall), explain_site() (one-site rebuild with setbacks), sensitivity() (incremental sweep; whole rules as values), check_capacity(), unmodelled_report(). Gate: check_capacity() reconciles Exampleton and the Auckland gate tile (parcels, land, storeys, uses all ok); the breakdown adds exactly. Vignettes “Getting started” and “Summaries” drafted (knit locally; CI builds them). 444 expectations.</p>
-<p><strong>Next: stage 6</strong> (scenarios and comparison: compare_scenarios(), crosswalk, attribution, Exampleton PC1, AKL PC120 test-only).</p>
+<p><strong>Stage 6 built</strong>: scenario_set(), run_scenarios() (incremental), read_scenarios() (YAML manifests), compare_scenarios() (landholding units: matched sites with reason codes, changed parcels apportioned by area, scenario-only land kept; zone transitions; by zone / height / areas / grid; land reconciliation; sequential or Shapley attribution over rules, zoning, layers, parcels, with a warning where an intermediate scenario zones land to a zone its rulebook lacks; per-rule split of the rules driver), diff_inputs(), check_comparison(); Exampleton PC1 (data-raw/exampleton_pc1.R, inst/extdata/exampleton_pc1.gpkg and _scenarios.yaml, inst/rulebooks/exampleton_pc1.yaml); vignette “Comparing plan changes”. Engine: frontage-trigger splits (item 321), per-site exclusion signatures. <strong>Gates met</strong>: on Exampleton PC1 an incremental run equals a full run and drivers sum to the change; on Auckland, operative against PC120 (data-raw/gate/export_ce_pc120.R, compare_pc120.R; PC120 rulebook converted test-only into data-raw/cache) matches capacityengine’s change exactly on all 2,668 landholdings (+75,092 m2, +387 dwellings), and the operative tile is still exact in all four modes. 494 expectations.</p>
+<p><strong>Next: stage 7</strong> (plots and theme, including comparison plots).</p>
 <p><em>(Earlier note)</em> <strong>Stage 4, part 3</strong>: stepped terrain (item 318) and boundary runs (item 299); site shape factor (item 324); tower controls; then the tile reproduction: run plancap on a capacityengine tile’s own sites, roads, zoning, overlays, DEM and water, compare per site against <code>capacityengine/outputs/region_sites.parquet</code> (floorspace_m2, dwellings, yield_path), and reconcile every difference to a known cause (access width from easements, item 259; entrance strips, item 374; open-space area tokens such as OPEN_SPACE_OVER_2000_WIDE, which plancap families do not yet express).</p>
 </li>
 </ul><div class="section level3">
@@ -143,7 +145,7 @@
 <code>aggregate_results</code>, <code>diff_scenarios</code>
 </td>
 <td>
-<code><a href="reference/summarise_capacity.html">summarise_capacity()</a></code>, <code>compare_scenarios()</code>
+<code><a href="reference/summarise_capacity.html">summarise_capacity()</a></code>, <code><a href="reference/compare_scenarios.html">compare_scenarios()</a></code>
 </td>
 <td>much richer, see sections 5A and 6</td>
 </tr><tr><td>explorer <code>site_rules_scene()</code>
@@ -374,9 +376,9 @@
 <span>                       rulebook <span class="op">=</span> <span class="fu"><a href="reference/read_rulebook.html">read_rulebook</a></span><span class="op">(</span><span class="st">"pc1.yaml"</span><span class="op">)</span>,   <span class="co"># extends: operative.yaml</span></span>
 <span>                       layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>zoning <span class="op">=</span> <span class="va">zoning_pc1</span><span class="op">)</span><span class="op">)</span>      <span class="co"># other layers inherited</span></span>
 <span></span>
-<span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="fu">scenario_set</span><span class="op">(</span><span class="va">base</span>, <span class="va">pc1</span>, <span class="va">pc1_option_b</span><span class="op">)</span>    <span class="co"># the first is the baseline</span></span>
-<span><span class="va">res</span>  <span class="op">&lt;-</span> <span class="fu">run_scenarios</span><span class="op">(</span><span class="va">scen</span><span class="op">)</span>                      <span class="co"># shares and reuses work</span></span>
-<span><span class="va">cmp</span>  <span class="op">&lt;-</span> <span class="fu">compare_scenarios</span><span class="op">(</span><span class="va">res</span><span class="op">)</span>                   <span class="co"># each against the baseline</span></span>
+<span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/scenario_set.html">scenario_set</a></span><span class="op">(</span><span class="va">base</span>, <span class="va">pc1</span>, <span class="va">pc1_option_b</span><span class="op">)</span>    <span class="co"># the first is the baseline</span></span>
+<span><span class="va">res</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/scenario_set.html">run_scenarios</a></span><span class="op">(</span><span class="va">scen</span><span class="op">)</span>                      <span class="co"># shares and reuses work</span></span>
+<span><span class="va">cmp</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/compare_scenarios.html">compare_scenarios</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>                   <span class="co"># each against the baseline</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cmp</span><span class="op">)</span>; <span class="fu">plot_change_map</span><span class="op">(</span><span class="va">cmp</span><span class="op">)</span>; <span class="fu">plot_attribution</span><span class="op">(</span><span class="va">cmp</span><span class="op">)</span></span></code></pre></div>
 <p>Scenarios can also be written as a <strong>manifest file</strong> (YAML: name, rulebook path, layer paths, which scenario it changes), so a council’s comparison is one reproducible file: <code>read_scenarios("pc1-options.yaml")</code>.</p>
 </div>
@@ -430,7 +432,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="why-did-capacity-change-attribution">Why did capacity change? (attribution)<a class="anchor" aria-label="anchor" href="#why-did-capacity-change-attribution"></a></h3>
-<p>A plan change usually moves several things at once. <code>compare_scenarios()</code> splits the total change (and each area’s change) into its <strong>drivers</strong>: rule values, zone extents, overlay and precinct extents, and parcels. It does this by running intermediate scenarios that switch one driver at a time:</p>
+<p>A plan change usually moves several things at once. <code><a href="reference/compare_scenarios.html">compare_scenarios()</a></code> splits the total change (and each area’s change) into its <strong>drivers</strong>: rule values, zone extents, overlay and precinct extents, and parcels. It does this by running intermediate scenarios that switch one driver at a time:</p>
 <ul><li>
 <strong>Sequential</strong> (default; one extra run for each driver): apply the drivers in a stated order. Cheap, but the split depends on the order.</li>
 <li>
@@ -444,8 +446,8 @@
 <li>change by zone transition, by area or grid cell, and by height band;</li>
 <li>site-level changes (sf) for matched sites and crosswalked parcels, each with a <strong>reason code</strong>: <code>rezoned</code>, <code>rule_changed</code>, <code>overlay_added</code>, <code>overlay_removed</code>, <code>area_changed</code>, <code>parcel_changed</code>, <code>neighbour_effect</code>;</li>
 <li>the attribution table;</li>
-<li>an input diff (<code>diff_inputs()</code>): the rule changes as a table, and the map changes as polygons (land rezoned, overlay added or removed, parcels changed);</li>
-<li>reconciliation checks (<code>check_comparison()</code>).</li>
+<li>an input diff (<code><a href="reference/diff_inputs.html">diff_inputs()</a></code>): the rule changes as a table, and the map changes as polygons (land rezoned, overlay added or removed, parcels changed);</li>
+<li>reconciliation checks (<code><a href="reference/check_comparison.html">check_comparison()</a></code>).</li>
 </ul><p>Summaries and plots built on it: <code>summary(cmp)</code>, <code>plot_comparison()</code> (dumbbell or bars by zone, area or height band), <code>plot_change_map()</code> (diverging colours on sites, grid or areas), <code>plot_transitions()</code> (zone-to-zone flows of land and capacity), <code>plot_attribution()</code> (waterfall of drivers), and <code>plot_height_profile(cmp)</code> (each scenario’s floor area by storey, overlaid).</p>
 <p>More than two scenarios: each is compared with the baseline by default; <code>compare_scenarios(res, pairs = ...)</code> adds other pairs; a scenario-by-measure table summarises all of them.</p>
 </div>
@@ -476,7 +478,7 @@
 <ul><li>
 <code>constraint_breakdown(cap)</code> â€” floor area lost to each rule, in sequence from a theoretical maximum (zoned land Ã— height) down to enabled. Feeds the waterfall plot.</li>
 <li>
-<code>compare_scenarios()</code>: scenario differences, including where the zones, overlays or parcels differ. See section 5A.</li>
+<code><a href="reference/compare_scenarios.html">compare_scenarios()</a></code>: scenario differences, including where the zones, overlays or parcels differ. See section 5A.</li>
 <li>
 <code>sensitivity(sites, rb, rule = "MRZ$height", values = c(11, 14, 16))</code> â€” sweeps a rule and returns a tidy table.</li>
 <li>
@@ -578,7 +580,7 @@
 <td>Reconciliation checks; vignettes 1, 5 draft</td>
 </tr><tr><td>6</td>
 <td>
-<strong>Scenarios and comparison</strong>: <code><a href="reference/scenario.html">scenario_change()</a></code>, <code>scenario_set()</code>, manifests, <code>run_scenarios()</code>, <code>compare_scenarios()</code>, crosswalk, transitions, attribution, <code>diff_inputs()</code>; Exampleton PC1</td>
+<strong>Scenarios and comparison</strong>: <code><a href="reference/scenario.html">scenario_change()</a></code>, <code><a href="reference/scenario_set.html">scenario_set()</a></code>, manifests, <code><a href="reference/scenario_set.html">run_scenarios()</a></code>, <code><a href="reference/compare_scenarios.html">compare_scenarios()</a></code>, crosswalk, transitions, attribution, <code><a href="reference/diff_inputs.html">diff_inputs()</a></code>; Exampleton PC1</td>
 <td>On Exampleton PC1: an incremental run equals a full run; drivers sum to the total change; land reconciles. On Auckland: operative vs PC120 matches capacityengine’s difference on a tile. “Comparing plan changes” vignette drafted</td>
 </tr><tr><td>7</td>
 <td>Plots (including comparison plots) and a theme design pass</td>

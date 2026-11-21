@@ -98,8 +98,8 @@ sc <- scenario("Operative", rulebook_example("exampleton"),
   zoning = town$zoning, layers = town[c("height_areas", "transit")])
 cap <- estimate_capacity(sc)
 cap
-#> <plancap capacity> Operative: 80 sites, 116,312 m2 floor area (97,112 m2
-#> residential), 1,012 dwellings (+0 minor).
+#> <plancap capacity> Operative: 80 sites, 117,251 m2 floor area (98,051 m2
+#> residential), 1,024 dwellings (+0 minor).
 #> Plan-enabled, gross, blank-slate capacity; dwellings at 78 m2 and 85%
 #> efficiency.
 #> Paths: volumetric 80.

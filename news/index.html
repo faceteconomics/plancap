@@ -19,7 +19,8 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -45,6 +46,21 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="plancap-0009000">plancap 0.0.0.9000<a class="anchor" aria-label="anchor" href="#plancap-0009000"></a></h2>
+<div class="section level3">
+<h3 id="comparing-scenarios-stage-0-0-0-9000">Comparing scenarios (stage 6)<a class="anchor" aria-label="anchor" href="#comparing-scenarios-stage-0-0-0-9000"></a></h3>
+<ul><li>
+<code><a href="../reference/scenario_set.html">scenario_set()</a></code> and <code><a href="../reference/scenario_set.html">run_scenarios()</a></code>: scenarios run together, the baseline in full and the others incrementally from it. <code><a href="../reference/read_scenarios.html">read_scenarios()</a></code> reads a whole comparison from a YAML manifest.</li>
+<li>
+<code><a href="../reference/compare_scenarios.html">compare_scenarios()</a></code>: totals and change; every baseline site’s change with a reason (<code>rezoned</code>, <code>rule_changed</code>, <code>overlay_added</code>, <code>overlay_removed</code>, <code>area_changed</code>, <code>neighbour_effect</code>, <code>parcel_changed</code>, <code>unchanged</code>), with changed parcels apportioned to the baseline’s by area; zone transitions; by zone, height band, area and grid; land reconciliation; and attribution of the change to its drivers (rules, zoning, layers, parcels), sequential or Shapley, with the rules driver split by each zone, overlay or area whose rules changed. Sites are compared by landholding (<code>scenario(landholding = )</code>).</li>
+<li>
+<code><a href="../reference/diff_inputs.html">diff_inputs()</a></code>: the rule changes as a table, and the land rezoned, the layer land added or removed and the parcels changed as polygons. <code><a href="../reference/check_comparison.html">check_comparison()</a></code> reconciles every view.</li>
+<li>Exampleton Plan Change 1 (<code><a href="../reference/exampleton_pc1.html">exampleton_pc1()</a></code>, <code>rulebook_example( "exampleton_pc1")</code>, and a manifest in <code>extdata</code>): a rulebook that <code>extends:</code> the operative one, a rezoning, a wider flood plain and a re-subdivided block. Vignette “Comparing plan changes”.</li>
+<li>Boundaries are cut where they cross a distance from the road that a rule switches at (<code>within_frontage</code>, <code>beyond_frontage</code>), so each part takes its own rule (capacityengine item 321), for the standards being built. This changes Exampleton’s figures: MDR’s front exemption standard now applies its plane behind 20 m on every side boundary.</li>
+<li>Incremental runs: an exclusion layer’s change reaches only the sites it touches; a run copying every site keeps its storey stack’s columns.</li>
+<li>Fixed: <code>summarise_capacity(by = "area")</code> replaced the land area with the area names.</li>
+<li>The capacityengine converter carries <code>applies_to_rear_sites: true</code> (rear sites only).</li>
+<li>Gate: operative against PC120 (residential standards) on the Auckland tile reproduces capacityengine’s change exactly, on every landholding.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="summaries-stage-0-0-0-9000">Summaries (stage 5)<a class="anchor" aria-label="anchor" href="#summaries-stage-0-0-0-9000"></a></h3>
 <ul><li>

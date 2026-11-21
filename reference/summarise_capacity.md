@@ -121,12 +121,12 @@ cap <- estimate_capacity(sc)
 summarise_capacity(cap)
 #> <plancap summary> Operative, by zone_key: 6 rows
 #>  zone_key sites land_area floor_area dwellings  far floor_area_share
-#>       HDR   272   215,500    529,519     5,594 2.46            25.4%
+#>       HDR   272   215,500    529,519     5,594 2.46            25.2%
 #>       IND    24    48,000    115,200         0 2.40             5.5%
 #>       LDR   108    96,000     64,920       103 0.68             3.1%
-#>       MDR   714   512,500    737,704     7,644 1.44            35.3%
-#>        MU   176   128,000    384,000     2,132 3.00            18.4%
-#>        TC    85    64,000    256,000     1,342 4.00            12.3%
+#>       MDR   714   512,500    748,147     7,754 1.46            35.7%
+#>        MU   176   128,000    384,000     2,132 3.00            18.3%
+#>        TC    85    64,000    256,000     1,342 4.00            12.2%
 summarise_capacity(cap, by = c("zone", "height_band"), measures = c("sites", "floor_area"))
 #> <plancap summary> Operative, by zone_key, height_band: 9 rows
 #>  zone_key height_band sites floor_area
@@ -136,16 +136,16 @@ summarise_capacity(cap, by = c("zone", "height_band"), measures = c("sites", "fl
 #>       HDR     22-30 m   149    357,196
 #>       IND     12-16 m    24    115,200
 #>       LDR       0-9 m   108     64,920
-#>       MDR      9-12 m   714    737,704
+#>       MDR      9-12 m   714    748,147
 #>        MU     12-16 m   176    384,000
 #>        TC     22-30 m    85    256,000
 summarise_capacity(cap, by = "storey")
 #> <plancap summary> Operative, by storey: 6 rows
 #>  storey sites floor_area floor_area_share
-#>       1 1,379    643,225            30.8%
-#>       2 1,378    641,683            30.7%
-#>       3 1,269    592,126            28.4%
-#>       4   355    149,980             7.2%
+#>       1 1,379    643,225            30.7%
+#>       2 1,378    641,683            30.6%
+#>       3 1,269    602,569            28.7%
+#>       4   355    149,980             7.1%
 #>       5   245     43,497             2.1%
 #>       6   149     16,832             0.8%
 ```

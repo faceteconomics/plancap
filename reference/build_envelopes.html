@@ -25,7 +25,8 @@ floorplate limits."></head><body>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -184,22 +185,22 @@ run.</p>
 <span class="r-in"><span>  zoning <span class="op">=</span> <span class="va">town</span><span class="op">$</span><span class="va">zoning</span>, layers <span class="op">=</span> <span class="va">town</span><span class="op">[</span><span class="st">"height_areas"</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu">build_envelopes</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">env</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap envelope&gt; Operative: 60 of 60 sites build; 80,511 m2 of floor area.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap envelope&gt; Operative: 60 of 60 sites build; 81,120 m2 of floor area.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">Plan-enabled, gross, blank-slate building envelope (before yield and use</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">split).</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Binding constraint by storey: coverage 68%, geometry 32%.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Binding constraint by storey: coverage 73%, geometry 27%.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">env</span><span class="op">$</span><span class="va">sites</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   site_id zone_key                         param_id         variant storeys</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  P00001      MDR 44c5d8349d2124b4f418d91bfffa29a1 front_exemption       3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  P00002      MDR 44c5d8349d2124b4f418d91bfffa29a1        standard       3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  P00003      MDR 44c5d8349d2124b4f418d91bfffa29a1        standard       3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  P00003      MDR 44c5d8349d2124b4f418d91bfffa29a1 front_exemption       3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  P00004      MDR 44c5d8349d2124b4f418d91bfffa29a1 front_exemption       3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  P00005      MDR 44c5d8349d2124b4f418d91bfffa29a1        standard       3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  P00006      MDR 44c5d8349d2124b4f418d91bfffa29a1        standard       3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   height footprint floor_area  binding flag water_yard_share removed_area</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     11  357.1497  1071.4492 coverage   ok                0            0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2     11  513.1069  1539.3206 coverage   ok                0            0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     11  389.1607  1103.5445 coverage   ok                0            0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     11  389.1607  1167.4821 coverage   ok                0            0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4     11  184.5345   553.6034 coverage   ok                0            0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5     11  290.8621   834.5310 coverage   ok                0            0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6     11  480.3579  1441.0736 coverage   ok                0            0</span>

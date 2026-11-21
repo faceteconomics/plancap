@@ -61,8 +61,8 @@ constraint_breakdown(estimate_capacity(sc))
 #>                 step floor_area remaining
 #>          theoretical  4,126,500 4,126,500
 #>  storeys_not_reached     89,916 4,036,584
-#>    setbacks_and_land  1,241,836 2,794,748
-#>             coverage    405,693 2,389,055
-#>                  far    301,712 2,087,343
-#>              enabled  2,087,343 2,087,343
+#>    setbacks_and_land  1,211,250 2,825,334
+#>             coverage    425,836 2,399,498
+#>                  far    301,712 2,097,786
+#>              enabled  2,097,786 2,097,786
 ```

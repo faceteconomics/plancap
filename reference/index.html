@@ -19,7 +19,8 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -353,6 +354,50 @@
         </dt>
         <dd>The site shape factor: can a site hold the plan's rectangle?</dd>
       </dl></div><div class="section level2">
+      <h2 id="comparing-scenarios">Comparing scenarios<a class="anchor" aria-label="anchor" href="#comparing-scenarios"></a></h2>
+
+      <div class="section-desc"><p>Plan changes as scenarios: run a set incrementally, compare each with the baseline (by site, zone transition, area and height), split the change into its drivers, and check that it all adds up.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="scenario_set.html">scenario_set()</a></code> <code><a href="scenario_set.html">run_scenarios()</a></code>
+
+        </dt>
+        <dd>Sets of scenarios, run together</dd>
+
+        <dt>
+
+          <code><a href="read_scenarios.html">read_scenarios()</a></code>
+
+        </dt>
+        <dd>Read a set of scenarios from a manifest file</dd>
+
+        <dt>
+
+          <code><a href="compare_scenarios.html">compare_scenarios()</a></code> <code><a href="compare_scenarios.html">summary(<i>&lt;plancap_comparison&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Compare scenarios: what changed, where, and why</dd>
+
+        <dt>
+
+          <code><a href="diff_inputs.html">diff_inputs()</a></code>
+
+        </dt>
+        <dd>What differs between two scenarios' inputs</dd>
+
+        <dt>
+
+          <code><a href="check_comparison.html">check_comparison()</a></code>
+
+        </dt>
+        <dd>Reconcile a comparison</dd>
+      </dl></div><div class="section level2">
       <h2 id="summaries-and-checks">Summaries and checks<a class="anchor" aria-label="anchor" href="#summaries-and-checks"></a></h2>
 
       <div class="section-desc"><p>Capacity by zone, height, site size, location or binding constraint; the floor area each kind of rule removes; one site explained; a rule swept through values; reconciliation; the register of rules not modelled.</p></div>
@@ -521,6 +566,13 @@
 
         </dt>
         <dd>Path to an Exampleton file</dd>
+
+        <dt>
+
+          <code><a href="exampleton_pc1.html">exampleton_pc1()</a></code>
+
+        </dt>
+        <dd>Exampleton Plan Change 1</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

@@ -110,8 +110,8 @@ sc
 
 cap <- estimate_capacity(sc)
 cap
-#> <plancap capacity> Operative: 1379 sites, 2,026,327 m2 floor area (1,622,053 m2
-#> residential), 16,197 dwellings (+102 minor).
+#> <plancap capacity> Operative: 1379 sites, 2,040,100 m2 floor area (1,635,826 m2
+#> residential), 16,345 dwellings (+102 minor).
 #> Plan-enabled, gross, blank-slate capacity; dwellings at 78 m2 and 85%
 #> efficiency.
 #> Paths: hybrid_density 108, volumetric 1271.
@@ -120,19 +120,19 @@ summary(cap)
 #> 
 #> ── Capacity: Operative ──
 #> 
-#> 1,379 sites on 106.4 ha: 2,026,327 m2 of floor area (1,622,053 m2 residential,
-#> 404,275 m2 business), 16,197 dwellings and 102 minor dwellings.
+#> 1,379 sites on 106.4 ha: 2,040,100 m2 of floor area (1,635,826 m2 residential,
+#> 404,275 m2 business), 16,345 dwellings and 102 minor dwellings.
 #> Plan-enabled, gross, blank-slate capacity; dwellings at 78 m2 and 85%
 #> efficiency.
 #> 
 #> ── By zone
 #>  zone_key sites land_area floor_area dwellings  far floor_area_share
-#>       HDR   272   215,500    510,439     5,225 2.37            25.2%
+#>       HDR   272   215,500    510,439     5,225 2.37            25.0%
 #>       IND    24    48,000     97,673         0 2.03             4.8%
 #>       LDR   108    96,000     64,707       102 0.67             3.2%
-#>       MDR   714   512,500    714,195     7,397 1.39            35.2%
-#>        MU   176   128,000    383,313     2,131 2.99            18.9%
-#>        TC    85    64,000    256,000     1,342 4.00            12.6%
+#>       MDR   714   512,500    727,969     7,545 1.42            35.7%
+#>        MU   176   128,000    383,313     2,131 2.99            18.8%
+#>        TC    85    64,000    256,000     1,342 4.00            12.5%
 #> 
 #> ── Flags
 #> no_capacity 8, ok 1,371
@@ -153,7 +153,7 @@ from the engine.
 check_capacity(cap)
 #> ✔ parcels accounted for: 1377 of 1377 (every input parcel is in a site)
 #> ✔ land in equals land out: 1064000 of 1064000 m2 (site areas add to parcel areas (overlaps aside))
-#> ✔ storeys add to sites: 2026327 m2 (floor area by storey equals floor area by site)
+#> ✔ storeys add to sites: 2040100 m2 (floor area by storey equals floor area by site)
 #> ✔ uses add to floor area:  (residential plus business equals floor area)
 #> ✔ no missing or negative values: 0 (floor area and dwellings)
 #> ✔ within the height's storeys: 0 (no site above its area times its storeys)

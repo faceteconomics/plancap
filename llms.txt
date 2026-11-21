@@ -217,6 +217,25 @@ Floor area and dwellings, by the path each zone’s method sets.
 - [`site_shape_factor()`](https://faceteconomics.github.io/plancap/reference/site_shape_factor.md)
   : The site shape factor: can a site hold the plan's rectangle?
 
+## Comparing scenarios
+
+Plan changes as scenarios: run a set incrementally, compare each with
+the baseline (by site, zone transition, area and height), split the
+change into its drivers, and check that it all adds up.
+
+- [`scenario_set()`](https://faceteconomics.github.io/plancap/reference/scenario_set.md)
+  [`run_scenarios()`](https://faceteconomics.github.io/plancap/reference/scenario_set.md)
+  : Sets of scenarios, run together
+- [`read_scenarios()`](https://faceteconomics.github.io/plancap/reference/read_scenarios.md)
+  : Read a set of scenarios from a manifest file
+- [`compare_scenarios()`](https://faceteconomics.github.io/plancap/reference/compare_scenarios.md)
+  [`summary(`*`<plancap_comparison>`*`)`](https://faceteconomics.github.io/plancap/reference/compare_scenarios.md)
+  : Compare scenarios: what changed, where, and why
+- [`diff_inputs()`](https://faceteconomics.github.io/plancap/reference/diff_inputs.md)
+  : What differs between two scenarios' inputs
+- [`check_comparison()`](https://faceteconomics.github.io/plancap/reference/check_comparison.md)
+  : Reconcile a comparison
+
 ## Summaries and checks
 
 Capacity by zone, height, site size, location or binding constraint; the
@@ -291,11 +310,15 @@ Exampleton, a synthetic town built to exercise every rule type.
   : Exampleton ground surface
 - [`exampleton_path()`](https://faceteconomics.github.io/plancap/reference/exampleton_path.md)
   : Path to an Exampleton file
+- [`exampleton_pc1()`](https://faceteconomics.github.io/plancap/reference/exampleton_pc1.md)
+  : Exampleton Plan Change 1
 
 # Articles
 
 ### All vignettes
 
+- [Comparing plan
+  changes](https://faceteconomics.github.io/plancap/articles/comparing.md):
 - [Getting
   started](https://faceteconomics.github.io/plancap/articles/plancap.md):
 - [Summaries](https://faceteconomics.github.io/plancap/articles/summaries.md):

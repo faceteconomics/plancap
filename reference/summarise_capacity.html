@@ -23,7 +23,8 @@ one group, so groups always add up to the total."></head><body>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -160,12 +161,12 @@ over land area), <code>floor_area_per_ha</code> and <code>dwellings_per_ha</code
 <span class="r-in"><span><span class="fu">summarise_capacity</span><span class="op">(</span><span class="va">cap</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap summary&gt; Operative, by zone_key: 6 rows</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  zone_key sites land_area floor_area dwellings  far floor_area_share</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       HDR   272   215,500    529,519     5,594 2.46            25.4%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       HDR   272   215,500    529,519     5,594 2.46            25.2%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       IND    24    48,000    115,200         0 2.40             5.5%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       LDR   108    96,000     64,920       103 0.68             3.1%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       MDR   714   512,500    737,704     7,644 1.44            35.3%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        MU   176   128,000    384,000     2,132 3.00            18.4%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        TC    85    64,000    256,000     1,342 4.00            12.3%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       MDR   714   512,500    748,147     7,754 1.46            35.7%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        MU   176   128,000    384,000     2,132 3.00            18.3%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        TC    85    64,000    256,000     1,342 4.00            12.2%</span>
 <span class="r-in"><span><span class="fu">summarise_capacity</span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"zone"</span>, <span class="st">"height_band"</span><span class="op">)</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sites"</span>, <span class="st">"floor_area"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap summary&gt; Operative, by zone_key, height_band: 9 rows</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  zone_key height_band sites floor_area</span>
@@ -175,16 +176,16 @@ over land area), <code>floor_area_per_ha</code> and <code>dwellings_per_ha</code
 <span class="r-out co"><span class="r-pr">#&gt;</span>       HDR     22-30 m   149    357,196</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       IND     12-16 m    24    115,200</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       LDR       0-9 m   108     64,920</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       MDR      9-12 m   714    737,704</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       MDR      9-12 m   714    748,147</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        MU     12-16 m   176    384,000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        TC     22-30 m    85    256,000</span>
 <span class="r-in"><span><span class="fu">summarise_capacity</span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="st">"storey"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap summary&gt; Operative, by storey: 6 rows</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  storey sites floor_area floor_area_share</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       1 1,379    643,225            30.8%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       2 1,378    641,683            30.7%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       3 1,269    592,126            28.4%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       4   355    149,980             7.2%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       1 1,379    643,225            30.7%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       2 1,378    641,683            30.6%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       3 1,269    602,569            28.7%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       4   355    149,980             7.1%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       5   245     43,497             2.1%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       6   149     16,832             0.8%</span>
 </code></pre></div>

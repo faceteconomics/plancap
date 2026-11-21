@@ -35,7 +35,7 @@ sc <- scenario("Operative", rulebook_example("exampleton"),
 check_capacity(estimate_capacity(sc))
 #> ✔ parcels accounted for: 1377 of 1377 (every input parcel is in a site)
 #> ✔ land in equals land out: 1064000 of 1064000 m2 (site areas add to parcel areas (overlaps aside))
-#> ✔ storeys add to sites: 2087343 m2 (floor area by storey equals floor area by site)
+#> ✔ storeys add to sites: 2097786 m2 (floor area by storey equals floor area by site)
 #> ✔ uses add to floor area:  (residential plus business equals floor area)
 #> ✔ no missing or negative values: 0 (floor area and dwellings)
 #> ✔ within the height's storeys: 0 (no site above its area times its storeys)
