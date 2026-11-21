@@ -118,11 +118,28 @@ GitHub). Status (20 November 2026):
   surfaces: floor area +0.034%, 99.2% of sites exact
   (data-raw/gate/README.md). 344 expectations.
 
-  **Stage 4, part 5 (next)**: site shape factor (item 324); the measured
-  front yard (`value_from`, needs building outlines); access width from
-  easements; faster surface sampling (the gate tile takes 158 s with
-  surfaces, 34 s without); the 17 to 21 irregular special-character lots
-  (classification).
+- **Stage 4, part 5 built (stage 4 complete)**: site shape factor (item
+  324, stage 1: yards, water yards and exclusions;
+  [`site_shape_factor()`](https://faceteconomics.github.io/plancap/reference/site_shape_factor.md));
+  access width of rear sites from entrance strips, easements and access
+  lots, shared across a landholding (item 259;
+  [`find_access_widths()`](https://faceteconomics.github.io/plancap/reference/find_access_widths.md),
+  `scenario(easements, other_parcels, landholding)`); the front yard set
+  from the neighbours’ existing setbacks (items 314, 317, 325;
+  `yard(value_from = "existing_front_setback")`,
+  [`find_existing_front_setbacks()`](https://faceteconomics.github.io/plancap/reference/find_existing_front_setbacks.md),
+  `scenario(buildings, streets, neighbours)`); a rear site’s sides as
+  rear boundaries where the plan says so (item 319; morphology
+  `rear_site_sides_as_rear`); surface banding vectorised (141 s to 11
+  s); ground tables matched by segment midpoint. **Gate: plancap
+  reproduces capacityengine exactly on tile t_011_011 in every mode**
+  (flat or terrain, with or without the measured front yard): floor area
+  and dwellings on all 2,680 sites. The 17 “irregular special-character
+  lots” were the J1 rear site rule, not classification. 393
+  expectations.
+
+  **Next: stage 5** (summaries: summarise_capacity, explain_site,
+  sensitivity).
 
   *(Earlier note)* **Stage 4, part 3**: stepped terrain (item 318) and
   boundary runs (item 299); site shape factor (item 324); tower
@@ -268,7 +285,7 @@ rb <- rulebook("Exampleton District Plan", units = "m") |>
 - `validate_rulebook(rb)` checks schema (structure), semantics (bands
   contiguous, variants consistent, every zone referenced by the zone
   map, every overlay type has its required fields) and lint (missing
-  sources, rules nothing will consume — the riparian lesson).
+  sources, rules nothing will consume â€” the riparian lesson).
 - `write_rulebook(rb, path)` round-trips to YAML/JSON/XLSX losslessly
   (tested by round-trip property tests).
 - `print(rb)` / `summary(rb)` give a readable digest; `rule_table(rb)`
@@ -284,7 +301,7 @@ Neutral names first, with the NZ term in brackets. Every rule accepts
 `source`, `variant`, `activity_status` and conditions (3.3).
 
 **Height and storeys** -
-`height_limit(value, occupiable, roof_allowance, storeys)` — total vs
+`height_limit(value, occupiable, roof_allowance, storeys)` â€” total vs
 occupiable height (the HVC lesson: mapped height includes roof form). -
 Storey heights: default, ground-floor height, per-zone; storey count
 derived as occupiable / intended storeys, never a flat 3 m. -
@@ -292,7 +309,7 @@ derived as occupiable / intended storeys, never a flat 3 m. -
 bound. - Absolute height limits (RL above datum) as well as
 above-ground.
 
-**Setbacks (yards)** — by boundary class: `road`, `side`, `rear`,
+**Setbacks (yards)** â€” by boundary class: `road`, `side`, `rear`,
 `internal`, `common`, `coastal`, `riparian`, `lakeside`, `reserve`,
 `rail`, plus user-defined classes keyed to a layer. Options:
 `above_storey`, `max_value`, `value_from = "existing_average"` (special
@@ -308,9 +325,9 @@ exemptions for the front N m or share of depth, datum (ground / boundary
 **Upper-level setbacks**: extra setback above a storey or height, per
 class.
 
-**Site ratios**: building coverage, landscaped area, impervious, paved —
-each a single value or **bands by site area**; floor area ratio (FAR)
-max.
+**Site ratios**: building coverage, landscaped area, impervious, paved
+â€” each a single value or **bands by site area**; floor area ratio
+(FAR) max.
 
 **Building form**: max floorplate, max tower floorplate / dimension,
 tower separation, building length, building separation, gaps above a
@@ -321,7 +338,8 @@ width, site shape factor (min rectangle).
 area, vacant site minimum, max dwellings per site, minor dwellings, max
 / min dwellings across an area (precinct totals), large-site rules
 (threshold, infrastructure deduction, alternative density), access-width
-table (frontage/accessway width → max dwellings), minimum dwelling size.
+table (frontage/accessway width â†’ max dwellings), minimum dwelling
+size.
 
 **Use mix**: residential enabled, business enabled, residential share of
 floorspace in mixed zones (with source), max floorspace per site / area.
@@ -347,7 +365,7 @@ field.
 **Zone adjacency**: rules that switch on the zone across the boundary
 (business yards and planes), with zone families for set membership.
 
-**Conversion**: floorspace → dwellings (dwelling size, circulation and
+**Conversion**: floorspace â†’ dwellings (dwelling size, circulation and
 efficiency allowances, minimum-one-dwelling floor), shown in every
 output that reports dwellings.
 
@@ -369,7 +387,7 @@ error.
   (Q7). Sites must be in a projected CRS; geographic CRS is an error.
 - Hemisphere inferred from the CRS / centroid for orientation rules,
   overridable.
-- `zone_map`: the jurisdiction’s own zone codes/labels → rulebook zone
+- `zone_map`: the jurisdiction’s own zone codes/labels â†’ rulebook zone
   keys (the alias map), with a check that every mapped zone is either
   modelled or listed as unmodelled (no silent zero).
 
@@ -388,8 +406,9 @@ In summary:
   count twice.
 - **Seven combination operators**: `cap`, `envelope`, `replace`,
   `floor`, `add`, `multiply`, `composite`. They are evaluated in a fixed
-  order: zone → areas → overlays → bonuses → entitlements. Variants: by
-  default a site takes the maximum over its permitted variants.
+  order: zone â†’ areas â†’ overlays â†’ bonuses â†’ entitlements.
+  Variants: by default a site takes the maximum over its permitted
+  variants.
 - **Setback profile primitive.** Every rule about distance from a
   boundary becomes d(h) from an origin line (boundary, far side of road,
   road centreline). **Values may be restricted formulas**,
@@ -415,17 +434,17 @@ plotted and corrected on their own, before any capacity run.
 | Helper | Identifies | Default assumptions (all overridable) |
 |----|----|----|
 | [`find_road_frontages()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Boundaries on a road; frontage length per road | Road layer if given, else gap or centreline inference; min road contact 0.5 m; probe distance 25 m to clear carriageways |
-| [`find_side_rear()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Side vs rear boundaries | Angle to frontage; tolerance 30°; depth-share rule for ambiguous segments |
+| [`find_side_rear()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Side vs rear boundaries | Angle to frontage; tolerance 30Â°; depth-share rule for ambiguous segments |
 | [`find_corner_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Sites on two or more roads at an angle | Corner angle tolerance; min frontage on each road |
-| [`find_through_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Sites with frontage on opposite sides | Bearing difference ≥ 135° |
+| [`find_through_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Sites with frontage on opposite sides | Bearing difference â‰¥ 135Â° |
 | [`find_rear_sites()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Rear (battle-axe) sites | Frontage below a width threshold or reached only by a leg |
-| [`find_access_legs()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Driveways / access legs, and whether they come off net site area | Leg opening 7.5 m max; road contact ≥ 0.5 m; `exclude_from_net_area = TRUE` |
+| [`find_access_legs()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Driveways / access legs, and whether they come off net site area | Leg opening 7.5 m max; road contact â‰¥ 0.5 m; `exclude_from_net_area = TRUE` |
 | `find_rights_of_way()` | Shared accessways from an easement layer | Optional layer; width from geometry |
 | `find_internal_boundaries()` | Common walls / internal boundaries (unit titles, cross-leases, amalgamated sites) | Shared-edge overlap fraction, never `intersects` |
 | [`find_water_boundaries()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Coastal, riparian, lakeside boundaries | Distance to water layer; bank vs centreline |
 | `find_reserve_boundaries()` | Boundaries onto open space / reserves | Zone family membership across the boundary |
-| `find_boundary_runs()` | Near-straight pieces of one boundary treated as one | Merge angle 5° |
-| [`site_metrics()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Area, depth, width, frontage width, compactness, largest inscribed rectangle (site shape factor) | — |
+| `find_boundary_runs()` | Near-straight pieces of one boundary treated as one | Merge angle 5Â° |
+| [`site_metrics()`](https://faceteconomics.github.io/plancap/reference/morphology.md) | Area, depth, width, frontage width, compactness, largest inscribed rectangle (site shape factor) | â€” |
 
 How assumptions are held:
 
@@ -445,13 +464,13 @@ so a wrong call can be traced.
 
 Checking tools:
 
-- `plot_morphology(sites, area = bbox)` — boundaries coloured by class,
-  rear sites and access legs hatched, corners marked. The way to eyeball
-  a new jurisdiction’s cadastre before trusting a run.
-- `check_morphology(sites)` — shares of each class against plausible
+- `plot_morphology(sites, area = bbox)` â€” boundaries coloured by
+  class, rear sites and access legs hatched, corners marked. The way to
+  eyeball a new jurisdiction’s cadastre before trusting a run.
+- `check_morphology(sites)` â€” shares of each class against plausible
   ranges (the project’s 19% corner-site share was a warning sign worth
   automating); unclassified segments; inward-normal failures.
-- `override_boundaries(sites, segment_id, class)` — manual correction
+- `override_boundaries(sites, segment_id, class)` â€” manual correction
   table, applied reproducibly (kept as data, not edits to geometry).
 
 ## 4. Site preparation
@@ -465,18 +484,18 @@ sites <- prepare_sites(parcels, zoning,
 
 Steps, each also exported on its own:
 
-1.  `clean_parcels()` — validity, drop slivers (flagged), drop
+1.  `clean_parcels()` â€” validity, drop slivers (flagged), drop
     road/rail/water parcels by a user-supplied filter, projected-CRS
     check.
-2.  `split_sites_by_zone()` — partition-safe (no 50/50 drop).
-3.  `classify_boundaries()` — segments; road / side / rear / internal by
-    adjacency, road contact and frontage; rear sites and access legs;
+2.  `split_sites_by_zone()` â€” partition-safe (no 50/50 drop).
+3.  `classify_boundaries()` â€” segments; road / side / rear / internal
+    by adjacency, road contact and frontage; rear sites and access legs;
     corner sites; inward normals from the geometry, not vertex order.
-4.  `resolve_adjacency()` — zone across each boundary (pass the WHOLE
+4.  `resolve_adjacency()` â€” zone across each boundary (pass the WHOLE
     zoning layer, including open space).
-5.  `attach_overlays()` — area/length overlap fractions, never
+5.  `attach_overlays()` â€” area/length overlap fractions, never
     `intersects`.
-6.  `attach_terrain()` (optional, `terra`) — per-segment ground datum.
+6.  `attach_terrain()` (optional, `terra`) â€” per-segment ground datum.
 
 Result is a `cap_sites` object (sf + segments table) that can be cached
 and reused across rule scenarios, because it does not depend on rule
@@ -523,8 +542,8 @@ The result is a `cap_result` S3 object:
 | Slot | Content |
 |----|----|
 | `sites` | sf, one row per input site: zone, area, method, height, storeys, footprint, GFA, residential GFA, business GFA, dwellings, binding constraint, flags |
-| `storeys` | tibble, site × storey: level, height, floor area, binding constraint |
-| `segments` | optional (`keep_setbacks = TRUE`): segment × storey setback, winning rule, citation |
+| `storeys` | tibble, site Ã— storey: level, height, floor area, binding constraint |
+| `segments` | optional (`keep_setbacks = TRUE`): segment Ã— storey setback, winning rule, citation |
 | `rulebook`, `conversion`, `variant` | what produced it |
 | `meta` | package version, run time, input hashes, warnings tally |
 
@@ -581,7 +600,7 @@ comparison is one reproducible file:
 
 ### Where it fits in the pipeline
 
-    inputs ──► A. parcel geometry ──► B. plan geometry ──► C. rule resolution ──► D. envelope + yield ──► E. results ──► F. comparison
+    inputs â”€â”€â–º A. parcel geometry â”€â”€â–º B. plan geometry â”€â”€â–º C. rule resolution â”€â”€â–º D. envelope + yield â”€â”€â–º E. results â”€â”€â–º F. comparison
               (parcels, roads,        (zoning, overlay,     (rulebook: each        (per site)                          (two or more
                water, terrain;         precinct layers:      site's effective                                           scenarios)
                morphology)             zone split,           parameters)
@@ -620,7 +639,7 @@ run exactly.
       a square or hex grid, or the extent of the change. Always valid,
       and the totals reconcile.
 - **Different zone keys:** a **transition table** of land area and
-  capacity from each baseline zone to each scenario zone (MRZ → THAB,
+  capacity from each baseline zone to each scenario zone (MRZ â†’ THAB,
   new zones, removed zones). This is the natural way to read a rezoning.
 - **Land reconciliation:** total land per scenario, and how it differs
   (roads vested, reserves created, parcels added or removed). Flag,
@@ -642,7 +661,7 @@ that switch one driver at a time:
   because incremental runs only recompute affected sites.
 
 For a rule-only change it also splits the change by individual rule
-(from the rule table diff), e.g. “+38% from the height increase, −6%
+(from the rule table diff), e.g. “+38% from the height increase, âˆ’6%
 from the new recession plane”. The drivers always sum to the total
 change.
 
@@ -679,8 +698,8 @@ scenario-by-measure table summarises all of them.
 Exampleton gets a worked plan change, **“Exampleton PC1”**, built to
 exercise every kind of difference:
 
-- a rulebook that `extends:` the operative one (MDR height 12 → 16 m, a
-  new “Terraced Housing” zone);
+- a rulebook that `extends:` the operative one (MDR height 12 â†’ 16 m,
+  a new “Terraced Housing” zone);
 - a zoning layer upzoning the blocks within 400 m of the station;
 - an enlarged flood overlay;
 - one block re-subdivided into new lots.
@@ -718,18 +737,18 @@ total, plus “density” measures per hectare of land.
 
 Other summary functions:
 
-- `constraint_breakdown(cap)` — floor area lost to each rule, in
-  sequence from a theoretical maximum (zoned land × height) down to
+- `constraint_breakdown(cap)` â€” floor area lost to each rule, in
+  sequence from a theoretical maximum (zoned land Ã— height) down to
   enabled. Feeds the waterfall plot.
 - `compare_scenarios()`: scenario differences, including where the
   zones, overlays or parcels differ. See section 5A.
 - `sensitivity(sites, rb, rule = "MRZ$height", values = c(11, 14, 16))`
-  — sweeps a rule and returns a tidy table.
-- `explain_site(cap, site_id)` — boundary-by-boundary table: class,
+  â€” sweeps a rule and returns a tidy table.
+- `explain_site(cap, site_id)` â€” boundary-by-boundary table: class,
   length, setback per storey, winning rule and citation; caps; binding
   constraint.
-- `unmodelled_report(rb)` — the register as a table, for any report.
-- `check_capacity(cap)` — reconciliation and diagnostics (sites in =
+- `unmodelled_report(rb)` â€” the register as a table, for any report.
+- `check_capacity(cap)` â€” reconciliation and diagnostics (sites in =
   sites out, zero-capacity sites by reason, flags tally, suspicious
   values).
 
@@ -739,8 +758,8 @@ Other summary functions:
 
 All ggplot2, all return ggplot objects (so users can add layers), one
 theme (`theme_capacity()`) and one palette system, colour-blind safe,
-light/dark variants. Labels auto-formatted (m², k / M, %). Captions
-auto-state “Plan-enabled gross capacity; dwellings at X m² per
+light/dark variants. Labels auto-formatted (mÂ², k / M, %). Captions
+auto-state “Plan-enabled gross capacity; dwellings at X mÂ² per
 dwelling”.
 
 | Function | What it shows |
@@ -760,7 +779,7 @@ dwelling”.
 | `autoplot(cap)` | Sensible default dashboard (patchwork of 4) |
 
 Optional interactive layer (Suggests only): `view_capacity_3d(cap)` with
-`mapgl` (MapLibre extrusions) — the visual language already proven in
+`mapgl` (MapLibre extrusions) â€” the visual language already proven in
 the capacity viewer. Q11 decides whether this is v1 or later.
 
 The plotting look gets its own design pass at stage 6 with rendered
@@ -783,18 +802,18 @@ sites, rear lots, adjacency, bands). Optionally a small real NZ extract
 - roxygen2 on every exported function, with runnable examples on
   Exampleton (fast, \< 5 s each).
 - Vignettes:
-  1.  *Getting started* — parcels to plots in ten lines.
-  2.  *Writing a rulebook* — the three entry routes, validation,
+  1.  *Getting started* â€” parcels to plots in ten lines.
+  2.  *Writing a rulebook* â€” the three entry routes, validation,
       citations.
-  3.  *Rule reference* — every rule type, a diagram each, how it is
+  3.  *Rule reference* â€” every rule type, a diagram each, how it is
       computed.
-  4.  *Preparing sites* — boundary classes, adjacency, terrain,
+  4.  *Preparing sites* â€” boundary classes, adjacency, terrain,
       pitfalls.
-  5.  *Summaries and plots* — gallery.
+  5.  *Summaries and plots* â€” gallery.
   6.  *Scenarios, sensitivity and comparison*.
-  7.  *Adding a new jurisdiction* — worked example from plan text to
+  7.  *Adding a new jurisdiction* â€” worked example from plan text to
       results.
-  8.  *Method and assumptions* — what “plan-enabled” means, what it is
+  8.  *Method and assumptions* â€” what “plan-enabled” means, what it is
       not, the unmodelled register, validation against published
       studies.
 - pkgdown site (GitHub Pages), README with badges, NEWS.md, CITATION,
@@ -806,7 +825,7 @@ sites, rear lots, adjacency, bands). Optionally a small real NZ extract
 
 **Quality:** testthat 3e (port the ~1,000 expectations that apply), covr
 target \> 85%, R CMD check clean (0/0/0) on GitHub Actions for Windows,
-macOS, Linux × release/devel/oldrel, lintr, `urlchecker`, `spelling`.
+macOS, Linux Ã— release/devel/oldrel, lintr, `urlchecker`, `spelling`.
 Benchmarks guard against quadratic regressions.
 
 ------------------------------------------------------------------------
@@ -832,7 +851,7 @@ Everything optional is checked with
 | 1 | Rulebook: schema, R constructors, YAML/JSON I/O, validation, print/rule_table | Auckland/CHC/WCC bundles convert and validate; round-trip tests |
 | 2 | Site preparation, split into parcel geometry and plan geometry, each hashed; [`scenario()`](https://faceteconomics.github.io/plancap/reference/scenario.md) object | Ported boundary/adjacency tests pass; Exampleton prepared; a zoning-only change reuses the parcel geometry |
 | 3 | Envelope engine; accepts prepared parts; affected-site runs | Hand-checked cases reproduce exactly (S039789 etc.); benchmark |
-| 4 | Yield paths, overlays, areas, variants, conversion | A capacityengine region tile reproduces to the m² |
+| 4 | Yield paths, overlays, areas, variants, conversion | A capacityengine region tile reproduces to the mÂ² |
 | 5 | Summaries, sensitivity, explain_site | Reconciliation checks; vignettes 1, 5 draft |
 | 6 | **Scenarios and comparison**: [`scenario_change()`](https://faceteconomics.github.io/plancap/reference/scenario.md), `scenario_set()`, manifests, `run_scenarios()`, `compare_scenarios()`, crosswalk, transitions, attribution, `diff_inputs()`; Exampleton PC1 | On Exampleton PC1: an incremental run equals a full run; drivers sum to the total change; land reconciles. On Auckland: operative vs PC120 matches capacityengine’s difference on a tile. “Comparing plan changes” vignette drafted |
 | 7 | Plots (including comparison plots) and a theme design pass | Rendered gallery reviewed by you |

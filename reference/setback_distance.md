@@ -14,7 +14,8 @@ setback_distance(
   bearing = NA_real_,
   vars = list(),
   slope_in = 0,
-  base_height = height
+  base_height = height,
+  measured = NULL
 )
 ```
 
@@ -56,6 +57,11 @@ setback_distance(
   The building's own height above the site's ground, where `height` has
   been adjusted to the boundary's ground; a plane's `max_setback_above`
   is tested against it.
+
+- measured:
+
+  For a yard with `value_from`: the measured distance (m) per height
+  (`NA` where nothing was measured).
 
 ## Value
 

@@ -130,6 +130,43 @@ reserve boundary. <code>"OPEN_SPACE"</code>.</p></dd>
 <dd><p>Pieces of a site (m2) smaller than this, left by
 a zone boundary, are merged into the larger piece. 1.</p></dd>
 
+<dt><code>access_touch_distance</code></dt>
+<dd><p>Distance (m) within which an easement or
+access lot counts as reaching a rear site (<code><a href="find_access_widths.html">find_access_widths()</a></code>).
+0.5.</p></dd>
+
+<dt><code>access_contact_tolerance</code></dt>
+<dd><p>Distance (m) within which a boundary
+counts as on a road when measuring access width. Small, because
+cadastral boundaries share surveyed vertices. 0.05.</p></dd>
+
+<dt><code>access_max_strip_width</code></dt>
+<dd><p>Road contact wider than this (m) is a
+lot, not an access strip. 10.</p></dd>
+
+<dt><code>access_lot_max_area</code></dt>
+<dd><p>Largest parcel (m2) taken as a possible
+jointly owned access lot. 800.</p></dd>
+
+<dt><code>front_setback_neighbours</code></dt>
+<dd><p>Neighbouring sites on each side whose
+dwellings set a measured front yard (<code><a href="find_existing_front_setbacks.html">find_existing_front_setbacks()</a></code>).
+3.</p></dd>
+
+<dt><code>front_setback_min_dwelling_area</code></dt>
+<dd><p>Smallest building (m2) counted
+as a dwelling there, so a garage or shed is not. 50.</p></dd>
+
+<dt><code>front_setback_max_offset</code></dt>
+<dd><p>A parcel further than this (m) from
+the street line is not taken to front it. 60.</p></dd>
+
+<dt><code>rear_site_sides_as_rear</code></dt>
+<dd><p>Whether a rear site's side boundaries
+are rear boundaries, where a plan defines a rear site's yards as all
+rear yards (Auckland Unitary Plan J1: a rear yard "Includes: all yards
+on a rear site"). They are tagged <code>rear_site_side</code>. <code>FALSE</code>.</p></dd>
+
 
 </dl></div>
 

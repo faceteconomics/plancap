@@ -58,7 +58,8 @@ plotted on their own.</p>
 <span>  bearing <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
 <span>  vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  slope_in <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  base_height <span class="op">=</span> <span class="va">height</span></span>
+<span>  base_height <span class="op">=</span> <span class="va">height</span>,</span>
+<span>  measured <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -98,6 +99,11 @@ rises into the site from the boundary (metres per metre).</p></dd>
 <dd><p>The building's own height above the site's ground, where
 <code>height</code> has been adjusted to the boundary's ground; a plane's
 <code>max_setback_above</code> is tested against it.</p></dd>
+
+
+<dt id="arg-measured">measured<a class="anchor" aria-label="anchor" href="#arg-measured"></a></dt>
+<dd><p>For a yard with <code>value_from</code>: the measured distance (m)
+per height (<code>NA</code> where nothing was measured).</p></dd>
 
 </dl></div>
     <div class="section level2">

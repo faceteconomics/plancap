@@ -65,6 +65,13 @@ scenarios, and two scenarios may differ in any of these.</p>
 <span>  centrelines <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dem <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ground <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  easements <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  other_parcels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  buildings <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  streets <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  street_field <span class="op">=</span> <span class="st">"name"</span>,</span>
+<span>  neighbours <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  landholding <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  zone_field <span class="op">=</span> <span class="st">"zone"</span>,</span>
 <span>  site_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  group_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -126,7 +133,44 @@ rulebook names them.</p></dd>
 (from a survey, or another model): a list with <code>sites</code> (a data frame of
 <code>site_id</code> and <code>ground_mean</code>) and <code>segments</code> (a data frame of <code>site_id</code>,
 <code>seq</code>, the segment's position in its site's boundary counting from 1, and
-<code>ground</code>, the mean ground level along it).</p></dd>
+<code>ground</code>, the mean ground level along it). Give the segment's midpoint
+as <code>x</code> and <code>y</code> instead of <code>seq</code> to match segments by position.</p></dd>
+
+
+<dt id="arg-easements">easements<a class="anchor" aria-label="anchor" href="#arg-easements"></a></dt>
+<dd><p>Optional easement areas (rights of way), for the access
+width of rear sites (<code><a href="find_access_widths.html">find_access_widths()</a></code>).</p></dd>
+
+
+<dt id="arg-other-parcels">other_parcels<a class="anchor" aria-label="anchor" href="#arg-other-parcels"></a></dt>
+<dd><p>Optional parcels that are not sites (and not roads),
+among which jointly owned access lots are found.</p></dd>
+
+
+<dt id="arg-buildings">buildings<a class="anchor" aria-label="anchor" href="#arg-buildings"></a></dt>
+<dd><p>Optional building outlines, for yards set from the
+neighbours' existing setbacks (<code><a href="find_existing_front_setbacks.html">find_existing_front_setbacks()</a></code>).</p></dd>
+
+
+<dt id="arg-streets">streets<a class="anchor" aria-label="anchor" href="#arg-streets"></a></dt>
+<dd><p>Optional named street centre lines for the same; default
+<code>centrelines</code>.</p></dd>
+
+
+<dt id="arg-street-field">street_field<a class="anchor" aria-label="anchor" href="#arg-street-field"></a></dt>
+<dd><p>Column of <code>streets</code> holding the street name.</p></dd>
+
+
+<dt id="arg-neighbours">neighbours<a class="anchor" aria-label="anchor" href="#arg-neighbours"></a></dt>
+<dd><p>Optional parcels beyond <code>parcels</code> that may be neighbours
+for a measured front yard (default <code>other_parcels</code>). Leave out parcels
+whose buildings are not dwellings, such as reserves and schools.</p></dd>
+
+
+<dt id="arg-landholding">landholding<a class="anchor" aria-label="anchor" href="#arg-landholding"></a></dt>
+<dd><p>Optional column of <code>parcels</code> naming the landholding
+each parcel belongs to, where parcels held together are still separate
+sites: pieces of one landholding share their best access width.</p></dd>
 
 
 <dt id="arg-zone-field">zone_field<a class="anchor" aria-label="anchor" href="#arg-zone-field"></a></dt>

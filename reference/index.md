@@ -132,12 +132,15 @@ Floor area and dwellings, by the path each zone’s method sets.
 
 - [`estimate_capacity()`](https://faceteconomics.github.io/plancap/reference/estimate_capacity.md)
   : Estimate plan-enabled capacity
+- [`site_shape_factor()`](https://faceteconomics.github.io/plancap/reference/site_shape_factor.md)
+  : The site shape factor: can a site hold the plan's rectangle?
 
 ## Site and boundary types
 
 Road frontages, side and rear boundaries, corner, through and rear
 sites, access legs, water boundaries and road widths, each with the
-evidence for the call.
+evidence for the call; the access width of rear sites; the front
+setbacks of the dwellings along a street.
 
 - [`find_road_frontages()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
   [`find_side_rear()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
@@ -149,6 +152,10 @@ evidence for the call.
   [`find_road_widths()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
   [`site_metrics()`](https://faceteconomics.github.io/plancap/reference/morphology.md)
   : Identify what each boundary and site is
+- [`find_access_widths()`](https://faceteconomics.github.io/plancap/reference/find_access_widths.md)
+  : Measure the legal access to rear sites
+- [`find_existing_front_setbacks()`](https://faceteconomics.github.io/plancap/reference/find_existing_front_setbacks.md)
+  : The existing front setback of the dwellings along a street
 - [`check_morphology()`](https://faceteconomics.github.io/plancap/reference/check_morphology.md)
   [`plot_morphology()`](https://faceteconomics.github.io/plancap/reference/check_morphology.md)
   : Check and draw how sites and boundaries were classified

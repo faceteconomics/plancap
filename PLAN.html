@@ -55,9 +55,10 @@
 <li><p><strong>Stage 4, part 1 built</strong> (yield). <code><a href="reference/estimate_capacity.html">estimate_capacity()</a></code>: use split (bands by storey), volumetric / density / hybrid / large-site paths (capacityengine items 322, 323, 358, 363, 365, 374, 377), FAR and max site floorspace capping the stack from the ground up, access width, dwellings per site, minor dwellings, area and sub-area totals (total_group), entitlements as a floor, bonuses in <code>*_with_bonus</code> columns (height bonuses not yet evaluated: they need a second envelope). Exclusion overlays (all / residential) in the engine. 306 expectations. Differences from capacityengine to expect at the tile gate: access width is read from road frontage (capacityengine measures access from easements, item 259); site shape factor (item 324) not yet; access legs are not the “entrance strip” offsets of item 374.</p></li>
 <li><p><strong>Stage 4, part 2 built</strong>: height overlays with capacityengine’s cap and override semantics (item 297) and a <code>height_conversion</code> table (HVC, item 68 passthrough between bands); height surfaces, full cover caps, partial cover by storey (item 368, covered share 0.99); building length and separation gaps, from a height (items 372, 374; converter maps <code>building_gaps_above_m</code> to separation bands by height); height bonuses via an incremental second envelope. Auckland conversion now drops 9 fields. 328 expectations.</p></li>
 <li><p><strong>Stage 4 gate, flat ground: met</strong> (20 Nov 2026, <code>data-raw/gate/README.md</code>). Tile t_011_011 (2,680 sites): floor area +0.033%, 99.4% of sites exact to 0.01 m2; dwellings -0.51%, 97.9% exact. Every zone but Single House exact. Remaining differences traced: 17 irregular special-character lots (boundary classification), access width from easements (dwellings), the neighbours’-setback front yard (not ported). Fixes made: zone storey height rule, area-conditional zone families, unmeasured access uncapped, CfGS large-site divisor, precinct name parsing.</p></li>
+<li><p><strong>Stage 4, part 4 built</strong>: stepped terrain (item 318) with boundary runs (item 299) and ground planes; ground levels from a DEM (sampled along each boundary) or supplied as tables; tower floorplate cap; tower dimension and separation flagged. Gate with terrain and height surfaces: floor area +0.034%, 99.2% of sites exact (data-raw/gate/README.md). 344 expectations.</p></li>
 <li>
-<p><strong>Stage 4, part 4 built</strong>: stepped terrain (item 318) with boundary runs (item 299) and ground planes; ground levels from a DEM (sampled along each boundary) or supplied as tables; tower floorplate cap; tower dimension and separation flagged. Gate with terrain and height surfaces: floor area +0.034%, 99.2% of sites exact (data-raw/gate/README.md). 344 expectations.</p>
-<p><strong>Stage 4, part 5 (next)</strong>: site shape factor (item 324); the measured front yard (<code>value_from</code>, needs building outlines); access width from easements; faster surface sampling (the gate tile takes 158 s with surfaces, 34 s without); the 17 to 21 irregular special-character lots (classification).</p>
+<p><strong>Stage 4, part 5 built (stage 4 complete)</strong>: site shape factor (item 324, stage 1: yards, water yards and exclusions; <code><a href="reference/site_shape_factor.html">site_shape_factor()</a></code>); access width of rear sites from entrance strips, easements and access lots, shared across a landholding (item 259; <code><a href="reference/find_access_widths.html">find_access_widths()</a></code>, <code>scenario(easements, other_parcels, landholding)</code>); the front yard set from the neighbours’ existing setbacks (items 314, 317, 325; <code>yard(value_from = "existing_front_setback")</code>, <code><a href="reference/find_existing_front_setbacks.html">find_existing_front_setbacks()</a></code>, <code>scenario(buildings, streets, neighbours)</code>); a rear site’s sides as rear boundaries where the plan says so (item 319; morphology <code>rear_site_sides_as_rear</code>); surface banding vectorised (141 s to 11 s); ground tables matched by segment midpoint. <strong>Gate: plancap reproduces capacityengine exactly on tile t_011_011 in every mode</strong> (flat or terrain, with or without the measured front yard): floor area and dwellings on all 2,680 sites. The 17 “irregular special-character lots” were the J1 rear site rule, not classification. 393 expectations.</p>
+<p><strong>Next: stage 5</strong> (summaries: summarise_capacity, explain_site, sensitivity).</p>
 <p><em>(Earlier note)</em> <strong>Stage 4, part 3</strong>: stepped terrain (item 318) and boundary runs (item 299); site shape factor (item 324); tower controls; then the tile reproduction: run plancap on a capacityengine tile’s own sites, roads, zoning, overlays, DEM and water, compare per site against <code>capacityengine/outputs/region_sites.parquet</code> (floorspace_m2, dwellings, yield_path), and reconcile every difference to a known cause (access width from easements, item 259; entrance strips, item 374; open-space area tokens such as OPEN_SPACE_OVER_2000_WIDE, which plancap families do not yet express).</p>
 </li>
 </ul><div class="section level3">
@@ -166,7 +167,7 @@
 <ul><li>
 <code>rulebook_template("new.xlsx")</code> writes an empty, annotated workbook (one sheet per rule family, a citation column on every sheet, dropdowns for enumerations). <code>rulebook_template("new.yaml")</code> does the same in YAML.</li>
 <li>
-<code>validate_rulebook(rb)</code> checks schema (structure), semantics (bands contiguous, variants consistent, every zone referenced by the zone map, every overlay type has its required fields) and lint (missing sources, rules nothing will consume — the riparian lesson).</li>
+<code>validate_rulebook(rb)</code> checks schema (structure), semantics (bands contiguous, variants consistent, every zone referenced by the zone map, every overlay type has its required fields) and lint (missing sources, rules nothing will consume â€” the riparian lesson).</li>
 <li>
 <code>write_rulebook(rb, path)</code> round-trips to YAML/JSON/XLSX losslessly (tested by round-trip property tests).</li>
 <li>
@@ -177,19 +178,19 @@
 <div class="section level3">
 <h3 id="id_32-rule-catalogue-everything-handled-in-the-project">3.2 Rule catalogue (everything handled in the project)<a class="anchor" aria-label="anchor" href="#id_32-rule-catalogue-everything-handled-in-the-project"></a></h3>
 <p>Neutral names first, with the NZ term in brackets. Every rule accepts <code>source</code>, <code>variant</code>, <code>activity_status</code> and conditions (3.3).</p>
-<p><strong>Height and storeys</strong> - <code>height_limit(value, occupiable, roof_allowance, storeys)</code> — total vs occupiable height (the HVC lesson: mapped height includes roof form). - Storey heights: default, ground-floor height, per-zone; storey count derived as occupiable / intended storeys, never a flat 3 m. - <code>no_limit_stand_in</code> for zones with no height limit, flagged as upper bound. - Absolute height limits (RL above datum) as well as above-ground.</p>
-<p><strong>Setbacks (yards)</strong> — by boundary class: <code>road</code>, <code>side</code>, <code>rear</code>, <code>internal</code>, <code>common</code>, <code>coastal</code>, <code>riparian</code>, <code>lakeside</code>, <code>reserve</code>, <code>rail</code>, plus user-defined classes keyed to a layer. Options: <code>above_storey</code>, <code>max_value</code>, <code>value_from = "existing_average"</code> (special character front yard), water yards measured from a water layer.</p>
+<p><strong>Height and storeys</strong> - <code>height_limit(value, occupiable, roof_allowance, storeys)</code> â€” total vs occupiable height (the HVC lesson: mapped height includes roof form). - Storey heights: default, ground-floor height, per-zone; storey count derived as occupiable / intended storeys, never a flat 3 m. - <code>no_limit_stand_in</code> for zones with no height limit, flagged as upper bound. - Absolute height limits (RL above datum) as well as above-ground.</p>
+<p><strong>Setbacks (yards)</strong> â€” by boundary class: <code>road</code>, <code>side</code>, <code>rear</code>, <code>internal</code>, <code>common</code>, <code>coastal</code>, <code>riparian</code>, <code>lakeside</code>, <code>reserve</code>, <code>rail</code>, plus user-defined classes keyed to a layer. Options: <code>above_storey</code>, <code>max_value</code>, <code>value_from = "existing_average"</code> (special character front yard), water yards measured from a water layer.</p>
 <p><strong>Planes</strong> (recession plane / height in relation to boundary / daylight angle / sky exposure plane): angle, start height, set-in, boundaries, <code>orientation_graded</code> (angle by compass bearing; <strong>hemisphere-aware</strong>), <code>on_southern_boundary_of_neighbour</code> (generalised to <code>facing</code>), exemptions for the front N m or share of depth, datum (ground / boundary / site mean), <code>vertical_above</code>, step-back above a height.</p>
 <p><strong>Upper-level setbacks</strong>: extra setback above a storey or height, per class.</p>
-<p><strong>Site ratios</strong>: building coverage, landscaped area, impervious, paved — each a single value or <strong>bands by site area</strong>; floor area ratio (FAR) max.</p>
+<p><strong>Site ratios</strong>: building coverage, landscaped area, impervious, paved â€” each a single value or <strong>bands by site area</strong>; floor area ratio (FAR) max.</p>
 <p><strong>Building form</strong>: max floorplate, max tower floorplate / dimension, tower separation, building length, building separation, gaps above a height, minimum floorplate (enforced in the stack), minimum building width, site shape factor (min rectangle).</p>
-<p><strong>Density</strong>: site area per dwelling, dwellings per hectare, minimum site area, vacant site minimum, max dwellings per site, minor dwellings, max / min dwellings across an area (precinct totals), large-site rules (threshold, infrastructure deduction, alternative density), access-width table (frontage/accessway width → max dwellings), minimum dwelling size.</p>
+<p><strong>Density</strong>: site area per dwelling, dwellings per hectare, minimum site area, vacant site minimum, max dwellings per site, minor dwellings, max / min dwellings across an area (precinct totals), large-site rules (threshold, infrastructure deduction, alternative density), access-width table (frontage/accessway width â†’ max dwellings), minimum dwelling size.</p>
 <p><strong>Use mix</strong>: residential enabled, business enabled, residential share of floorspace in mixed zones (with source), max floorspace per site / area.</p>
 <p><strong>Methods</strong>: <code>volumetric</code> (storey stack), <code>density</code> (rule straight to dwellings), <code>hybrid</code> (both, take the lesser).</p>
 <p><strong>Overlays</strong> (spatial layers that modify rules), with precedence: <code>height_cap</code>, <code>height_override</code>, <code>height_surface</code> (raster/TIN, e.g. airport surfaces, viewshafts, sunlight admission planes), <code>height_bands</code> (a mapped height converted via a table, the HVC case), <code>exclusion</code> (subtract geometry: hazards, designations, water yards), <code>parameter_override</code> (edit named zone parameters, e.g. special character), <code>flag_only</code>. Each can be <code>default_enabled: false</code> and switched on in a scenario. Partial coverage: a surface caps only the part of a site it covers (engine item 368, done properly from the start).</p>
 <p><strong>Areas</strong> (precinct / sub-precinct / specific control / overlay zone): <code>overrides</code>, <code>additions</code>, per-zone overrides, sub-areas keyed by a field.</p>
 <p><strong>Zone adjacency</strong>: rules that switch on the zone across the boundary (business yards and planes), with zone families for set membership.</p>
-<p><strong>Conversion</strong>: floorspace → dwellings (dwelling size, circulation and efficiency allowances, minimum-one-dwelling floor), shown in every output that reports dwellings.</p>
+<p><strong>Conversion</strong>: floorspace â†’ dwellings (dwelling size, circulation and efficiency allowances, minimum-one-dwelling floor), shown in every output that reports dwellings.</p>
 <p><strong>Unmodelled rules register</strong>: rule, zones, reason, likely effect of modelling it (overstates / understates / either), size where known.</p>
 </div>
 <div class="section level3">
@@ -201,7 +202,7 @@
 <ul><li>Units: metres internally; <code>units = "ft"</code> accepted on input and output (Q7). Sites must be in a projected CRS; geographic CRS is an error.</li>
 <li>Hemisphere inferred from the CRS / centroid for orientation rules, overridable.</li>
 <li>
-<code>zone_map</code>: the jurisdiction’s own zone codes/labels → rulebook zone keys (the alias map), with a check that every mapped zone is either modelled or listed as unmodelled (no silent zero).</li>
+<code>zone_map</code>: the jurisdiction’s own zone codes/labels â†’ rulebook zone keys (the alias map), with a check that every mapped zone is either modelled or listed as unmodelled (no silent zero).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="id_35-combining-overlapping-rules-and-rules-from-other-jurisdictions">3.5 Combining overlapping rules, and rules from other jurisdictions<a class="anchor" aria-label="anchor" href="#id_35-combining-overlapping-rules-and-rules-from-other-jurisdictions"></a></h3>
@@ -209,7 +210,7 @@
 <ul><li>
 <strong>Coverage, landscaping and impervious limits combine as the most restrictive, not additively</strong> (as capacityengine does now). A <strong>ground budget</strong> adds the paving a development needs (access legs, surface parking, outdoor space per dwelling). It has three modes: <code>most_restrictive</code> (default), <code>with_access</code> and <code>full</code>. Sites with no slack are flagged. A <code>ground_overlap:</code> block declares which ground may count twice.</li>
 <li>
-<strong>Seven combination operators</strong>: <code>cap</code>, <code>envelope</code>, <code>replace</code>, <code>floor</code>, <code>add</code>, <code>multiply</code>, <code>composite</code>. They are evaluated in a fixed order: zone → areas → overlays → bonuses → entitlements. Variants: by default a site takes the maximum over its permitted variants.</li>
+<strong>Seven combination operators</strong>: <code>cap</code>, <code>envelope</code>, <code>replace</code>, <code>floor</code>, <code>add</code>, <code>multiply</code>, <code>composite</code>. They are evaluated in a fixed order: zone â†’ areas â†’ overlays â†’ bonuses â†’ entitlements. Variants: by default a site takes the maximum over its permitted variants.</li>
 <li>
 <strong>Setback profile primitive.</strong> Every rule about distance from a boundary becomes d(h) from an origin line (boundary, far side of road, road centreline). <strong>Values may be restricted formulas</strong>, e.g. <code>max(3, 0.4*H)</code> or <code>road_width*0.4</code>.</li>
 <li>
@@ -231,19 +232,19 @@
 <td>Road layer if given, else gap or centreline inference; min road contact 0.5 m; probe distance 25 m to clear carriageways</td>
 </tr><tr><td><code><a href="reference/morphology.html">find_side_rear()</a></code></td>
 <td>Side vs rear boundaries</td>
-<td>Angle to frontage; tolerance 30°; depth-share rule for ambiguous segments</td>
+<td>Angle to frontage; tolerance 30Â°; depth-share rule for ambiguous segments</td>
 </tr><tr><td><code><a href="reference/morphology.html">find_corner_sites()</a></code></td>
 <td>Sites on two or more roads at an angle</td>
 <td>Corner angle tolerance; min frontage on each road</td>
 </tr><tr><td><code><a href="reference/morphology.html">find_through_sites()</a></code></td>
 <td>Sites with frontage on opposite sides</td>
-<td>Bearing difference ≥ 135°</td>
+<td>Bearing difference â‰¥ 135Â°</td>
 </tr><tr><td><code><a href="reference/morphology.html">find_rear_sites()</a></code></td>
 <td>Rear (battle-axe) sites</td>
 <td>Frontage below a width threshold or reached only by a leg</td>
 </tr><tr><td><code><a href="reference/morphology.html">find_access_legs()</a></code></td>
 <td>Driveways / access legs, and whether they come off net site area</td>
-<td>Leg opening 7.5 m max; road contact ≥ 0.5 m; <code>exclude_from_net_area = TRUE</code>
+<td>Leg opening 7.5 m max; road contact â‰¥ 0.5 m; <code>exclude_from_net_area = TRUE</code>
 </td>
 </tr><tr><td><code>find_rights_of_way()</code></td>
 <td>Shared accessways from an easement layer</td>
@@ -260,10 +261,10 @@
 <td>Zone family membership across the boundary</td>
 </tr><tr><td><code>find_boundary_runs()</code></td>
 <td>Near-straight pieces of one boundary treated as one</td>
-<td>Merge angle 5°</td>
+<td>Merge angle 5Â°</td>
 </tr><tr><td><code><a href="reference/morphology.html">site_metrics()</a></code></td>
 <td>Area, depth, width, frontage width, compactness, largest inscribed rectangle (site shape factor)</td>
-<td>—</td>
+<td>â€”</td>
 </tr></tbody></table><p>How assumptions are held:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/morphology_defaults.html">morphology_defaults</a></span><span class="op">(</span><span class="op">)</span>                       <span class="co"># package defaults, documented</span></span>
@@ -273,11 +274,11 @@
 <p>Precedence: run argument &gt; rulebook <code>morphology:</code> block &gt; package default. The values actually used are stored on the result, so every run says which definitions it applied. Each helper returns the classification <strong>and the evidence</strong> (contact length, angle, probe hit), so a wrong call can be traced.</p>
 <p>Checking tools:</p>
 <ul><li>
-<code>plot_morphology(sites, area = bbox)</code> — boundaries coloured by class, rear sites and access legs hatched, corners marked. The way to eyeball a new jurisdiction’s cadastre before trusting a run.</li>
+<code>plot_morphology(sites, area = bbox)</code> â€” boundaries coloured by class, rear sites and access legs hatched, corners marked. The way to eyeball a new jurisdiction’s cadastre before trusting a run.</li>
 <li>
-<code>check_morphology(sites)</code> — shares of each class against plausible ranges (the project’s 19% corner-site share was a warning sign worth automating); unclassified segments; inward-normal failures.</li>
+<code>check_morphology(sites)</code> â€” shares of each class against plausible ranges (the project’s 19% corner-site share was a warning sign worth automating); unclassified segments; inward-normal failures.</li>
 <li>
-<code>override_boundaries(sites, segment_id, class)</code> — manual correction table, applied reproducibly (kept as data, not edits to geometry).</li>
+<code>override_boundaries(sites, segment_id, class)</code> â€” manual correction table, applied reproducibly (kept as data, not edits to geometry).</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_4-site-preparation">4. Site preparation<a class="anchor" aria-label="anchor" href="#id_4-site-preparation"></a></h2>
@@ -287,17 +288,17 @@
 <span>  water <span class="op">=</span> <span class="va">rivers</span>, group_by <span class="op">=</span> <span class="cn">NULL</span>, terrain <span class="op">=</span> <span class="cn">NULL</span>, rulebook <span class="op">=</span> <span class="va">rb</span><span class="op">)</span></span></code></pre></div>
 <p>Steps, each also exported on its own:</p>
 <ol style="list-style-type: decimal"><li>
-<code>clean_parcels()</code> — validity, drop slivers (flagged), drop road/rail/water parcels by a user-supplied filter, projected-CRS check.</li>
+<code>clean_parcels()</code> â€” validity, drop slivers (flagged), drop road/rail/water parcels by a user-supplied filter, projected-CRS check.</li>
 <li>
-<code>split_sites_by_zone()</code> — partition-safe (no 50/50 drop).</li>
+<code>split_sites_by_zone()</code> â€” partition-safe (no 50/50 drop).</li>
 <li>
-<code>classify_boundaries()</code> — segments; road / side / rear / internal by adjacency, road contact and frontage; rear sites and access legs; corner sites; inward normals from the geometry, not vertex order.</li>
+<code>classify_boundaries()</code> â€” segments; road / side / rear / internal by adjacency, road contact and frontage; rear sites and access legs; corner sites; inward normals from the geometry, not vertex order.</li>
 <li>
-<code>resolve_adjacency()</code> — zone across each boundary (pass the WHOLE zoning layer, including open space).</li>
+<code>resolve_adjacency()</code> â€” zone across each boundary (pass the WHOLE zoning layer, including open space).</li>
 <li>
-<code>attach_overlays()</code> — area/length overlap fractions, never <code>intersects</code>.</li>
+<code>attach_overlays()</code> â€” area/length overlap fractions, never <code>intersects</code>.</li>
 <li>
-<code>attach_terrain()</code> (optional, <code>terra</code>) — per-segment ground datum.</li>
+<code>attach_terrain()</code> (optional, <code>terra</code>) â€” per-segment ground datum.</li>
 </ol><p>Result is a <code>cap_sites</code> object (sf + segments table) that can be cached and reused across rule scenarios, because it does not depend on rule values (only on the zoning/overlay layers). That split is what made Auckland’s re-runs fast.</p>
 <p>For scenarios (section 5A) the preparation is split in two, so a plan change that only redraws zones does not redo the expensive geometry:</p>
 <ul><li>
@@ -319,9 +320,9 @@
 </tr></thead><tbody><tr><td><code>sites</code></td>
 <td>sf, one row per input site: zone, area, method, height, storeys, footprint, GFA, residential GFA, business GFA, dwellings, binding constraint, flags</td>
 </tr><tr><td><code>storeys</code></td>
-<td>tibble, site × storey: level, height, floor area, binding constraint</td>
+<td>tibble, site Ã— storey: level, height, floor area, binding constraint</td>
 </tr><tr><td><code>segments</code></td>
-<td>optional (<code>keep_setbacks = TRUE</code>): segment × storey setback, winning rule, citation</td>
+<td>optional (<code>keep_setbacks = TRUE</code>): segment Ã— storey setback, winning rule, citation</td>
 </tr><tr><td>
 <code>rulebook</code>, <code>conversion</code>, <code>variant</code>
 </td>
@@ -375,7 +376,7 @@
 </div>
 <div class="section level3">
 <h3 id="where-it-fits-in-the-pipeline">Where it fits in the pipeline<a class="anchor" aria-label="anchor" href="#where-it-fits-in-the-pipeline"></a></h3>
-<pre><code>inputs ──► A. parcel geometry ──► B. plan geometry ──► C. rule resolution ──► D. envelope + yield ──► E. results ──► F. comparison
+<pre><code>inputs â”€â”€â–º A. parcel geometry â”€â”€â–º B. plan geometry â”€â”€â–º C. rule resolution â”€â”€â–º D. envelope + yield â”€â”€â–º E. results â”€â”€â–º F. comparison
           (parcels, roads,        (zoning, overlay,     (rulebook: each        (per site)                          (two or more
            water, terrain;         precinct layers:      site's effective                                           scenarios)
            morphology)             zone split,           parameters)
@@ -417,7 +418,7 @@
 <em>Common geography</em>: the user’s areas (suburbs, statistical areas), a square or hex grid, or the extent of the change. Always valid, and the totals reconcile.</li>
 </ol></li>
 <li>
-<strong>Different zone keys:</strong> a <strong>transition table</strong> of land area and capacity from each baseline zone to each scenario zone (MRZ → THAB, new zones, removed zones). This is the natural way to read a rezoning.</li>
+<strong>Different zone keys:</strong> a <strong>transition table</strong> of land area and capacity from each baseline zone to each scenario zone (MRZ â†’ THAB, new zones, removed zones). This is the natural way to read a rezoning.</li>
 <li>
 <strong>Land reconciliation:</strong> total land per scenario, and how it differs (roads vested, reserves created, parcels added or removed). Flag, don’t drop: sites present in only one scenario are listed, never silently left out.</li>
 </ul></div>
@@ -428,7 +429,7 @@
 <strong>Sequential</strong> (default; one extra run for each driver): apply the drivers in a stated order. Cheap, but the split depends on the order.</li>
 <li>
 <strong>Shapley</strong> (optional; 2^k runs for k drivers, so 16 at most): average over every order, so the split does not depend on order. Practical because incremental runs only recompute affected sites.</li>
-</ul><p>For a rule-only change it also splits the change by individual rule (from the rule table diff), e.g. “+38% from the height increase, −6% from the new recession plane”. The drivers always sum to the total change.</p>
+</ul><p>For a rule-only change it also splits the change by individual rule (from the rule table diff), e.g. “+38% from the height increase, âˆ’6% from the new recession plane”. The drivers always sum to the total change.</p>
 </div>
 <div class="section level3">
 <h3 id="what-a-comparison-returns">What a comparison returns<a class="anchor" aria-label="anchor" href="#what-a-comparison-returns"></a></h3>
@@ -445,7 +446,7 @@
 <div class="section level3">
 <h3 id="example-data">Example data<a class="anchor" aria-label="anchor" href="#example-data"></a></h3>
 <p>Exampleton gets a worked plan change, <strong>“Exampleton PC1”</strong>, built to exercise every kind of difference:</p>
-<ul><li>a rulebook that <code>extends:</code> the operative one (MDR height 12 → 16 m, a new “Terraced Housing” zone);</li>
+<ul><li>a rulebook that <code>extends:</code> the operative one (MDR height 12 â†’ 16 m, a new “Terraced Housing” zone);</li>
 <li>a zoning layer upzoning the blocks within 400 m of the station;</li>
 <li>an enlarged flood overlay;</li>
 <li>one block re-subdivided into new lots.</li>
@@ -467,21 +468,21 @@
 <p>Measures: sites, land area, footprint, GFA (total / residential / business), dwellings, mean &amp; median per site, FAR achieved, share of total, plus “density” measures per hectare of land.</p>
 <p>Other summary functions:</p>
 <ul><li>
-<code>constraint_breakdown(cap)</code> — floor area lost to each rule, in sequence from a theoretical maximum (zoned land × height) down to enabled. Feeds the waterfall plot.</li>
+<code>constraint_breakdown(cap)</code> â€” floor area lost to each rule, in sequence from a theoretical maximum (zoned land Ã— height) down to enabled. Feeds the waterfall plot.</li>
 <li>
 <code>compare_scenarios()</code>: scenario differences, including where the zones, overlays or parcels differ. See section 5A.</li>
 <li>
-<code>sensitivity(sites, rb, rule = "MRZ$height", values = c(11, 14, 16))</code> — sweeps a rule and returns a tidy table.</li>
+<code>sensitivity(sites, rb, rule = "MRZ$height", values = c(11, 14, 16))</code> â€” sweeps a rule and returns a tidy table.</li>
 <li>
-<code>explain_site(cap, site_id)</code> — boundary-by-boundary table: class, length, setback per storey, winning rule and citation; caps; binding constraint.</li>
+<code>explain_site(cap, site_id)</code> â€” boundary-by-boundary table: class, length, setback per storey, winning rule and citation; caps; binding constraint.</li>
 <li>
-<code>unmodelled_report(rb)</code> — the register as a table, for any report.</li>
+<code>unmodelled_report(rb)</code> â€” the register as a table, for any report.</li>
 <li>
-<code>check_capacity(cap)</code> — reconciliation and diagnostics (sites in = sites out, zero-capacity sites by reason, flags tally, suspicious values).</li>
+<code>check_capacity(cap)</code> â€” reconciliation and diagnostics (sites in = sites out, zero-capacity sites by reason, flags tally, suspicious values).</li>
 </ul><hr></div>
 <div class="section level2">
 <h2 id="id_7-plots">7. Plots<a class="anchor" aria-label="anchor" href="#id_7-plots"></a></h2>
-<p>All ggplot2, all return ggplot objects (so users can add layers), one theme (<code>theme_capacity()</code>) and one palette system, colour-blind safe, light/dark variants. Labels auto-formatted (m², k / M, %). Captions auto-state “Plan-enabled gross capacity; dwellings at X m² per dwelling”.</p>
+<p>All ggplot2, all return ggplot objects (so users can add layers), one theme (<code>theme_capacity()</code>) and one palette system, colour-blind safe, light/dark variants. Labels auto-formatted (mÂ², k / M, %). Captions auto-state “Plan-enabled gross capacity; dwellings at X mÂ² per dwelling”.</p>
 <table class="table"><colgroup><col width="50%"><col width="50%"></colgroup><thead><tr><th>Function</th>
 <th>What it shows</th>
 </tr></thead><tbody><tr><td><code>plot_capacity(cap, by = "zone", measure = "gfa")</code></td>
@@ -511,7 +512,7 @@
 <td>Single site: parcel, setback strips, storey footprints in plan; axonometric stack (ggplot polygons, no 3D dependency)</td>
 </tr><tr><td><code>autoplot(cap)</code></td>
 <td>Sensible default dashboard (patchwork of 4)</td>
-</tr></tbody></table><p>Optional interactive layer (Suggests only): <code>view_capacity_3d(cap)</code> with <code>mapgl</code> (MapLibre extrusions) — the visual language already proven in the capacity viewer. Q11 decides whether this is v1 or later.</p>
+</tr></tbody></table><p>Optional interactive layer (Suggests only): <code>view_capacity_3d(cap)</code> with <code>mapgl</code> (MapLibre extrusions) â€” the visual language already proven in the capacity viewer. Q11 decides whether this is v1 or later.</p>
 <p>The plotting look gets its own design pass at stage 6 with rendered examples reviewed before release (house rule: verify against the rendered output, not the code).</p>
 <hr></div>
 <div class="section level2">
@@ -521,26 +522,26 @@
 <ul><li>roxygen2 on every exported function, with runnable examples on Exampleton (fast, &lt; 5 s each).</li>
 <li>Vignettes:
 <ol style="list-style-type: decimal"><li>
-<em>Getting started</em> — parcels to plots in ten lines.</li>
+<em>Getting started</em> â€” parcels to plots in ten lines.</li>
 <li>
-<em>Writing a rulebook</em> — the three entry routes, validation, citations.</li>
+<em>Writing a rulebook</em> â€” the three entry routes, validation, citations.</li>
 <li>
-<em>Rule reference</em> — every rule type, a diagram each, how it is computed.</li>
+<em>Rule reference</em> â€” every rule type, a diagram each, how it is computed.</li>
 <li>
-<em>Preparing sites</em> — boundary classes, adjacency, terrain, pitfalls.</li>
+<em>Preparing sites</em> â€” boundary classes, adjacency, terrain, pitfalls.</li>
 <li>
-<em>Summaries and plots</em> — gallery.</li>
+<em>Summaries and plots</em> â€” gallery.</li>
 <li>
 <em>Scenarios, sensitivity and comparison</em>.</li>
 <li>
-<em>Adding a new jurisdiction</em> — worked example from plan text to results.</li>
+<em>Adding a new jurisdiction</em> â€” worked example from plan text to results.</li>
 <li>
-<em>Method and assumptions</em> — what “plan-enabled” means, what it is not, the unmodelled register, validation against published studies.</li>
+<em>Method and assumptions</em> â€” what “plan-enabled” means, what it is not, the unmodelled register, validation against published studies.</li>
 </ol></li>
 <li>pkgdown site (GitHub Pages), README with badges, NEWS.md, CITATION, CONTRIBUTING, Code of Conduct, issue templates (incl. “new jurisdiction”).</li>
 <li>
 <code>inst/rulebooks/</code> holds contributed rulebooks; the Auckland, Christchurch and Wellington bundles converted as worked, real examples (Q6).</li>
-</ul><p><strong>Quality:</strong> testthat 3e (port the ~1,000 expectations that apply), covr target &gt; 85%, R CMD check clean (0/0/0) on GitHub Actions for Windows, macOS, Linux × release/devel/oldrel, lintr, <code>urlchecker</code>, <code>spelling</code>. Benchmarks guard against quadratic regressions.</p>
+</ul><p><strong>Quality:</strong> testthat 3e (port the ~1,000 expectations that apply), covr target &gt; 85%, R CMD check clean (0/0/0) on GitHub Actions for Windows, macOS, Linux Ã— release/devel/oldrel, lintr, <code>urlchecker</code>, <code>spelling</code>. Benchmarks guard against quadratic regressions.</p>
 <hr></div>
 <div class="section level2">
 <h2 id="id_9-dependencies">9. Dependencies<a class="anchor" aria-label="anchor" href="#id_9-dependencies"></a></h2>
@@ -565,7 +566,7 @@
 <td>Hand-checked cases reproduce exactly (S039789 etc.); benchmark</td>
 </tr><tr><td>4</td>
 <td>Yield paths, overlays, areas, variants, conversion</td>
-<td>A capacityengine region tile reproduces to the m²</td>
+<td>A capacityengine region tile reproduces to the mÂ²</td>
 </tr><tr><td>5</td>
 <td>Summaries, sensitivity, explain_site</td>
 <td>Reconciliation checks; vignettes 1, 5 draft</td>

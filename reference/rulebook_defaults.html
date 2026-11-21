@@ -74,6 +74,11 @@ mean ground).</p></dd>
 <dd><p>Steepest fitted ground slope (rise over run)
 accepted; steeper fits are scaled back. 0.5.</p></dd>
 
+<dt><code>site_shape_factor</code></dt>
+<dd><p>Whether a zone's <code>site_shape</code> rectangle caps
+the dwellings a site creates by subdivision (<code><a href="site_shape_factor.html">site_shape_factor()</a></code>).
+<code>TRUE</code>.</p></dd>
+
 <dt><code>no_limit_height</code></dt>
 <dd><p>Stand-in height (m) for zones with no height
 limit; <code>NULL</code> means such zones are flagged and given no stand-in.</p></dd>
@@ -104,6 +109,9 @@ limit; <code>NULL</code> means such zones are flagged and given no stand-in.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $max_ground_slope</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $site_shape_factor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $large_site</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $large_site$threshold</span>

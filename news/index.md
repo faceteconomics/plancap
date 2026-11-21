@@ -2,6 +2,38 @@
 
 ## plancap 0.0.0.9000
 
+### Shape, access and the measured front yard (stage 4, part 5)
+
+- [`site_shape_factor()`](https://faceteconomics.github.io/plancap/reference/site_shape_factor.md):
+  a zone’s `site_shape` rectangle must fit clear of the yards, water
+  yards and exclusions for a site to create vacant sites;
+  [`estimate_capacity()`](https://faceteconomics.github.io/plancap/reference/estimate_capacity.md)
+  caps the subdivision paths by it (`defaults$site_shape_factor`).
+- [`find_access_widths()`](https://faceteconomics.github.io/plancap/reference/find_access_widths.md):
+  the access width of rear sites, from their own entrance strip,
+  easements (`scenario(easements = )`) and access lots
+  (`scenario(other_parcels = )`); the access width table reads it, and
+  pieces of one landholding (`scenario(landholding = )`) share their
+  best access.
+- `yard(value_from = "existing_front_setback")`: a front yard set by the
+  average setback of the dwellings on the neighbouring sites along the
+  street, measured from building outlines
+  ([`find_existing_front_setbacks()`](https://faceteconomics.github.io/plancap/reference/find_existing_front_setbacks.md),
+  `scenario(buildings, streets, neighbours)`); where nothing is measured
+  the rule is reported as not applied. The Auckland rulebook’s Special
+  Character front yard now carries it.
+- Morphology `rear_site_sides_as_rear`: a rear site’s side boundaries
+  are rear boundaries where the plan defines a rear site’s yards as rear
+  yards (AUP J1); on in the converted rulebooks.
+- Height surfaces are banded for all sites in one pass (13 times faster
+  on the gate tile); ground tables may match segments by midpoint (`x`,
+  `y`).
+- Fixed: an open-ended band of an access width table (or any band table)
+  read its upper limit from a field beginning “max” by partial matching.
+- plancap now reproduces capacityengine exactly on the gate tile (floor
+  area and dwellings on all 2,680 sites, with terrain, height surfaces
+  and the measured front yard).
+
 ### Terrain and towers (stage 4, part 4)
 
 - Stepped terrain (the default, `defaults$terrain`): each site’s ground

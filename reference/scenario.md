@@ -19,6 +19,13 @@ scenario(
   centrelines = NULL,
   dem = NULL,
   ground = NULL,
+  easements = NULL,
+  other_parcels = NULL,
+  buildings = NULL,
+  streets = NULL,
+  street_field = "name",
+  neighbours = NULL,
+  landholding = NULL,
   zone_field = "zone",
   site_id = NULL,
   group_by = NULL,
@@ -79,7 +86,47 @@ scenario_change(base, name, ...)
   survey, or another model): a list with `sites` (a data frame of
   `site_id` and `ground_mean`) and `segments` (a data frame of
   `site_id`, `seq`, the segment's position in its site's boundary
-  counting from 1, and `ground`, the mean ground level along it).
+  counting from 1, and `ground`, the mean ground level along it). Give
+  the segment's midpoint as `x` and `y` instead of `seq` to match
+  segments by position.
+
+- easements:
+
+  Optional easement areas (rights of way), for the access width of rear
+  sites
+  ([`find_access_widths()`](https://faceteconomics.github.io/plancap/reference/find_access_widths.md)).
+
+- other_parcels:
+
+  Optional parcels that are not sites (and not roads), among which
+  jointly owned access lots are found.
+
+- buildings:
+
+  Optional building outlines, for yards set from the neighbours'
+  existing setbacks
+  ([`find_existing_front_setbacks()`](https://faceteconomics.github.io/plancap/reference/find_existing_front_setbacks.md)).
+
+- streets:
+
+  Optional named street centre lines for the same; default
+  `centrelines`.
+
+- street_field:
+
+  Column of `streets` holding the street name.
+
+- neighbours:
+
+  Optional parcels beyond `parcels` that may be neighbours for a
+  measured front yard (default `other_parcels`). Leave out parcels whose
+  buildings are not dwellings, such as reserves and schools.
+
+- landholding:
+
+  Optional column of `parcels` naming the landholding each parcel
+  belongs to, where parcels held together are still separate sites:
+  pieces of one landholding share their best access width.
 
 - zone_field:
 

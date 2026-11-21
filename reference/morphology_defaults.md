@@ -96,6 +96,51 @@ A named list:
   Pieces of a site (m2) smaller than this, left by a zone boundary, are
   merged into the larger piece. 1.
 
+- `access_touch_distance`:
+
+  Distance (m) within which an easement or access lot counts as reaching
+  a rear site
+  ([`find_access_widths()`](https://faceteconomics.github.io/plancap/reference/find_access_widths.md)).
+  0.5.
+
+- `access_contact_tolerance`:
+
+  Distance (m) within which a boundary counts as on a road when
+  measuring access width. Small, because cadastral boundaries share
+  surveyed vertices. 0.05.
+
+- `access_max_strip_width`:
+
+  Road contact wider than this (m) is a lot, not an access strip. 10.
+
+- `access_lot_max_area`:
+
+  Largest parcel (m2) taken as a possible jointly owned access lot. 800.
+
+- `front_setback_neighbours`:
+
+  Neighbouring sites on each side whose dwellings set a measured front
+  yard
+  ([`find_existing_front_setbacks()`](https://faceteconomics.github.io/plancap/reference/find_existing_front_setbacks.md)).
+  3.
+
+- `front_setback_min_dwelling_area`:
+
+  Smallest building (m2) counted as a dwelling there, so a garage or
+  shed is not. 50.
+
+- `front_setback_max_offset`:
+
+  A parcel further than this (m) from the street line is not taken to
+  front it. 60.
+
+- `rear_site_sides_as_rear`:
+
+  Whether a rear site's side boundaries are rear boundaries, where a
+  plan defines a rear site's yards as all rear yards (Auckland Unitary
+  Plan J1: a rear yard "Includes: all yards on a rear site"). They are
+  tagged `rear_site_side`. `FALSE`.
+
 ## Examples
 
 ``` r

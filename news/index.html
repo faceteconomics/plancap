@@ -41,6 +41,19 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="plancap-0009000">plancap 0.0.0.9000<a class="anchor" aria-label="anchor" href="#plancap-0009000"></a></h2>
 <div class="section level3">
+<h3 id="shape-access-and-the-measured-front-yard-stage-part-0-0-0-9000">Shape, access and the measured front yard (stage 4, part 5)<a class="anchor" aria-label="anchor" href="#shape-access-and-the-measured-front-yard-stage-part-0-0-0-9000"></a></h3>
+<ul><li>
+<code><a href="../reference/site_shape_factor.html">site_shape_factor()</a></code>: a zone’s <code>site_shape</code> rectangle must fit clear of the yards, water yards and exclusions for a site to create vacant sites; <code><a href="../reference/estimate_capacity.html">estimate_capacity()</a></code> caps the subdivision paths by it (<code>defaults$site_shape_factor</code>).</li>
+<li>
+<code><a href="../reference/find_access_widths.html">find_access_widths()</a></code>: the access width of rear sites, from their own entrance strip, easements (<code>scenario(easements = )</code>) and access lots (<code>scenario(other_parcels = )</code>); the access width table reads it, and pieces of one landholding (<code>scenario(landholding = )</code>) share their best access.</li>
+<li>
+<code>yard(value_from = "existing_front_setback")</code>: a front yard set by the average setback of the dwellings on the neighbouring sites along the street, measured from building outlines (<code><a href="../reference/find_existing_front_setbacks.html">find_existing_front_setbacks()</a></code>, <code>scenario(buildings, streets, neighbours)</code>); where nothing is measured the rule is reported as not applied. The Auckland rulebook’s Special Character front yard now carries it.</li>
+<li>Morphology <code>rear_site_sides_as_rear</code>: a rear site’s side boundaries are rear boundaries where the plan defines a rear site’s yards as rear yards (AUP J1); on in the converted rulebooks.</li>
+<li>Height surfaces are banded for all sites in one pass (13 times faster on the gate tile); ground tables may match segments by midpoint (<code>x</code>, <code>y</code>).</li>
+<li>Fixed: an open-ended band of an access width table (or any band table) read its upper limit from a field beginning “max” by partial matching.</li>
+<li>plancap now reproduces capacityengine exactly on the gate tile (floor area and dwellings on all 2,680 sites, with terrain, height surfaces and the measured front yard).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="terrain-and-towers-stage-part-0-0-0-9000">Terrain and towers (stage 4, part 4)<a class="anchor" aria-label="anchor" href="#terrain-and-towers-stage-part-0-0-0-9000"></a></h3>
 <ul><li>Stepped terrain (the default, <code>defaults$terrain</code>): each site’s ground is a plane fitted to its boundaries’ ground; a recession plane is measured from the ground at its own boundary, taken over runs of near-straight pieces of one boundary, and the ground’s rise into the site slows the building’s gain on the plane. <code>terrain = "flat"</code> stands the building on one floor at the site’s mean ground.</li>
 <li>Ground levels may be supplied as tables (<code>scenario(ground = )</code>) instead of a DEM; a DEM is now sampled along each boundary, not at its midpoint.</li>

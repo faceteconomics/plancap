@@ -40,6 +40,13 @@ A named list:
   Steepest fitted ground slope (rise over run) accepted; steeper fits
   are scaled back. 0.5.
 
+- `site_shape_factor`:
+
+  Whether a zone's `site_shape` rectangle caps the dwellings a site
+  creates by subdivision
+  ([`site_shape_factor()`](https://faceteconomics.github.io/plancap/reference/site_shape_factor.md)).
+  `TRUE`.
+
 - `no_limit_height`:
 
   Stand-in height (m) for zones with no height limit; `NULL` means such
@@ -69,6 +76,9 @@ rulebook_defaults()
 #> 
 #> $max_ground_slope
 #> [1] 0.5
+#> 
+#> $site_shape_factor
+#> [1] TRUE
 #> 
 #> $large_site
 #> $large_site$threshold
