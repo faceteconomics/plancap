@@ -15,7 +15,12 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/plancap.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
+  </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -40,6 +45,23 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="plancap-0009000">plancap 0.0.0.9000<a class="anchor" aria-label="anchor" href="#plancap-0009000"></a></h2>
+<div class="section level3">
+<h3 id="summaries-stage-0-0-0-9000">Summaries (stage 5)<a class="anchor" aria-label="anchor" href="#summaries-stage-0-0-0-9000"></a></h3>
+<ul><li>
+<code><a href="../reference/summarise_capacity.html">summarise_capacity()</a></code>: capacity by any site column or by zone, storeys, height, site size or floor area ratio bands, binding constraint, polygons (<code>areas</code>), a square grid, or floor area by storey level; measures include floor area by use, dwellings, means and medians, floor area ratio, per hectare figures and shares. Spatial summaries return <code>sf</code>.</li>
+<li>
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> of a capacity result: headline, by zone, flags and what limits dwellings. <code><a href="../reference/capacity_table.html">capacity_table()</a></code> formats any summary with gt.</li>
+<li>
+<code><a href="../reference/constraint_breakdown.html">constraint_breakdown()</a></code>: a waterfall from the theoretical maximum (whole site, every storey the height allows) to the enabled floor area: storeys not reached, setbacks and land, each cap, floor area ratio and maximum site floorspace. The steps add up exactly.</li>
+<li>
+<code><a href="../reference/explain_site.html">explain_site()</a></code>: one site’s rules, boundaries, setbacks at every storey with their citations, storeys and dwellings.</li>
+<li>
+<code><a href="../reference/sensitivity.html">sensitivity()</a></code>: a rule swept through values (or whole rules), with incremental reruns.</li>
+<li>
+<code><a href="../reference/check_capacity.html">check_capacity()</a></code>: reconciliation (parcels, land, storeys against sites, uses against floor area) and diagnostics; <code><a href="../reference/unmodelled_report.html">unmodelled_report()</a></code>: the register of rules not modelled.</li>
+<li>Envelopes record <code>storeys_allowed</code>; capacity results keep their scenario and options.</li>
+<li>Vignettes: “Getting started” and “Summaries”.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="shape-access-and-the-measured-front-yard-stage-part-0-0-0-9000">Shape, access and the measured front yard (stage 4, part 5)<a class="anchor" aria-label="anchor" href="#shape-access-and-the-measured-front-yard-stage-part-0-0-0-9000"></a></h3>
 <ul><li>

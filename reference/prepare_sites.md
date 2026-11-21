@@ -60,6 +60,7 @@ s
 #> <plancap sites> Operative: 1379 sites, 5912 boundary segments.
 #> Zones: MDR 714, HDR 272, MU 176, LDR 108, TC 85, IND 24.
 #> Corner 295, through 9, rear 144 (142 with access legs); split by zone 2.
+#> Reused: parcel_geometry.
 #> ! adjacency_unresolved: 173
 #> ! overlay_layers_missing: flood_hazard, heritage, trees
 #> ! distance_layers_missing: transit

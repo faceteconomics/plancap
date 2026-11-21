@@ -2,6 +2,37 @@
 
 ## plancap 0.0.0.9000
 
+### Summaries (stage 5)
+
+- [`summarise_capacity()`](https://faceteconomics.github.io/plancap/reference/summarise_capacity.md):
+  capacity by any site column or by zone, storeys, height, site size or
+  floor area ratio bands, binding constraint, polygons (`areas`), a
+  square grid, or floor area by storey level; measures include floor
+  area by use, dwellings, means and medians, floor area ratio, per
+  hectare figures and shares. Spatial summaries return `sf`.
+- [`summary()`](https://rdrr.io/r/base/summary.html) of a capacity
+  result: headline, by zone, flags and what limits dwellings.
+  [`capacity_table()`](https://faceteconomics.github.io/plancap/reference/capacity_table.md)
+  formats any summary with gt.
+- [`constraint_breakdown()`](https://faceteconomics.github.io/plancap/reference/constraint_breakdown.md):
+  a waterfall from the theoretical maximum (whole site, every storey the
+  height allows) to the enabled floor area: storeys not reached,
+  setbacks and land, each cap, floor area ratio and maximum site
+  floorspace. The steps add up exactly.
+- [`explain_site()`](https://faceteconomics.github.io/plancap/reference/explain_site.md):
+  one site’s rules, boundaries, setbacks at every storey with their
+  citations, storeys and dwellings.
+- [`sensitivity()`](https://faceteconomics.github.io/plancap/reference/sensitivity.md):
+  a rule swept through values (or whole rules), with incremental reruns.
+- [`check_capacity()`](https://faceteconomics.github.io/plancap/reference/check_capacity.md):
+  reconciliation (parcels, land, storeys against sites, uses against
+  floor area) and diagnostics;
+  [`unmodelled_report()`](https://faceteconomics.github.io/plancap/reference/unmodelled_report.md):
+  the register of rules not modelled.
+- Envelopes record `storeys_allowed`; capacity results keep their
+  scenario and options.
+- Vignettes: “Getting started” and “Summaries”.
+
 ### Shape, access and the measured front yard (stage 4, part 5)
 
 - [`site_shape_factor()`](https://faceteconomics.github.io/plancap/reference/site_shape_factor.md):

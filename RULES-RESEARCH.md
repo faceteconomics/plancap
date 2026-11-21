@@ -138,7 +138,8 @@ overlay, area or bonus can declare its own
 types become shorthands: `height_cap` = height with `cap`;
 `height_override` = height with `replace`. The order of evaluation is
 fixed and documented: base zone → areas (`replace`) → overlays (`cap`) →
-bonuses (`add` / `multiply`) → entitlements (`floor`). `explain_site()`
+bonuses (`add` / `multiply`) → entitlements (`floor`).
+[`explain_site()`](https://faceteconomics.github.io/plancap/reference/explain_site.md)
 prints that chain, so you can see why a site got its number.
 
 **Bonuses are conditional**, for example on providing affordable

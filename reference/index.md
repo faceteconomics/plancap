@@ -135,6 +135,31 @@ Floor area and dwellings, by the path each zone’s method sets.
 - [`site_shape_factor()`](https://faceteconomics.github.io/plancap/reference/site_shape_factor.md)
   : The site shape factor: can a site hold the plan's rectangle?
 
+## Summaries and checks
+
+Capacity by zone, height, site size, location or binding constraint; the
+floor area each kind of rule removes; one site explained; a rule swept
+through values; reconciliation; the register of rules not modelled.
+
+- [`summarise_capacity()`](https://faceteconomics.github.io/plancap/reference/summarise_capacity.md)
+  [`default_measures()`](https://faceteconomics.github.io/plancap/reference/summarise_capacity.md)
+  : Summarise capacity by zone, height, size, location or binding
+  constraint
+- [`summary(`*`<plancap_capacity>`*`)`](https://faceteconomics.github.io/plancap/reference/summary.plancap_capacity.md)
+  : Summarise a capacity result
+- [`capacity_table()`](https://faceteconomics.github.io/plancap/reference/capacity_table.md)
+  : A formatted capacity table
+- [`constraint_breakdown()`](https://faceteconomics.github.io/plancap/reference/constraint_breakdown.md)
+  : Floor area lost to each kind of rule
+- [`explain_site()`](https://faceteconomics.github.io/plancap/reference/explain_site.md)
+  : Explain one site's capacity
+- [`sensitivity()`](https://faceteconomics.github.io/plancap/reference/sensitivity.md)
+  : Sweep a rule through a set of values
+- [`check_capacity()`](https://faceteconomics.github.io/plancap/reference/check_capacity.md)
+  : Reconciliation and diagnostics for a capacity result
+- [`unmodelled_report()`](https://faceteconomics.github.io/plancap/reference/unmodelled_report.md)
+  : The register of rules not modelled
+
 ## Site and boundary types
 
 Road frontages, side and rear boundaries, corner, through and rear

@@ -15,7 +15,12 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="articles/plancap.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="articles/summaries.html">Summaries</a></li>
+  </ul></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json"></form></li>
@@ -142,7 +147,7 @@
 <strong>Variants (either/or).</strong> Alternative routes to compliance, such as MHS’s alternative HIRB, form-based building types, or NYC’s tower-on-base vs standard tower. Exactly one applies. <strong>Recommendation: the site’s enabled capacity is the maximum over its permitted variants</strong>, because the owner chooses the route. Each variant’s result is kept so you can report the others. This replaces “choose the reporting rule later” with a default that is easy to defend.</li>
 <li>
 <strong>Exemptions.</strong> These remove part of a rule. Examples: a plane not applied within 20 m of the frontage; exclusions from GFA; walls on the boundary allowed up to a length (Melbourne B18 (k)).</li>
-</ul><p>Implementation: every rule family has a default operator, and an overlay, area or bonus can declare its own (<code>combine: cap | replace | floor | add | multiply</code>). The old overlay types become shorthands: <code>height_cap</code> = height with <code>cap</code>; <code>height_override</code> = height with <code>replace</code>. The order of evaluation is fixed and documented: base zone → areas (<code>replace</code>) → overlays (<code>cap</code>) → bonuses (<code>add</code> / <code>multiply</code>) → entitlements (<code>floor</code>). <code>explain_site()</code> prints that chain, so you can see why a site got its number.</p>
+</ul><p>Implementation: every rule family has a default operator, and an overlay, area or bonus can declare its own (<code>combine: cap | replace | floor | add | multiply</code>). The old overlay types become shorthands: <code>height_cap</code> = height with <code>cap</code>; <code>height_override</code> = height with <code>replace</code>. The order of evaluation is fixed and documented: base zone → areas (<code>replace</code>) → overlays (<code>cap</code>) → bonuses (<code>add</code> / <code>multiply</code>) → entitlements (<code>floor</code>). <code><a href="reference/explain_site.html">explain_site()</a></code> prints that chain, so you can see why a site got its number.</p>
 <p><strong>Bonuses are conditional</strong>, for example on providing affordable housing. They are reported in a separate column (<code>*_with_bonus</code>) and never folded into the base “plan-enabled” figure unless the run asks for it.</p>
 <hr></div>
 </div>

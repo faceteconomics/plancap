@@ -17,7 +17,8 @@ build_envelopes(
   keep_setbacks = FALSE,
   baseline = NULL,
   max_storeys = 60,
-  height_add = NULL
+  height_add = NULL,
+  .only = NULL
 )
 ```
 
@@ -65,6 +66,12 @@ build_envelopes(
 
   Optional named numeric vector, by site id: metres of extra height (as
   a height bonus gives), added to total and occupiable height.
+
+- .only:
+
+  Internal: site ids to build (others are left out), as
+  [`explain_site()`](https://faceteconomics.github.io/plancap/reference/explain_site.md)
+  uses to rebuild one site.
 
 ## Value
 
@@ -154,4 +161,11 @@ head(env$sites)
 #> 4     11  184.5345   553.6034 coverage   ok                0            0
 #> 5     11  290.8621   834.5310 coverage   ok                0            0
 #> 6     11  480.3579  1441.0736 coverage   ok                0            0
+#>   storeys_allowed
+#> 1               3
+#> 2               3
+#> 3               3
+#> 4               3
+#> 5               3
+#> 6               3
 ```
