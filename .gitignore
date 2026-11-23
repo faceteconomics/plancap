@@ -12,3 +12,4 @@ data-raw/cache/
 vignettes/*.html
 vignettes/*.md
 data-raw/gallery/
+vignettes/figure/
