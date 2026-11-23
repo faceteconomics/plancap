@@ -49,8 +49,8 @@ base <- scenario("Operative", rulebook_example("exampleton"),
                  zoning = town$zoning, layers = town[c("height_areas", "flood_hazard", "transit")])
 change <- scenario_change(base, "PC1", rulebook = pc1$rulebook, zoning = pc1$zoning)
 res <- run_scenarios(scenario_set(base, change))
-#> Operative: 5.7 s.
-#> PC1: 4.6 s, 575 sites copied from the baseline.
+#> Operative: 5.3 s.
+#> PC1: 4.3 s, 575 sites copied from the baseline.
 res
 #> <plancap results> 2 scenarios
 #>   scenario sites land_area floor_area residential_floor_area dwellings

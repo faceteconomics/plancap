@@ -34,7 +34,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
-    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
+    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries and plots</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -245,7 +245,9 @@ overlays whose rules changed:</p>
 <span><span class="co">#&gt; 1      zone_map changed        0.0                    0.0         0</span></span>
 <span><span class="co">#&gt; 2 zone_families changed        0.0                    0.0         0</span></span>
 <span><span class="co">#&gt; 3     zones.MDR changed   206042.1               206042.1      2215</span></span>
-<span><span class="co">#&gt; 4     zones.THZ   added        0.0                    0.0         0</span></span></code></pre></div>
+<span><span class="co">#&gt; 4     zones.THZ   added        0.0                    0.0         0</span></span>
+<span><span class="fu"><a href="../reference/plot_comparison.html">plot_attribution</a></span><span class="op">(</span><span class="va">cmp</span><span class="op">)</span></span></code></pre></div>
+<p><img src="comparing_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="100%"></p>
 <p>Here PC1’s new MDR height adds floor area on every MDR site; the
 rezoning to Terraced Housing adds more; the wider flood plain takes some
 away; the re-subdivided block changes little.
@@ -263,9 +265,14 @@ zone to each PC1 zone:</p>
 <code class="sourceCode R"><span><span class="va">tr</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">$</span><span class="va">transitions</span></span>
 <span><span class="va">tr</span><span class="op">[</span><span class="va">tr</span><span class="op">$</span><span class="va">land_area</span> <span class="op">&gt;</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">tr</span><span class="op">$</span><span class="va">from</span> <span class="op">!=</span> <span class="va">tr</span><span class="op">$</span><span class="va">to</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"from"</span>, <span class="st">"to"</span>, <span class="st">"land_area"</span>, <span class="st">"floor_area_change"</span>, <span class="st">"dwellings_change"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   from  to land_area floor_area_change dwellings_change</span></span>
-<span><span class="co">#&gt; 9  MDR THZ    248500          188389.2             2042</span></span></code></pre></div>
-<p>Every baseline site carries its change and a reason:</p>
+<span><span class="co">#&gt; 9  MDR THZ    248500          188389.2             2042</span></span>
+<span><span class="fu"><a href="../reference/plot_comparison.html">plot_transitions</a></span><span class="op">(</span><span class="va">cmp</span><span class="op">)</span></span></code></pre></div>
+<p><img src="comparing_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_comparison.html">plot_comparison</a></span><span class="op">(</span><span class="va">cmp</span><span class="op">)</span></span></code></pre></div>
+<p><img src="comparing_files/figure-html/unnamed-chunk-8-2.png" class="r-plt" alt="" width="100%"></p>
+<p>Every baseline site carries its change and a reason:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">p</span><span class="op">$</span><span class="va">sites</span><span class="op">$</span><span class="va">reason</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; neighbour_effect    overlay_added   parcel_changed          rezoned </span></span>
@@ -285,7 +292,7 @@ zone to each PC1 zone:</p>
 capacity is apportioned to the old parcels by area, so the change still
 has a place. A common geography (<code>areas =</code> or
 <code>grid =</code>) is always comparable:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cmp_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compare_scenarios.html">compare_scenarios</a></span><span class="op">(</span><span class="va">res</span>, grid <span class="op">=</span> <span class="fl">400</span>, attribution <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="va">cmp_grid</span><span class="op">$</span><span class="va">pairs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">by_grid</span></span>
 <span><span class="va">g</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">g</span><span class="op">$</span><span class="va">floor_area_change</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grid"</span>, <span class="st">"floor_area_baseline"</span>, <span class="st">"floor_area_scenario"</span>, <span class="st">"floor_area_change"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span></span>
@@ -305,12 +312,14 @@ has a place. A common geography (<code>areas =</code> or
 <span><span class="co">#&gt; 11 POLYGON ((2201200 5600400, ...</span></span>
 <span><span class="co">#&gt; 1  POLYGON ((2200000 5600000, ...</span></span>
 <span><span class="co">#&gt; 6  POLYGON ((2200400 5600800, ...</span></span>
-<span><span class="co">#&gt; 9  POLYGON ((2200800 5600800, ...</span></span></code></pre></div>
+<span><span class="co">#&gt; 9  POLYGON ((2200800 5600800, ...</span></span>
+<span><span class="fu"><a href="../reference/plot_comparison.html">plot_change_map</a></span><span class="op">(</span><span class="va">cmp_grid</span>, on <span class="op">=</span> <span class="st">"grid"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="comparing_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="checking-it-adds-up">Checking it adds up<a class="anchor" aria-label="anchor" href="#checking-it-adds-up"></a>
 </h2>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/check_comparison.html">check_comparison</a></span><span class="op">(</span><span class="va">cmp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Operative -&gt; PC1 as notified: drivers sum to the change in floor_area: 224176.93 of 224176.93</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Operative -&gt; PC1 as notified: transitions reproduce floor_area:</span></span>

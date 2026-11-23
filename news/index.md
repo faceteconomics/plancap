@@ -2,6 +2,46 @@
 
 ## plancap 0.0.0.9000
 
+### Plots (stage 7)
+
+- One theme,
+  [`theme_capacity()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md)
+  (light or dark), and one palette system,
+  [`capacity_palette()`](https://faceteconomics.github.io/plancap/reference/capacity_palette.md)
+  and the `scale_*_capacity_*()` scales: eight categorical hues in a
+  fixed order validated for colour vision deficiency (a ninth category
+  folds into “Other”), a one-hue sequential scale and a blue and red
+  diverging scale with a grey midpoint. Zones keep their colour from
+  plot to plot. Text is never in a series colour; captions state what
+  the figures are.
+- Capacity plots:
+  [`plot_capacity()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  (ranked bars, stacked or faceted),
+  [`plot_height_profile()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md),
+  [`plot_distribution()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md),
+  [`plot_constraints()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  (the waterfall),
+  [`plot_capacity_map()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  (sites, grid or areas, per hectare),
+  [`plot_cumulative()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  (the capacity curve),
+  [`plot_site()`](https://faceteconomics.github.io/plancap/reference/plot_site.md)
+  (plan or axonometric) and
+  [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)
+  (a four-plot dashboard, with patchwork).
+- Comparison plots:
+  [`plot_comparison()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+  (dumbbell or change bars),
+  [`plot_change_map()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md),
+  [`plot_transitions()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+  and
+  [`plot_attribution()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md);
+  [`plot_sensitivity()`](https://faceteconomics.github.io/plancap/reference/plot_sensitivity.md).
+- Fixed: envelope geometry (`keep_geometry = TRUE`) labelled storeys
+  wrongly when more than one site was built.
+- The vignettes show the plots; “Summaries” is now “Summaries and
+  plots”.
+
 ### Comparing scenarios (stage 6)
 
 - [`scenario_set()`](https://faceteconomics.github.io/plancap/reference/scenario_set.md)

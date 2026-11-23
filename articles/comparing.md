@@ -188,7 +188,10 @@ p$rule_attribution
 #> 2 zone_families changed        0.0                    0.0         0
 #> 3     zones.MDR changed   206042.1               206042.1      2215
 #> 4     zones.THZ   added        0.0                    0.0         0
+plot_attribution(cmp)
 ```
+
+![](comparing_files/figure-html/unnamed-chunk-7-1.png)
 
 Here PC1’s new MDR height adds floor area on every MDR site; the
 rezoning to Terraced Housing adds more; the wider flood plain takes some
@@ -208,7 +211,17 @@ tr <- p$transitions
 tr[tr$land_area > 1 & tr$from != tr$to, c("from", "to", "land_area", "floor_area_change", "dwellings_change")]
 #>   from  to land_area floor_area_change dwellings_change
 #> 9  MDR THZ    248500          188389.2             2042
+plot_transitions(cmp)
 ```
+
+![](comparing_files/figure-html/unnamed-chunk-8-1.png)
+
+``` r
+
+plot_comparison(cmp)
+```
+
+![](comparing_files/figure-html/unnamed-chunk-8-2.png)
 
 Every baseline site carries its change and a reason:
 
@@ -258,7 +271,10 @@ g[order(-g$floor_area_change), c("grid", "floor_area_baseline", "floor_area_scen
 #> 1  POLYGON ((2200000 5600000, ...
 #> 6  POLYGON ((2200400 5600800, ...
 #> 9  POLYGON ((2200800 5600800, ...
+plot_change_map(cmp_grid, on = "grid")
 ```
+
+![](comparing_files/figure-html/unnamed-chunk-10-1.png)
 
 ## Checking it adds up
 

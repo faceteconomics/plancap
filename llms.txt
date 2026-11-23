@@ -261,6 +261,39 @@ through values; reconciliation; the register of rules not modelled.
 - [`unmodelled_report()`](https://faceteconomics.github.io/plancap/reference/unmodelled_report.md)
   : The register of rules not modelled
 
+## Plots
+
+Every plot returns a ggplot object with one quiet theme, a validated
+colour-blind-safe palette in light and dark, and a caption stating what
+the figures are.
+
+- [`plot_capacity()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  [`plot_height_profile()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  [`plot_distribution()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  [`plot_constraints()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  [`plot_capacity_map()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  [`plot_cumulative()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  : Plot capacity
+- [`plot_comparison()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+  [`plot_change_map()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+  [`plot_transitions()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+  [`plot_attribution()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+  : Plot a scenario comparison
+- [`plot_sensitivity()`](https://faceteconomics.github.io/plancap/reference/plot_sensitivity.md)
+  : Plot a rule sweep
+- [`plot_site()`](https://faceteconomics.github.io/plancap/reference/plot_site.md)
+  : Plot one site's envelope
+- [`autoplot(`*`<plancap_capacity>`*`)`](https://faceteconomics.github.io/plancap/reference/autoplot.plancap_capacity.md)
+  : A capacity dashboard
+- [`theme_capacity()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md)
+  [`scale_fill_capacity_d()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md)
+  [`scale_colour_capacity_d()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md)
+  [`scale_fill_capacity_c()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md)
+  [`scale_fill_capacity_div()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md)
+  : The plancap plot theme and colour scales
+- [`capacity_palette()`](https://faceteconomics.github.io/plancap/reference/capacity_palette.md)
+  : Colours of the plancap palette
+
 ## Site and boundary types
 
 Road frontages, side and rear boundaries, corner, through and rear
@@ -321,4 +354,5 @@ Exampleton, a synthetic town built to exercise every rule type.
   changes](https://faceteconomics.github.io/plancap/articles/comparing.md):
 - [Getting
   started](https://faceteconomics.github.io/plancap/articles/plancap.md):
-- [Summaries](https://faceteconomics.github.io/plancap/articles/summaries.md):
+- [Summaries and
+  plots](https://faceteconomics.github.io/plancap/articles/summaries.md):

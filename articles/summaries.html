@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Summaries • plancap</title>
+<title>Summaries and plots • plancap</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Summaries">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Summaries and plots">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -34,7 +34,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
-    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries</a></li>
+    <li><a class="dropdown-item" href="../articles/summaries.html">Summaries and plots</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -65,7 +65,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Summaries</h1>
+      <h1>Summaries and plots</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/faceteconomics/plancap/blob/main/vignettes/summaries.Rmd" class="external-link"><code>vignettes/summaries.Rmd</code></a></small>
@@ -78,7 +78,9 @@
 <code><a href="../reference/summarise_capacity.html">summarise_capacity()</a></code>, with a <code>by</code> argument for
 what to group by and a <code>measures</code> argument for what to
 report. Each site is counted once, in one group, so groups always add to
-the total. (Plots of these summaries come in a later version.)</p>
+the total. Each summary has a plot: every plot returns a ggplot object,
+in one quiet theme (<code><a href="../reference/theme_capacity.html">theme_capacity()</a></code>, light or dark) with a
+caption stating what the figures are.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/faceteconomics/plancap" class="external-link">plancap</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -107,10 +109,16 @@ the total. (Plots of these summaries come in a later version.)</p>
 <span><span class="co">#&gt;       LDR   108    96,000     64,707       102 0.67             3.2%</span></span>
 <span><span class="co">#&gt;       MDR   714   512,500    727,969     7,545 1.42            35.7%</span></span>
 <span><span class="co">#&gt;        MU   176   128,000    383,313     2,131 2.99            18.8%</span></span>
-<span><span class="co">#&gt;        TC    85    64,000    256,000     1,342 4.00            12.5%</span></span></code></pre></div>
+<span><span class="co">#&gt;        TC    85    64,000    256,000     1,342 4.00            12.5%</span></span>
+<span><span class="fu"><a href="../reference/plot_capacity.html">plot_capacity</a></span><span class="op">(</span><span class="va">cap</span><span class="op">)</span></span></code></pre></div>
+<p><img src="summaries_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="100%"></p>
+<p>A second grouping stacks within each bar:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_capacity.html">plot_capacity</a></span><span class="op">(</span><span class="va">cap</span>, measure <span class="op">=</span> <span class="st">"dwellings"</span>, fill <span class="op">=</span> <span class="st">"height_band"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="summaries_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="100%"></p>
 <p>The measures available are listed in
 <code><a href="../reference/summarise_capacity.html">?summarise_capacity</a></code>; per hectare measures are of land:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summarise_capacity.html">summarise_capacity</a></span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="st">"zone"</span>,</span>
 <span>                   measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sites"</span>, <span class="st">"dwellings"</span>, <span class="st">"dwellings_per_ha"</span>, <span class="st">"floor_area_mean"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;plancap summary&gt; Operative, by zone_key: 6 rows</span></span>
@@ -130,7 +138,7 @@ the total. (Plots of these summaries come in a later version.)</p>
 changes them). <code>by = "storey"</code> is different: it is floor area
 <strong>by storey level</strong>, so it shows where capacity sits
 vertically.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summarise_capacity.html">summarise_capacity</a></span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"zone"</span>, <span class="st">"height_band"</span><span class="op">)</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sites"</span>, <span class="st">"floor_area"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;plancap summary&gt; Operative, by zone_key, height_band: 11 rows</span></span>
 <span><span class="co">#&gt;  zone_key height_band sites floor_area</span></span>
@@ -153,7 +161,9 @@ vertically.</p>
 <span><span class="co">#&gt;       3 1,259    583,431            28.6%</span></span>
 <span><span class="co">#&gt;       4   354    147,953             7.3%</span></span>
 <span><span class="co">#&gt;       5   241     42,920             2.1%</span></span>
-<span><span class="co">#&gt;       6   138     15,710             0.8%</span></span></code></pre></div>
+<span><span class="co">#&gt;       6   138     15,710             0.8%</span></span>
+<span><span class="fu"><a href="../reference/plot_capacity.html">plot_height_profile</a></span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="st">"zone"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="summaries_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="by-location">By location<a class="anchor" aria-label="anchor" href="#by-location"></a>
@@ -161,7 +171,7 @@ vertically.</p>
 <p>Give polygons as <code>areas</code> (each site goes to the area
 covering most of it), or a cell size as <code>grid</code>. A spatial
 summary comes back with the areas’ geometry, ready to map.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cells</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summarise_capacity.html">summarise_capacity</a></span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="st">"grid"</span>, grid <span class="op">=</span> <span class="fl">250</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sites"</span>, <span class="st">"floor_area"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">cells</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">cells</span><span class="op">$</span><span class="va">floor_area</span><span class="op">)</span>, <span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; Simple feature collection with 5 features and 3 fields</span></span>
@@ -174,7 +184,14 @@ summary comes back with the areas’ geometry, ready to map.</p>
 <span><span class="co">#&gt; 10 8802_22401    68   172252.9 POLYGON ((2200500 5600250, ...</span></span>
 <span><span class="co">#&gt; 15 8803_22402    60   139045.1 POLYGON ((2200750 5600500, ...</span></span>
 <span><span class="co">#&gt; 6  8801_22401    73   119582.2 POLYGON ((2200250 5600250, ...</span></span>
-<span><span class="co">#&gt; 11 8802_22402    50   117333.8 POLYGON ((2200500 5600500, ...</span></span></code></pre></div>
+<span><span class="co">#&gt; 11 8802_22402    50   117333.8 POLYGON ((2200500 5600500, ...</span></span>
+<span><span class="fu"><a href="../reference/plot_capacity.html">plot_capacity_map</a></span><span class="op">(</span><span class="va">cap</span>, grid <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+<p><img src="summaries_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="100%"></p>
+<p>The capacity curve ranks sites by capacity per hectare and shows how
+much of the capacity is on how much of the land:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_capacity.html">plot_cumulative</a></span><span class="op">(</span><span class="va">cap</span><span class="op">)</span></span></code></pre></div>
+<p><img src="summaries_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="what-limits-capacity">What limits capacity<a class="anchor" aria-label="anchor" href="#what-limits-capacity"></a>
@@ -184,7 +201,7 @@ their dwellings, and <code><a href="../reference/constraint_breakdown.html">cons
 floor area from a theoretical maximum (every site built over its whole
 area to every storey its height allows) down to what is enabled, rule by
 rule. The steps add up exactly.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summarise_capacity.html">summarise_capacity</a></span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="st">"binding"</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sites"</span>, <span class="st">"dwellings"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;plancap summary&gt; Operative, by dwelling_binding: 4 rows</span></span>
 <span><span class="co">#&gt;  dwelling_binding sites dwellings</span></span>
@@ -200,7 +217,9 @@ rule. The steps add up exactly.</p>
 <span><span class="co">#&gt;    setbacks_and_land  1,276,117 2,731,352</span></span>
 <span><span class="co">#&gt;             coverage    391,158 2,340,195</span></span>
 <span><span class="co">#&gt;                  far    300,094 2,040,100</span></span>
-<span><span class="co">#&gt;              enabled  2,040,100 2,040,100</span></span></code></pre></div>
+<span><span class="co">#&gt;              enabled  2,040,100 2,040,100</span></span>
+<span><span class="fu"><a href="../reference/plot_capacity.html">plot_constraints</a></span><span class="op">(</span><span class="va">cap</span><span class="op">)</span></span></code></pre></div>
+<p><img src="summaries_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="sweeping-a-rule">Sweeping a rule<a class="anchor" aria-label="anchor" href="#sweeping-a-rule"></a>
@@ -208,13 +227,23 @@ rule. The steps add up exactly.</p>
 <p><code><a href="../reference/sensitivity.html">sensitivity()</a></code> runs capacity with a rule at each of a set
 of values; runs after the first rebuild only the sites the rule
 reaches.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/sensitivity.html">sensitivity</a></span><span class="op">(</span><span class="va">sc</span>, <span class="st">"zones.MDR.ratios.coverage_max.value"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sensitivity.html">sensitivity</a></span><span class="op">(</span><span class="va">sc</span>, <span class="st">"zones.MDR.ratios.coverage_max.value"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">s</span></span>
 <span><span class="co">#&gt; &lt;plancap sensitivity&gt; Operative: <span style="color: #00BB00;">zones.MDR.ratios.coverage_max.value</span></span></span>
 <span><span class="co">#&gt;  value floor_area dwellings floor_area_change dwellings_change</span></span>
 <span><span class="co">#&gt;    0.4  1,903,286    14,867                 0                0</span></span>
 <span><span class="co">#&gt;    0.5  2,040,100    16,345           136,814            1,478</span></span>
-<span><span class="co">#&gt;    0.6  2,168,004    17,717           264,718            2,850</span></span></code></pre></div>
+<span><span class="co">#&gt;    0.6  2,168,004    17,717           264,718            2,850</span></span>
+<span><span class="fu"><a href="../reference/plot_sensitivity.html">plot_sensitivity</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span></span></code></pre></div>
+<p><img src="summaries_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="one-site">One site<a class="anchor" aria-label="anchor" href="#one-site"></a>
+</h2>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_site.html">plot_site</a></span><span class="op">(</span><span class="va">cap</span>, <span class="st">"P00001"</span>, view <span class="op">=</span> <span class="st">"axo"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="summaries_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="for-a-report">For a report<a class="anchor" aria-label="anchor" href="#for-a-report"></a>
@@ -223,7 +252,7 @@ reaches.</p>
 note on what the figures are, and <code><a href="../reference/unmodelled_report.html">unmodelled_report()</a></code> lists
 the rules the rulebook does not model, with the likely direction of
 their effect.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/capacity_table.html">capacity_table</a></span><span class="op">(</span><span class="fu"><a href="../reference/summarise_capacity.html">summarise_capacity</a></span><span class="op">(</span><span class="va">cap</span>, by <span class="op">=</span> <span class="st">"zone"</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sites"</span>, <span class="st">"floor_area"</span>, <span class="st">"dwellings"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div id="mwlefoodfi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#mwlefoodfi table {
@@ -743,7 +772,7 @@ their effect.</p>
     </tr></tfoot>
 </table>
 </div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/unmodelled_report.html">unmodelled_report</a></span><span class="op">(</span><span class="va">cap</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rule"</span>, <span class="st">"likely_effect"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                                        rule likely_effect</span></span>
 <span><span class="co">#&gt; 1 Outlook space from principal living rooms    overstates</span></span>

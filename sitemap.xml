@@ -15,11 +15,13 @@
 <url><loc>https://faceteconomics.github.io/plancap/news/index.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/add_rules.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/area.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/autoplot.plancap_capacity.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/bands.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/bonus.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/boundary_classes.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/build_envelopes.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/building_form.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/capacity_palette.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/capacity_table.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/check_capacity.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/check_comparison.html</loc></url>
@@ -46,10 +48,15 @@
 <url><loc>https://faceteconomics.github.io/plancap/reference/morphology_defaults.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/overlay.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/plancap-package.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/plot_capacity.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/plot_comparison.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/plot_sensitivity.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/plot_site.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/prepare_sites.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/ratio.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/read_rulebook.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/read_scenarios.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/reexports.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rule-formulas.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rule_table.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/rulebook.html</loc></url>
@@ -67,6 +74,7 @@
 <url><loc>https://faceteconomics.github.io/plancap/reference/sub_area.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/summarise_capacity.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/summary.plancap_capacity.html</loc></url>
+<url><loc>https://faceteconomics.github.io/plancap/reference/theme_capacity.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/unmodelled_report.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/unmodelled_rule.html</loc></url>
 <url><loc>https://faceteconomics.github.io/plancap/reference/use_mix.html</loc></url>

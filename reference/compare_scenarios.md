@@ -111,7 +111,7 @@ base <- scenario("Operative", rulebook_example("exampleton"),
                  zoning = town$zoning, layers = town[c("height_areas", "flood_hazard", "transit")])
 change <- scenario_change(base, "PC1", rulebook = pc1$rulebook, zoning = pc1$zoning)
 cmp <- compare_scenarios(run_scenarios(scenario_set(base, change)))
-#> Operative: 6.4 s.
+#> Operative: 6.5 s.
 #> PC1: 4.4 s, 575 sites copied from the baseline.
 cmp
 #> <plancap comparison> baseline "Operative"

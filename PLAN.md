@@ -169,7 +169,21 @@ GitHub). Status (20 November 2026):
   landholdings (+75,092 m2, +387 dwellings), and the operative tile is
   still exact in all four modes. 494 expectations.
 
-  **Next: stage 7** (plots and theme, including comparison plots).
+- **Stage 7 built**: theme_capacity() (light/dark), capacity_palette()
+  and scales (the dataviz skill’s validated reference palette,
+  unchanged, fixed order; zones in rulebook order), label helpers (one
+  style per axis), plot_capacity, plot_height_profile,
+  plot_distribution, plot_constraints, plot_capacity_map,
+  plot_cumulative, plot_site (plan/axo), autoplot (patchwork \>= 1.3.1
+  for ggplot2 4), plot_comparison, plot_change_map, plot_transitions,
+  plot_attribution, plot_sensitivity. Gallery: data-raw/gallery.R
+  renders all 22 to data-raw/gallery/ (git-ignored) for review. Not
+  done: basemaps (maptiles) and the mapgl 3D view (neither installed
+  locally; Q11 put mapgl in v1, so it is a stage 8 item). Gate (rendered
+  gallery reviewed by the user): awaiting review.
+
+  **Next: stage 8** (XLSX template entry, new-jurisdiction vignette,
+  docs, pkgdown; mapgl view; basemaps).
 
   *(Earlier note)* **Stage 4, part 3**: stepped terrain (item 318) and
   boundary runs (item 299); site shape factor (item 324); tower
@@ -284,7 +298,7 @@ What is ported, generalised:
 | `build_envelope`, `apply_caps`, `enforce_stack_rules` | [`build_envelopes()`](https://faceteconomics.github.io/plancap/reference/build_envelopes.md) | hemisphere-aware orientation rules; units parameter |
 | yield paths | `estimate_yield()` | conversion assumptions explicit and required |
 | `aggregate_results`, `diff_scenarios` | [`summarise_capacity()`](https://faceteconomics.github.io/plancap/reference/summarise_capacity.md), [`compare_scenarios()`](https://faceteconomics.github.io/plancap/reference/compare_scenarios.md) | much richer, see sections 5A and 6 |
-| explorer `site_rules_scene()` | [`explain_site()`](https://faceteconomics.github.io/plancap/reference/explain_site.md), `plot_site()` | static ggplot first, interactive optional |
+| explorer `site_rules_scene()` | [`explain_site()`](https://faceteconomics.github.io/plancap/reference/explain_site.md), [`plot_site()`](https://faceteconomics.github.io/plancap/reference/plot_site.md) | static ggplot first, interactive optional |
 
 ------------------------------------------------------------------------
 
@@ -715,10 +729,14 @@ A `cap_comparison` object:
 - reconciliation checks
   ([`check_comparison()`](https://faceteconomics.github.io/plancap/reference/check_comparison.md)).
 
-Summaries and plots built on it: `summary(cmp)`, `plot_comparison()`
-(dumbbell or bars by zone, area or height band), `plot_change_map()`
-(diverging colours on sites, grid or areas), `plot_transitions()`
-(zone-to-zone flows of land and capacity), `plot_attribution()`
+Summaries and plots built on it: `summary(cmp)`,
+[`plot_comparison()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+(dumbbell or bars by zone, area or height band),
+[`plot_change_map()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+(diverging colours on sites, grid or areas),
+[`plot_transitions()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+(zone-to-zone flows of land and capacity),
+[`plot_attribution()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
 (waterfall of drivers), and `plot_height_profile(cmp)` (each scenario’s
 floor area by storey, overlaid).
 
@@ -791,10 +809,11 @@ Other summary functions:
 ## 7. Plots
 
 All ggplot2, all return ggplot objects (so users can add layers), one
-theme (`theme_capacity()`) and one palette system, colour-blind safe,
-light/dark variants. Labels auto-formatted (mÂ², k / M, %). Captions
-auto-state “Plan-enabled gross capacity; dwellings at X mÂ² per
-dwelling”.
+theme
+([`theme_capacity()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md))
+and one palette system, colour-blind safe, light/dark variants. Labels
+auto-formatted (mÂ², k / M, %). Captions auto-state “Plan-enabled gross
+capacity; dwellings at X mÂ² per dwelling”.
 
 | Function | What it shows |
 |----|----|

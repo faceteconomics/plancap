@@ -1,11 +1,13 @@
-# Summaries
+# Summaries and plots
 
 Every breakdown of a capacity result comes from one function,
 [`summarise_capacity()`](https://faceteconomics.github.io/plancap/reference/summarise_capacity.md),
 with a `by` argument for what to group by and a `measures` argument for
 what to report. Each site is counted once, in one group, so groups
-always add to the total. (Plots of these summaries come in a later
-version.)
+always add to the total. Each summary has a plot: every plot returns a
+ggplot object, in one quiet theme
+([`theme_capacity()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md),
+light or dark) with a caption stating what the figures are.
 
 ``` r
 
@@ -39,7 +41,19 @@ summarise_capacity(cap, by = "zone")
 #>       MDR   714   512,500    727,969     7,545 1.42            35.7%
 #>        MU   176   128,000    383,313     2,131 2.99            18.8%
 #>        TC    85    64,000    256,000     1,342 4.00            12.5%
+plot_capacity(cap)
 ```
+
+![](summaries_files/figure-html/unnamed-chunk-2-1.png)
+
+A second grouping stacks within each bar:
+
+``` r
+
+plot_capacity(cap, measure = "dwellings", fill = "height_band")
+```
+
+![](summaries_files/figure-html/unnamed-chunk-3-1.png)
 
 The measures available are listed in
 [`?summarise_capacity`](https://faceteconomics.github.io/plancap/reference/summarise_capacity.md);
@@ -90,7 +104,10 @@ summarise_capacity(cap, by = "storey")
 #>       4   354    147,953             7.3%
 #>       5   241     42,920             2.1%
 #>       6   138     15,710             0.8%
+plot_height_profile(cap, by = "zone")
 ```
+
+![](summaries_files/figure-html/unnamed-chunk-5-1.png)
 
 ## By location
 
@@ -113,7 +130,20 @@ cells[order(-cells$floor_area), ][1:5, ]
 #> 15 8803_22402    60   139045.1 POLYGON ((2200750 5600500, ...
 #> 6  8801_22401    73   119582.2 POLYGON ((2200250 5600250, ...
 #> 11 8802_22402    50   117333.8 POLYGON ((2200500 5600500, ...
+plot_capacity_map(cap, grid = 100)
 ```
+
+![](summaries_files/figure-html/unnamed-chunk-6-1.png)
+
+The capacity curve ranks sites by capacity per hectare and shows how
+much of the capacity is on how much of the land:
+
+``` r
+
+plot_cumulative(cap)
+```
+
+![](summaries_files/figure-html/unnamed-chunk-7-1.png)
 
 ## What limits capacity
 
@@ -142,7 +172,10 @@ constraint_breakdown(cap)
 #>             coverage    391,158 2,340,195
 #>                  far    300,094 2,040,100
 #>              enabled  2,040,100 2,040,100
+plot_constraints(cap)
 ```
+
+![](summaries_files/figure-html/unnamed-chunk-8-1.png)
 
 ## Sweeping a rule
 
@@ -152,13 +185,26 @@ first rebuild only the sites the rule reaches.
 
 ``` r
 
-sensitivity(sc, "zones.MDR.ratios.coverage_max.value", c(0.4, 0.5, 0.6))
+s <- sensitivity(sc, "zones.MDR.ratios.coverage_max.value", c(0.4, 0.5, 0.6))
+s
 #> <plancap sensitivity> Operative: zones.MDR.ratios.coverage_max.value
 #>  value floor_area dwellings floor_area_change dwellings_change
 #>    0.4  1,903,286    14,867                 0                0
 #>    0.5  2,040,100    16,345           136,814            1,478
 #>    0.6  2,168,004    17,717           264,718            2,850
+plot_sensitivity(s)
 ```
+
+![](summaries_files/figure-html/unnamed-chunk-9-1.png)
+
+## One site
+
+``` r
+
+plot_site(cap, "P00001", view = "axo")
+```
+
+![](summaries_files/figure-html/unnamed-chunk-10-1.png)
 
 ## For a report
 
