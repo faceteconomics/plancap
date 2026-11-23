@@ -19,8 +19,12 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/rulebooks.html">Writing a rulebook</a></li>
+    <li><a class="dropdown-item" href="../articles/preparing-sites.html">Preparing sites</a></li>
     <li><a class="dropdown-item" href="../articles/summaries.html">Summaries and plots</a></li>
+    <li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -46,6 +50,16 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="plancap-0009000">plancap 0.0.0.9000<a class="anchor" aria-label="anchor" href="#plancap-0009000"></a></h2>
+<div class="section level3">
+<h3 id="a-new-jurisdiction-maps-ind-documentation-stage-0-0-0-9000">A new jurisdiction, maps in 3D, documentation (stage 8)<a class="anchor" aria-label="anchor" href="#a-new-jurisdiction-maps-ind-documentation-stage-0-0-0-9000"></a></h3>
+<ul><li>Hamilton, New Zealand, entered through the Excel template from the Operative District Plan (revision of 13 November 2026, with Plan Change 12): General, Medium and High Density Residential, Business 6 and Business 2, every value cited, with seven rules registered as not modelled (<code>rulebook_example("hamilton")</code>, <code>inst/extdata/hamilton_rulebook.xlsx</code>). The vignette “Adding a new jurisdiction: Hamilton” follows it from the plan text to results, including a “permitted activities only” scenario.</li>
+<li>
+<code><a href="../reference/view_capacity_3d.html">view_capacity_3d()</a></code>: an interactive 3D map (mapgl), sites raised to their height or each storey’s footprint at its level, coloured by capacity per hectare.</li>
+<li>
+<code><a href="../reference/plot_capacity.html">plot_capacity_map()</a></code> and <code><a href="../reference/plot_comparison.html">plot_change_map()</a></code> take <code>basemap = TRUE</code> (Esri’s World Gray Canvas, or any maptiles provider).</li>
+<li>Fixed: a blank Excel template’s <code>families</code> sheet had no <code>family</code> column.</li>
+<li>Vignettes: “Writing a rulebook”, “Rule reference”, “Preparing sites”, “Method and assumptions”; the README describes the package as built.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="plots-stage-0-0-0-9000">Plots (stage 7)<a class="anchor" aria-label="anchor" href="#plots-stage-0-0-0-9000"></a></h3>
 <ul><li>One theme, <code><a href="../reference/theme_capacity.html">theme_capacity()</a></code> (light or dark), and one palette system, <code><a href="../reference/capacity_palette.html">capacity_palette()</a></code> and the <code>scale_*_capacity_*()</code> scales: eight categorical hues in a fixed order validated for colour vision deficiency (a ninth category folds into “Other”), a one-hue sequential scale and a blue and red diverging scale with a grey midpoint. Zones keep their colour from plot to plot. Text is never in a series colour; captions state what the figures are.</li>

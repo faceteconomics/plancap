@@ -21,8 +21,12 @@ and returns every view of the change:"></head><body>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/rulebooks.html">Writing a rulebook</a></li>
+    <li><a class="dropdown-item" href="../articles/preparing-sites.html">Preparing sites</a></li>
     <li><a class="dropdown-item" href="../articles/summaries.html">Summaries and plots</a></li>
+    <li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -149,8 +153,8 @@ changed. The drivers always sum to the total change;</p></li>
 <span class="r-in"><span>                 zoning <span class="op">=</span> <span class="va">town</span><span class="op">$</span><span class="va">zoning</span>, layers <span class="op">=</span> <span class="va">town</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"height_areas"</span>, <span class="st">"flood_hazard"</span>, <span class="st">"transit"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">change</span> <span class="op">&lt;-</span> <span class="fu"><a href="scenario.html">scenario_change</a></span><span class="op">(</span><span class="va">base</span>, <span class="st">"PC1"</span>, rulebook <span class="op">=</span> <span class="va">pc1</span><span class="op">$</span><span class="va">rulebook</span>, zoning <span class="op">=</span> <span class="va">pc1</span><span class="op">$</span><span class="va">zoning</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cmp</span> <span class="op">&lt;-</span> <span class="fu">compare_scenarios</span><span class="op">(</span><span class="fu"><a href="scenario_set.html">run_scenarios</a></span><span class="op">(</span><span class="fu"><a href="scenario_set.html">scenario_set</a></span><span class="op">(</span><span class="va">base</span>, <span class="va">change</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Operative: 6.5 s.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> PC1: 4.4 s, 575 sites copied from the baseline.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Operative: 4 s.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> PC1: 3 s, 575 sites copied from the baseline.</span>
 <span class="r-in"><span><span class="va">cmp</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap comparison&gt; baseline <span style="color: #0000BB;">"Operative"</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   scenario sites land_area floor_area residential_floor_area dwellings</span>

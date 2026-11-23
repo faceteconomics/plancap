@@ -1,0 +1,116 @@
+# Method and assumptions
+
+## What plan-enabled capacity is
+
+plancap estimates **plan-enabled capacity**: the floor area, and the
+dwellings it would hold, that a district plan’s rules allow on each
+site. It is the answer to “what does the plan let you build here?”, site
+by site, summed. It is a property of the plan, not a forecast.
+
+It is **not**:
+
+- **feasible capacity**: whether building it would pay at today’s prices
+  and costs;
+- **likely or realisable capacity**: whether owners will sell and build;
+- **infrastructure-ready capacity**: whether water, wastewater and
+  transport can serve it, unless the plan itself says so through a rule;
+- **net of what is there**: by default capacity is gross, on a blank
+  slate, as if each site were empty.
+
+These are later questions, and each starts from plan-enabled capacity.
+
+## Floor area first
+
+Floor area is the primary output. Dwellings are a derived view:
+residential floor area, times an efficiency, over a dwelling size or a
+unit mix
+([`conversion()`](https://faceteconomics.github.io/plancap/reference/conversion.md)),
+unless a zone counts dwellings by a density rule. The conversion is an
+assumption, stated on every summary and plot caption, not a plan rule.
+
+## Six principles
+
+1.  **Never invent a rule value.** Every number carries a citation;
+    values the plan does not state are assumptions, labelled as such.
+2.  **Flag, don’t drop.** Every input parcel appears in every output,
+    with a flag where it has no zone, no rules or no capacity.
+3.  **Floor area is primary; dwellings are derived.**
+4.  **Gross, blank-slate capacity** by default.
+5.  **Alternative standards are variants**, built separately; each site
+    takes the most enabling (or the one named), never a merger of the
+    two.
+6.  **Unmodelled rules are registered**, with the direction each would
+    move capacity, and reported with every result.
+
+## Activity status
+
+Plans permit some development outright and make other development
+subject to consent. plancap counts what a plan’s standards bound: where
+a plan provides for development by restricted discretionary consent and
+states standards for it, that development is counted, and the per-site
+limits of permitted activity are rules a rulebook may add (Hamilton’s
+vignette shows both readings as scenarios). Activities the plan
+discourages (non-complying, prohibited) are not counted. Every rule may
+record its `activity_status`.
+
+## What the envelope does not know
+
+A blank-slate envelope knows the site, its boundaries and the rules. It
+does not know where windows, balconies, outdoor living areas, driveways
+and trees will go, so rules that depend on them (outlook space,
+separation between buildings on a site, privacy setbacks, tree canopy)
+are registered as not modelled, and usually make capacity an
+overstatement. Rules that need a layer the run does not have (a hazard
+map, the road hierarchy) are registered the same way until the layer is
+supplied.
+
+``` r
+
+library(plancap)
+#> 
+#> Attaching package: 'plancap'
+#> The following object is masked from 'package:stats':
+#> 
+#>     density
+head(unmodelled_report(rulebook_example("auckland"))[, c("rule", "likely_effect")])
+#>                                                                                                             rule
+#> 1                        Height in relation to boundary does not apply where a common wall exists or is proposed
+#> 2                                Height in relation to boundary measured from the far side of any entrance strip
+#> 3                                                Principal living room, bedroom and habitable room outlook space
+#> 4                                 Outdoor living space, communal living space for developments over 20 dwellings
+#> 5 Deep soil and canopy tree areas (20 m2 for sites 200-600 m2, 30 m2 for 601-1500 m2, 50 m2 for 1501 m2 or more)
+#> 6     Daylight, wind, rainwater tanks, residential waste management, safety and privacy buffer, fences and walls
+#>   likely_effect
+#> 1   understates
+#> 2   understates
+#> 3    overstates
+#> 4    overstates
+#> 5    overstates
+#> 6       unknown
+```
+
+## Validation
+
+plancap reproduces the capacityengine model (built for Auckland’s
+Unitary Plan, Christchurch and Wellington) exactly on the same inputs:
+
+- on an Auckland tile of 2,680 sites, every site’s floor area and
+  dwellings match, on flat ground and with terrain, height surfaces and
+  the front yard measured from the neighbours’ houses;
+- operative against Plan Change 120 on that tile, the change matches on
+  every landholding (+75,092 m² of floor area, +387 dwellings).
+
+[`check_capacity()`](https://faceteconomics.github.io/plancap/reference/check_capacity.md)
+reconciles every run (every parcel accounted for, land in equal to land
+out, floor area by storey equal to floor area by site), and
+[`check_comparison()`](https://faceteconomics.github.io/plancap/reference/check_comparison.md)
+reconciles every comparison (the drivers sum to the change; every
+summary reproduces both totals). The package’s tests check hand-worked
+cases exactly.
+
+## Units and coordinates
+
+Rulebooks are in metres or feet
+([`convert_rulebook_units()`](https://faceteconomics.github.io/plancap/reference/convert_rulebook_units.md)
+converts, formulas included); the engine works in metres. Parcels must
+be in a projected coordinate reference system.

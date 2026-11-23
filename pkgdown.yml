@@ -3,9 +3,14 @@ pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   comparing: comparing.html
+  hamilton: hamilton.html
+  method: method.html
   plancap: plancap.html
+  preparing-sites: preparing-sites.html
+  rule-reference: rule-reference.html
+  rulebooks: rulebooks.html
   summaries: summaries.html
-last_built: 2026-11-23T03:56Z
+last_built: 2026-11-23T05:00Z
 urls:
   reference: https://faceteconomics.github.io/plancap/reference
   article: https://faceteconomics.github.io/plancap/articles

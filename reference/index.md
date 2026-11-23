@@ -203,6 +203,8 @@ the figures are.
   : Plot one site's envelope
 - [`autoplot(`*`<plancap_capacity>`*`)`](https://faceteconomics.github.io/plancap/reference/autoplot.plancap_capacity.md)
   : A capacity dashboard
+- [`view_capacity_3d()`](https://faceteconomics.github.io/plancap/reference/view_capacity_3d.md)
+  : A 3D view of capacity
 - [`theme_capacity()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md)
   [`scale_fill_capacity_d()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md)
   [`scale_colour_capacity_d()`](https://faceteconomics.github.io/plancap/reference/theme_capacity.md)

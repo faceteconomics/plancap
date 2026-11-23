@@ -2,6 +2,29 @@
 
 ## plancap 0.0.0.9000
 
+### A new jurisdiction, maps in 3D, documentation (stage 8)
+
+- Hamilton, New Zealand, entered through the Excel template from the
+  Operative District Plan (revision of 13 November 2026, with Plan
+  Change 12): General, Medium and High Density Residential, Business 6
+  and Business 2, every value cited, with seven rules registered as not
+  modelled (`rulebook_example("hamilton")`,
+  `inst/extdata/hamilton_rulebook.xlsx`). The vignette “Adding a new
+  jurisdiction: Hamilton” follows it from the plan text to results,
+  including a “permitted activities only” scenario.
+- [`view_capacity_3d()`](https://faceteconomics.github.io/plancap/reference/view_capacity_3d.md):
+  an interactive 3D map (mapgl), sites raised to their height or each
+  storey’s footprint at its level, coloured by capacity per hectare.
+- [`plot_capacity_map()`](https://faceteconomics.github.io/plancap/reference/plot_capacity.md)
+  and
+  [`plot_change_map()`](https://faceteconomics.github.io/plancap/reference/plot_comparison.md)
+  take `basemap = TRUE` (Esri’s World Gray Canvas, or any maptiles
+  provider).
+- Fixed: a blank Excel template’s `families` sheet had no `family`
+  column.
+- Vignettes: “Writing a rulebook”, “Rule reference”, “Preparing sites”,
+  “Method and assumptions”; the README describes the package as built.
+
 ### Plots (stage 7)
 
 - One theme,

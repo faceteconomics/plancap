@@ -39,7 +39,7 @@ the available names; `rulebook_example_path()` the file path.
 ``` r
 rulebook_examples()
 #> [1] "auckland"       "christchurch"   "exampleton"     "exampleton_pc1"
-#> [5] "wellington"    
+#> [5] "hamilton"       "wellington"    
 rb <- rulebook_example("exampleton")
 rb
 #> <plancap rulebook> Exampleton District Plan

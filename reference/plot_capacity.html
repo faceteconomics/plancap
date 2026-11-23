@@ -21,8 +21,12 @@ changed or added to, and carries a caption saying what the figures are."></head>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/rulebooks.html">Writing a rulebook</a></li>
+    <li><a class="dropdown-item" href="../articles/preparing-sites.html">Preparing sites</a></li>
     <li><a class="dropdown-item" href="../articles/summaries.html">Summaries and plots</a></li>
+    <li><a class="dropdown-item" href="../articles/comparing.html">Comparing plan changes</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -86,7 +90,8 @@ changed or added to, and carries a caption saying what the figures are.</p>
 <span>  areas <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  area_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  per_ha <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  mode <span class="op">=</span> <span class="st">"light"</span></span>
+<span>  mode <span class="op">=</span> <span class="st">"light"</span>,</span>
+<span>  basemap <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">plot_cumulative</span><span class="op">(</span><span class="va">cap</span>, measure <span class="op">=</span> <span class="st">"dwellings"</span>, by <span class="op">=</span> <span class="cn">NULL</span>, mode <span class="op">=</span> <span class="st">"light"</span><span class="op">)</span></span></code></pre></div>
@@ -148,6 +153,12 @@ changed or added to, and carries a caption saying what the figures are.</p>
 
 <dt id="arg-per-ha">per_ha<a class="anchor" aria-label="anchor" href="#arg-per-ha"></a></dt>
 <dd><p>Whether to map the measure per hectare of land.</p></dd>
+
+
+<dt id="arg-basemap">basemap<a class="anchor" aria-label="anchor" href="#arg-basemap"></a></dt>
+<dd><p><code>TRUE</code> to draw a basemap (Esri's World Gray Canvas), or the
+name of a maptiles provider; fetched with the maptiles and tidyterra
+packages, so it needs an internet connection.</p></dd>
 
 </dl></div>
     <div class="section level2">
