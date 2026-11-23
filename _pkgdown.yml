@@ -104,6 +104,19 @@ reference:
       - sensitivity
       - check_capacity
       - unmodelled_report
+  - title: Plots
+    desc: >
+      Every plot returns a ggplot object with one quiet theme, a validated
+      colour-blind-safe palette in light and dark, and a caption stating what
+      the figures are.
+    contents:
+      - plot_capacity
+      - plot_comparison
+      - plot_sensitivity
+      - plot_site
+      - autoplot.plancap_capacity
+      - theme_capacity
+      - capacity_palette
   - title: Site and boundary types
     desc: >
       Road frontages, side and rear boundaries, corner, through and rear

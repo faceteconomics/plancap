@@ -8,7 +8,8 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7.5, fig.height = 4.6, dpi = 96,
+                      out.width = "100%")
 ```
 
 A plan change rarely moves one thing. Exampleton's Plan Change 1 raises a
@@ -88,6 +89,7 @@ rules driver splits further by the zones and overlays whose rules changed:
 p <- cmp$pairs[[1]]
 p$attribution
 p$rule_attribution
+plot_attribution(cmp)
 ```
 
 Here PC1's new MDR height adds floor area on every MDR site; the rezoning
@@ -105,6 +107,8 @@ each PC1 zone:
 ```{r}
 tr <- p$transitions
 tr[tr$land_area > 1 & tr$from != tr$to, c("from", "to", "land_area", "floor_area_change", "dwellings_change")]
+plot_transitions(cmp)
+plot_comparison(cmp)
 ```
 
 Every baseline site carries its change and a reason:
@@ -123,6 +127,7 @@ A common geography (`areas = ` or `grid = `) is always comparable:
 cmp_grid <- compare_scenarios(res, grid = 400, attribution = "none")
 g <- cmp_grid$pairs[[1]]$by_grid
 g[order(-g$floor_area_change), c("grid", "floor_area_baseline", "floor_area_scenario", "floor_area_change")][1:5, ]
+plot_change_map(cmp_grid, on = "grid")
 ```
 
 ## Checking it adds up

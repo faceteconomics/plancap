@@ -142,7 +142,20 @@ Status (20 November 2026):
   change exactly on all 2,668 landholdings (+75,092 m2, +387 dwellings), and
   the operative tile is still exact in all four modes. 494 expectations.
 
-  **Next: stage 7** (plots and theme, including comparison plots).
+- **Stage 7 built**: theme_capacity() (light/dark), capacity_palette() and
+  scales (the dataviz skill's validated reference palette, unchanged, fixed
+  order; zones in rulebook order), label helpers (one style per axis),
+  plot_capacity, plot_height_profile, plot_distribution, plot_constraints,
+  plot_capacity_map, plot_cumulative, plot_site (plan/axo), autoplot
+  (patchwork >= 1.3.1 for ggplot2 4), plot_comparison, plot_change_map,
+  plot_transitions, plot_attribution, plot_sensitivity. Gallery:
+  data-raw/gallery.R renders all 22 to data-raw/gallery/ (git-ignored) for
+  review. Not done: basemaps (maptiles) and the mapgl 3D view (neither
+  installed locally; Q11 put mapgl in v1, so it is a stage 8 item). Gate
+  (rendered gallery reviewed by the user): awaiting review.
+
+  **Next: stage 8** (XLSX template entry, new-jurisdiction vignette, docs,
+  pkgdown; mapgl view; basemaps).
 
   *(Earlier note)* **Stage 4, part 3**: stepped terrain (item 318) and boundary runs
   (item 299); site shape factor (item 324); tower controls; then the tile

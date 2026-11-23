@@ -1,5 +1,26 @@
 # plancap 0.0.0.9000
 
+## Plots (stage 7)
+
+* One theme, `theme_capacity()` (light or dark), and one palette system,
+  `capacity_palette()` and the `scale_*_capacity_*()` scales: eight
+  categorical hues in a fixed order validated for colour vision deficiency
+  (a ninth category folds into "Other"), a one-hue sequential scale and a
+  blue and red diverging scale with a grey midpoint. Zones keep their colour
+  from plot to plot. Text is never in a series colour; captions state what
+  the figures are.
+* Capacity plots: `plot_capacity()` (ranked bars, stacked or faceted),
+  `plot_height_profile()`, `plot_distribution()`, `plot_constraints()` (the
+  waterfall), `plot_capacity_map()` (sites, grid or areas, per hectare),
+  `plot_cumulative()` (the capacity curve), `plot_site()` (plan or
+  axonometric) and `autoplot()` (a four-plot dashboard, with patchwork).
+* Comparison plots: `plot_comparison()` (dumbbell or change bars),
+  `plot_change_map()`, `plot_transitions()` and `plot_attribution()`;
+  `plot_sensitivity()`.
+* Fixed: envelope geometry (`keep_geometry = TRUE`) labelled storeys wrongly
+  when more than one site was built.
+* The vignettes show the plots; "Summaries" is now "Summaries and plots".
+
 ## Comparing scenarios (stage 6)
 
 * `scenario_set()` and `run_scenarios()`: scenarios run together, the

@@ -459,6 +459,7 @@ attribute_change <- function(a, b, sa, sb, method, order, by_rule, ...) {
                            in {.arg order}, with {.code attribution = \"sequential\"}."))
   }
   attr(dr, "incoherent") <- incoherent
+  attr(dr, "method") <- if (k == 1) "sequential" else method
   rules <- NULL
   if (by_rule && "rules" %in% drivers) rules <- attribute_rules(a, sa, sb, ...)
   list(drivers = dr, rules = rules, method = method)

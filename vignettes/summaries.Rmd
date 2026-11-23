@@ -1,21 +1,23 @@
 ---
-title: "Summaries"
+title: "Summaries and plots"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Summaries}
+  %\VignetteIndexEntry{Summaries and plots}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7.5, fig.height = 4.6, dpi = 96,
+                      out.width = "100%")
 ```
 
 Every breakdown of a capacity result comes from one function,
 `summarise_capacity()`, with a `by` argument for what to group by and a
 `measures` argument for what to report. Each site is counted once, in one
-group, so groups always add to the total. (Plots of these summaries come in
-a later version.)
+group, so groups always add to the total. Each summary has a plot: every
+plot returns a ggplot object, in one quiet theme (`theme_capacity()`, light
+or dark) with a caption stating what the figures are.
 
 ```{r setup}
 library(plancap)
@@ -34,6 +36,13 @@ cap <- estimate_capacity(sc)
 
 ```{r}
 summarise_capacity(cap, by = "zone")
+plot_capacity(cap)
+```
+
+A second grouping stacks within each bar:
+
+```{r}
+plot_capacity(cap, measure = "dwellings", fill = "height_band")
 ```
 
 The measures available are listed in `?summarise_capacity`; per hectare
@@ -53,6 +62,7 @@ storey level**, so it shows where capacity sits vertically.
 ```{r}
 summarise_capacity(cap, by = c("zone", "height_band"), measures = c("sites", "floor_area"))
 summarise_capacity(cap, by = "storey")
+plot_height_profile(cap, by = "zone")
 ```
 
 ## By location
@@ -64,6 +74,14 @@ geometry, ready to map.
 ```{r}
 cells <- summarise_capacity(cap, by = "grid", grid = 250, measures = c("sites", "floor_area"))
 cells[order(-cells$floor_area), ][1:5, ]
+plot_capacity_map(cap, grid = 100)
+```
+
+The capacity curve ranks sites by capacity per hectare and shows how much
+of the capacity is on how much of the land:
+
+```{r, fig.width = 5.5, fig.height = 5.5}
+plot_cumulative(cap)
 ```
 
 ## What limits capacity
@@ -76,6 +94,7 @@ down to what is enabled, rule by rule. The steps add up exactly.
 ```{r}
 summarise_capacity(cap, by = "binding", measures = c("sites", "dwellings"))
 constraint_breakdown(cap)
+plot_constraints(cap)
 ```
 
 ## Sweeping a rule
@@ -84,7 +103,15 @@ constraint_breakdown(cap)
 after the first rebuild only the sites the rule reaches.
 
 ```{r}
-sensitivity(sc, "zones.MDR.ratios.coverage_max.value", c(0.4, 0.5, 0.6))
+s <- sensitivity(sc, "zones.MDR.ratios.coverage_max.value", c(0.4, 0.5, 0.6))
+s
+plot_sensitivity(s)
+```
+
+## One site
+
+```{r, fig.width = 6.5, fig.height = 5}
+plot_site(cap, "P00001", view = "axo")
 ```
 
 ## For a report

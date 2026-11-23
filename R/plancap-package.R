@@ -19,5 +19,6 @@
 
 ## usethis namespace: start
 #' @importFrom rlang .data
+#' @importFrom ggplot2 autoplot
 ## usethis namespace: end
 NULL

@@ -351,7 +351,9 @@ envelope_core <- function(prep, res, rb, settings, idx, excl = list(), bands = N
     gl <- geoms[!vapply(geoms, is.null, TRUE)]
     if (length(gl)) {
       g <- do.call(c, lapply(gl, `[[`, "geom"))
-      df <- data.frame(run = unlist(lapply(gl, `[[`, "run")), storey = unlist(lapply(gl, `[[`, "storey")))
+      runs_by <- lapply(gl, `[[`, "run")
+      df <- data.frame(run = unlist(runs_by),
+                       storey = rep(vapply(gl, `[[`, 0, "storey"), lengths(runs_by)))
       ok <- chosen[df$run]
       geometry <- sf::st_sf(site_id = s_df$site_id[runs$site[df$run[ok]]], storey = df$storey[ok],
                             geometry = sf::st_as_sfc(g[ok]))
