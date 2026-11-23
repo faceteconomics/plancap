@@ -41,7 +41,8 @@ plot_capacity_map(
   areas = NULL,
   area_id = NULL,
   per_ha = TRUE,
-  mode = "light"
+  mode = "light",
+  basemap = FALSE
 )
 
 plot_cumulative(cap, measure = "dwellings", by = NULL, mode = "light")
@@ -74,6 +75,10 @@ plot_cumulative(cap, measure = "dwellings", by = NULL, mode = "light")
 \code{areas} labelled by \code{area_id}, instead of on sites.}
 
 \item{per_ha}{Whether to map the measure per hectare of land.}
+
+\item{basemap}{\code{TRUE} to draw a basemap (Esri's World Gray Canvas), or the
+name of a maptiles provider; fetched with the maptiles and tidyterra
+packages, so it needs an internet connection.}
 }
 \value{
 A ggplot object.

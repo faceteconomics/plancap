@@ -202,9 +202,12 @@ waterfall <- function(step, value, first, last, labels = NULL, mode = "light", l
 #' @param grid,areas,area_id Plot on a square grid of `grid` metres, or on
 #'   `areas` labelled by `area_id`, instead of on sites.
 #' @param per_ha Whether to map the measure per hectare of land.
+#' @param basemap `TRUE` to draw a basemap (Esri's World Gray Canvas), or the
+#'   name of a maptiles provider; fetched with the maptiles and tidyterra
+#'   packages, so it needs an internet connection.
 #' @export
 plot_capacity_map <- function(cap, measure = "floor_area", grid = NULL, areas = NULL, area_id = NULL,
-                              per_ha = TRUE, mode = "light") {
+                              per_ha = TRUE, mode = "light", basemap = FALSE) {
   check_capacity_object(cap)
   ink <- capacity_ink(mode)
   if (!is.null(grid) || !is.null(areas)) {
@@ -221,11 +224,16 @@ plot_capacity_map <- function(cap, measure = "floor_area", grid = NULL, areas = 
   d$value <- if (per_ha) ifelse(d$land_area > 0, d[[measure]] / d$land_area * 10000, NA) else d[[measure]]
   lab <- if (per_ha) paste(measure_label(measure), "per hectare") else measure_label(measure)
   fmt <- measure_formatter(measure)
+  use_base <- !isFALSE(basemap)
+  if (use_base) d <- sf::st_transform(d, 3857)
   ggplot2::ggplot(d) +
-    ggplot2::geom_sf(ggplot2::aes(fill = .data$value), colour = ink$surface, linewidth = if (unit == "sites") 0.05 else 0.2) +
+    (if (use_base) basemap_layer(d, basemap)) +
+    ggplot2::geom_sf(ggplot2::aes(fill = .data$value), colour = ink$surface, linewidth = if (unit == "sites") 0.05 else 0.2,
+                     alpha = if (use_base) 0.85 else 1) +
     scale_fill_capacity_c(mode = mode, name = NULL, labels = fmt, na.value = ink$neutral) +
-    ggplot2::coord_sf(datum = NA) +
-    ggplot2::labs(title = lab, subtitle = paste0(cap$scenario, ", on ", unit), caption = wrap_text(plot_caption(cap$conversion), 110)) +
+    ggplot2::coord_sf(datum = NA, crs = sf::st_crs(d), expand = FALSE) +
+    ggplot2::labs(title = lab, subtitle = paste0(cap$scenario, ", on ", unit),
+                  caption = wrap_text(paste(plot_caption(cap$conversion), if (use_base) basemap_credit(basemap)), 90)) +
     theme_capacity(mode = mode, grid = "none") +
     ggplot2::theme(axis.text = ggplot2::element_blank(), legend.key.width = ggplot2::unit(2.5, "lines"))
 }

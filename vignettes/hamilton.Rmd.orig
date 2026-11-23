@@ -1,0 +1,205 @@
+---
+title: "Adding a new jurisdiction: Hamilton"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Adding a new jurisdiction: Hamilton}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<!-- This vignette is pre-computed: edit vignettes/hamilton.Rmd.orig and knit it
+with data-raw/hamilton/knit_vignette.R. It needs data the package does not
+ship (Hamilton City Council's zoning, which has no stated licence). -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.path = "hamilton-", dpi = 96,
+                      fig.width = 7.5, fig.height = 4.6, out.width = "100%")
+suppressPackageStartupMessages(devtools::load_all("..", quiet = TRUE))
+```
+
+This vignette adds a real jurisdiction from nothing: Hamilton, New Zealand.
+It follows the route a planner or analyst would take with a plan they have
+not modelled before: read the plan, enter its rules in the Excel template,
+prepare the parcels and the zoning, run capacity, check it, and ask a
+question of it. Everything here was done once, on 23 November 2026, with
+the plan as it then stood.
+
+## 1. Read the plan
+
+Hamilton's rules are in the **Hamilton City Operative District Plan**, read
+in its online ePlan at the revision of 13 November 2026. Plan Change 12
+(Enabling Housing Supply), Hamilton's response to the National Policy
+Statement on Urban Development, was made operative on 20 December 2024 and
+is part of that text. The walkthrough covers the zones of one area,
+Claudelands and Hamilton East: General, Medium Density and High Density
+Residential (Chapter 4), and the Business 6 (neighbourhood centre) and
+Business 2 zones (Chapter 6).
+
+For each zone, the rules that shape a building or count its dwellings were
+written down with their rule numbers (the notes are in
+`data-raw/hamilton/rules_notes.md` in the package source). In summary:
+
+| | General Residential | Medium Density Residential | High Density Residential | Business 6 |
+|---|---|---|---|---|
+| Height | 10 m (4.2.5.4) | 18 m, 5 storeys (4.3.4.4) | 26 m (4.4.5.4) | 11 m next to General Residential, 18 m next to Medium Density (6.4.1) |
+| Recession plane | 45° from 4 m, not to a road (4.2.5.5) | one or two units: 60° from 4 m, 45° to General Residential; three or more attached units: no plane on side boundaries within 20 m of the road, 60° from 6 m beyond (4.3.4.5) | only to other zones: 45° to General Residential, 60° from 6 m to Medium Density beyond 20 m (4.4.5.5) | 45° from 4 m to General Residential, 60° to Medium Density (6.4.2) |
+| Setbacks | road 1.5 m, side and rear 1.5 m (4.2.5.6) | road 1.5 m, side and rear 1 m (4.3.4.6) | 1 m; parts over 11 m 4 m back (4.4.5.6, 4.4.5.14) | 0 m front; 1.5 m to a residential zone (6.4.3) |
+| Coverage | 45% (4.2.5.2) | 50% (4.3.4.2) | 60% (4.4.5.2) | floor area ratio 2:1 or 3:1 (6.4.4) |
+| Landscaping | 20% (4.2.5.3) | 20% (4.3.4.3) | 10% (4.4.5.3) | none at ground floor dwellings: none allowed (6.4.7) |
+| Dwellings | two per site permitted, more restricted discretionary (4.2.3.1) | three per site permitted, more restricted discretionary (4.3.3.1) | three or more restricted discretionary (4.4.3.1) | above ground floor only (6.3, 6.4.7) |
+
+Some rules have no layer to apply them to here (the 5 m setback from
+arterial roads needs the road hierarchy; a density rule applies only inside
+an infrastructure overlay; a riverbank hazard setback). They are not dropped:
+they go in the rulebook's register of rules not modelled, with the direction
+each would move capacity.
+
+## 2. Enter the rules in the template
+
+`rulebook_template()` writes an empty workbook with one sheet per kind of
+rule and a `fields` sheet explaining every column. The rules above were
+typed into it, a row per zone, a row per setback, each with its citation:
+
+```{r}
+f <- system.file("extdata", "hamilton_rulebook.xlsx", package = "plancap")
+if (!nzchar(f)) f <- "../inst/extdata/hamilton_rulebook.xlsx"
+z <- openxlsx2::read_xlsx(f, sheet = "zones")
+z[z$method != "none", c("zone", "codes", "height", "storeys", "coverage_max", "landscaping_min", "far_max", "height_source")]
+s <- openxlsx2::read_xlsx(f, sheet = "setbacks")
+s[s$target == "MRZ", c("target", "kind", "boundaries", "distance", "angle_deg", "start_height", "above_height",
+                       "within_frontage", "beyond_frontage", "adjacent_zones", "not_adjacent_zones", "variant")]
+```
+
+Medium Density's two sets of standards (one or two units; three or more
+attached) are entered as two **variants**: each site is built under both and
+takes the one that enables more. Business 6's residential share is a band by
+storey, none on the ground floor:
+
+```{r}
+openxlsx2::read_xlsx(f, sheet = "bands")
+```
+
+The workbook reads back as a rulebook, checked against the schema and for
+missing citations:
+
+```{r}
+rb <- read_rulebook(f)
+rb
+validate_rulebook(rb)
+head(rule_table(rb)[, c("zone", "rule", "value", "applies_to", "source")], 12)
+```
+
+## 3. Prepare the parcels and zoning
+
+Two layers come from their publishers, cut to a square of about 1.4 km over
+Claudelands and Hamilton East:
+
+- **parcels**: LINZ NZ Primary Parcels (CC BY 4.0), split into land parcels
+  and road parcels;
+- **zoning**: Hamilton City Council's District Plan Zones. The council asks
+  that its data be attributed to it and that derived work say it is not the
+  authoritative source: this is derived work, not Hamilton City Council's
+  data. The zoning is not shipped with the package.
+
+The zoning layer needs three changes before plancap can use it, which is
+typical of a council layer (`data-raw/hamilton/prepare.R`):
+
+1. Zone names become the codes the rulebook's zone map expects (`codes` in
+   the zones sheet).
+2. Business 6's height and floor area ratio depend on the residential zone
+   it adjoins, so each centre polygon is coded by its neighbour.
+3. Two features are not zones: the Industrial Amenity Protection Area (an
+   overlay stored with the zones) and the Transport Corridor Zone.
+
+The third was found the useful way. The first run left the Transport
+Corridor Zone in, and `check_capacity()` failed its land check: the sites
+added to twice the land in the parcels. That zone is a single polygon under
+every other zone, so it split nearly every parcel in two. Roads come from
+the road parcels, so the polygon is dropped.
+
+```{r}
+source("../data-raw/hamilton/prepare.R")
+h <- hamilton_inputs("../data-raw/cache/hamilton")
+table(h$zoning$zone)
+nrow(h$parcels)
+```
+
+## 4. Run capacity and check it
+
+```{r}
+sc <- scenario("Hamilton, Claudelands", rb, parcels = h$parcels, roads = h$roads, zoning = h$zoning)
+cap <- estimate_capacity(sc)
+summary(cap)
+check_capacity(cap)
+```
+
+The 121 sites with no zone are land parcels inside the transport corridor
+(once the corridor polygon is dropped, nothing zones them). They are
+flagged, not dropped.
+
+```{r}
+plot_capacity(cap)
+plot_capacity(cap, measure = "dwellings", fill = "height_band")
+plot_constraints(cap)
+plot_capacity_map(cap, grid = 100)
+```
+
+## 5. Look at one site
+
+A Medium Density site near a General Residential boundary shows the
+alternative standards at work:
+
+```{r}
+s <- sf::st_drop_geometry(cap$sites)
+pick <- s$site_id[s$zone_key %in% "MRZ" & s$area > 600 & s$area < 900][1]
+ex <- explain_site(cap, pick)
+ex$site[, c("site_id", "zone_key", "area", "variant", "storeys", "floor_area", "dwellings")]
+ex$setbacks[ex$setbacks$storey == 5, c("segment_id", "boundary_class", "setback", "rule", "source")]
+plot_site(cap, pick, view = "axo")
+```
+
+## 6. Ask a question: permitted activities only
+
+Capacity here counts restricted discretionary development where the plan's
+standards bound it, as plancap's Auckland example does. A narrower reading
+counts only what is permitted: two units per site in General Residential and
+three in Medium Density. That is a rule change, so it is a scenario:
+
+```{r}
+permitted <- rb |>
+  set_rule("zones.GRZ.density.max_dwellings_per_site", 2) |>
+  set_rule("zones.MRZ.density.max_dwellings_per_site", 3)
+sc_p <- scenario_change(sc, "Permitted activities only", rulebook = permitted)
+cmp <- compare_scenarios(run_scenarios(scenario_set(sc, sc_p)))
+cmp$pairs[[1]]$totals
+plot_comparison(cmp, measure = "dwellings", type = "bars")
+```
+
+Floor area does not move (the envelopes are the same); dwellings fall to the
+permitted count wherever the envelope holds more.
+
+## 7. What is not modelled
+
+```{r}
+unmodelled_report(rb)[, c("rule", "likely_effect")]
+```
+
+## A checklist for a new jurisdiction
+
+1. Read the plan for each zone you need: height (and storeys), recession
+   planes, setbacks by boundary, coverage, landscaping and impervious area,
+   floor area ratio, density, the dwellings each activity status allows, and
+   any alternative standards. Note every rule number.
+2. Write a blank template with `rulebook_template()`, fill the `plan`,
+   `zones`, `setbacks` and `bands` sheets, and the register of rules not
+   modelled. Read it with `read_rulebook()`; fix what `validate_rulebook()`
+   reports.
+3. Get parcels (LINZ in New Zealand) and the council's zoning. Map zone
+   names to the rulebook's codes; take overlays and non-zones out of the
+   zone layer.
+4. Run `estimate_capacity()` and `check_capacity()`. A land check that fails
+   means overlapping zones or parcels.
+5. Look at a few sites with `explain_site()` and `plot_site()` before
+   trusting totals.
+6. Put the rulebook (`write_rulebook()`) and the preparation script under
+   version control, so the run can be repeated when the plan changes.

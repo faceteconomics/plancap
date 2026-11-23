@@ -154,8 +154,29 @@ Status (20 November 2026):
   installed locally; Q11 put mapgl in v1, so it is a stage 8 item). Gate
   (rendered gallery reviewed by the user): awaiting review.
 
-  **Next: stage 8** (XLSX template entry, new-jurisdiction vignette, docs,
-  pkgdown; mapgl view; basemaps).
+- **Stage 7 gate met**: the rendered gallery was reviewed by the user ("look
+  good for now", 23 Nov 2026).
+- **Stage 8 built**: Hamilton entered through the Excel template from the
+  Operative District Plan ePlan (revision 13 Nov 2026, PC12 operative 20 Dec
+  2024; read in the browser, ePlan terms accepted with the user's approval):
+  data-raw/hamilton/ (fetch.R from the capacityengine folder: LINZ parcels
+  and HCC DistrictPlan_Zoning, no licence stated so not shipped;
+  rules_notes.md; fill_template.R; prepare.R; run.R; knit_vignette.R).
+  Rulebook inst/rulebooks/hamilton.yaml and inst/extdata/hamilton_rulebook.xlsx.
+  Run: 1,493 sites, 1,639,304 m2, 12,829 dwellings; check_capacity()
+  reconciles. The pre-computed vignette (vignettes/hamilton.Rmd from
+  hamilton.Rmd.orig) shows the template, data preparation (the Transport
+  Corridor Zone polygon under every zone, caught by the land check), a site
+  explained, and a permitted-only scenario (dwellings -58%). Template fix:
+  blank families sheet. view_capacity_3d() (mapgl, OpenFreeMap style) and
+  basemaps (maptiles Esri.WorldGrayCanvas; CARTO raster now needs a key).
+  Vignettes 2 (rulebooks), 3 (rule-reference), 4 (preparing-sites), 8
+  (method); README rewritten; pkgdown articles. **Gate met**: a fresh
+  jurisdiction entered from the template end to end.
+
+  **Next: stage 9** (release: R CMD check 0/0/0, pkgdown live on GitHub
+  Pages, user sign-off; CRAN optional). Still open: net-of-existing (Q12),
+  mirai parallel runs (Q10), Wellington extract (Q16).
 
   *(Earlier note)* **Stage 4, part 3**: stepped terrain (item 318) and boundary runs
   (item 299); site shape factor (item 324); tower controls; then the tile

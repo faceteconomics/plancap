@@ -102,8 +102,10 @@ plot_comparison <- function(cmp, by = "zone", measure = "floor_area", type = c("
 
 #' @rdname plot_comparison
 #' @param on `"sites"` or `"grid"` (the comparison's grid).
+#' @param basemap Whether to draw a basemap (see [plot_capacity_map()]).
 #' @export
-plot_change_map <- function(cmp, measure = "floor_area", on = c("sites", "grid"), pair = 1, mode = "light") {
+plot_change_map <- function(cmp, measure = "floor_area", on = c("sites", "grid"), pair = 1, mode = "light",
+                            basemap = FALSE) {
   on <- rlang::arg_match(on)
   p <- get_pair(cmp, pair)
   d <- if (on == "grid") p$by_grid else p$sites
@@ -115,13 +117,17 @@ plot_change_map <- function(cmp, measure = "floor_area", on = c("sites", "grid")
   br <- signif(lim, 1) * c(-1, 0, 1)
   if (br[3] > lim) br <- signif(lim / 2, 1) * c(-1, 0, 1)
   fmt <- measure_formatter(measure)
+  use_base <- !isFALSE(basemap)
+  if (use_base) d <- sf::st_transform(d, 3857)
   ggplot2::ggplot(d) +
-    ggplot2::geom_sf(ggplot2::aes(fill = .data$value), colour = ink$surface, linewidth = if (on == "sites") 0.05 else 0.2) +
+    (if (use_base) basemap_layer(d, basemap)) +
+    ggplot2::geom_sf(ggplot2::aes(fill = .data$value), colour = ink$surface, linewidth = if (on == "sites") 0.05 else 0.2,
+                     alpha = if (use_base) 0.85 else 1) +
     scale_fill_capacity_div(mode = mode, limits = c(-lim, lim), breaks = br, labels = label_signed(fmt), name = NULL) +
-    ggplot2::coord_sf(datum = NA) +
+    ggplot2::coord_sf(datum = NA, crs = sf::st_crs(d), expand = FALSE) +
     ggplot2::labs(title = paste("Change in", tolower(measure_label(measure))),
                   subtitle = paste(p$baseline, "\u2192", p$scenario, if (on == "grid") "(grid cells)" else "(sites)"),
-                  caption = pair_caption(cmp)) +
+                  caption = paste(pair_caption(cmp), if (use_base) basemap_credit(basemap))) +
     theme_capacity(mode = mode, grid = "none") +
     ggplot2::theme(axis.text = ggplot2::element_blank(), legend.key.width = ggplot2::unit(2.5, "lines"))
 }

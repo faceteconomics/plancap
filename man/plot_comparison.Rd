@@ -22,7 +22,8 @@ plot_change_map(
   measure = "floor_area",
   on = c("sites", "grid"),
   pair = 1,
-  mode = "light"
+  mode = "light",
+  basemap = FALSE
 )
 
 plot_transitions(
@@ -58,6 +59,8 @@ the comparison run with \code{areas} or \code{grid}).}
 \item{mode}{\code{"light"} or \code{"dark"}.}
 
 \item{on}{\code{"sites"} or \code{"grid"} (the comparison's grid).}
+
+\item{basemap}{Whether to draw a basemap (see \code{\link[=plot_capacity_map]{plot_capacity_map()}}).}
 
 \item{changed_only}{Whether to leave out land that kept its zone.}
 

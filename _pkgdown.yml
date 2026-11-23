@@ -115,6 +115,7 @@ reference:
       - plot_sensitivity
       - plot_site
       - autoplot.plancap_capacity
+      - view_capacity_3d
       - theme_capacity
       - capacity_palette
   - title: Site and boundary types
@@ -141,3 +142,18 @@ reference:
       - exampleton_dem
       - exampleton_path
       - exampleton_pc1
+
+articles:
+  - title: Using plancap
+    navbar: ~
+    contents:
+      - plancap
+      - rulebooks
+      - preparing-sites
+      - summaries
+      - comparing
+  - title: Reference and method
+    contents:
+      - rule-reference
+      - hamilton
+      - method

@@ -1,0 +1,518 @@
+# Hamilton City Operative District Plan: the walkthrough rulebook.
+#
+# Entered through the Excel template (inst/extdata/hamilton_rulebook.xlsx) by
+# data-raw/hamilton/fill_template.R from the ePlan revision of 13 November 2026.
+# General, Medium and High Density Residential, Business 6 and Business 2 only;
+# check the plan itself before relying on any value.
+
+# plancap rulebook (schema 0.1)
+# Hamilton City Operative District Plan (residential zones and Business 6, walkthrough extract)
+schema_version: '0.1'
+plan:
+  name: Hamilton City Operative District Plan (residential zones and Business 6, walkthrough
+    extract)
+  id: hamilton-odp-2026
+  jurisdiction: Hamilton
+  country: NZ
+  effective_date: '2026-11-13'
+  units: m
+  source: Hamilton City Operative District Plan, ePlan revision 13 November 2026 (Plan
+    Change 12 operative 20 December 2024)
+  notes: 'Entered through the Excel template for the Adding a new jurisdiction vignette:
+    General, Medium and High Density Residential, Business 6 and Business 2 only.'
+defaults:
+  storey_height: 3.0
+  min_floorplate: 30.0
+  level_reference: ceiling
+  terrain: flat
+  site_shape_factor: yes
+  large_site:
+    method: envelope
+    threshold: 10000.0
+    deduction: 0.25
+morphology:
+  reserve_families: OPEN_SPACE
+conversion:
+  dwelling_size: 100.0
+  efficiency: 0.85
+  min_one_dwelling: yes
+  source: 'Assumption for the walkthrough: 100 m2 gross per dwelling, 85% of floor
+    area in dwellings'
+variant_choice: max
+zone_families:
+  RESIDENTIAL:
+    - GRZ
+    - MRZ
+    - HDZ
+  BUSINESS:
+    - B6G
+    - B6M
+    - B2
+  OPEN_SPACE: OSZ
+zone_map:
+  General Residential: GRZ
+  Medium Density Residential: MRZ
+  High Density Residential: HDZ
+  Business 6 (General Residential): B6G
+  Business 6 (Medium Density Residential): B6M
+  Business 2: B2
+  Community Facilities: CFZ
+  Major Facilities: MFZ
+  Open Space: OSZ
+  Industrial: INZ
+  Transport Corridor: TCZ
+zones:
+  GRZ:
+    label: General Residential Zone
+    method: volumetric
+    height:
+      value: 10.0
+      occupiable: 10.0
+      roof_allowance: 1.0
+      source: HCC ODP 4.2.5.4
+    setbacks:
+      - kind: yard
+        distance: 1.5
+        boundaries: road
+        source: 'HCC ODP 4.2.5.6 a: local and collector transport corridors'
+      - kind: yard
+        distance: 1.5
+        boundaries: side
+        source: HCC ODP 4.2.5.6 b
+      - kind: yard
+        distance: 1.5
+        boundaries: rear
+        source: HCC ODP 4.2.5.6 d
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        source: 'HCC ODP 4.2.5.5: 45 degrees from 4 m, all boundaries except a road'
+    ratios:
+      coverage_max:
+        value: 0.45
+        source: HCC ODP 4.2.5.2
+      landscaping_min:
+        value: 0.2
+        source: HCC ODP 4.2.5.3 b
+      impervious_max:
+        value: 0.7
+        source: HCC ODP 4.2.5.3 a
+    density:
+      minor_dwellings_per_site: 1.0
+      source: 'HCC ODP 4.2.3.1, 4.2.6.1: ancillary residential unit, one per site'
+    use:
+      residential: yes
+      business: no
+      source: HCC ODP 4.2.3.1
+    source: HCC ODP 4.2 General Residential Zone
+  MRZ:
+    label: Medium Density Residential Zone
+    method: volumetric
+    height:
+      value: 18.0
+      occupiable: 18.0
+      roof_allowance: 1.0
+      storeys: 5.0
+      source: HCC ODP 4.3.4.4 a
+    setbacks:
+      - kind: yard
+        distance: 1.5
+        boundaries: road
+        source: HCC ODP 4.3.4.6 a ii
+      - kind: yard
+        distance: 1.0
+        boundaries: side
+        source: HCC ODP 4.3.4.6 b
+      - kind: yard
+        distance: 1.0
+        boundaries: rear
+        source: HCC ODP 4.3.4.6 d
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          not_adjacent_zones: GRZ
+        variant: single_duplex
+        source: 'HCC ODP 4.3.4.5 a: single and duplex units, 60 degrees from 4 m'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        variant: single_duplex
+        source: 'HCC ODP 4.3.4.5 a: 45 degrees from 4 m along a General Residential
+          boundary'
+      - kind: upper_level
+        distance: 4.0
+        above_height: 11.0
+        boundaries: side
+        when:
+          within_frontage: 20.0
+          not_adjacent_zones: GRZ
+        variant: attached
+        source: 'HCC ODP 4.3.4.5 b: within 20 m of the road, parts over 11 m set back
+          4 m from side boundaries'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 6.0
+        boundaries:
+          - side
+          - rear
+        when:
+          beyond_frontage: 20.0
+          not_adjacent_zones: GRZ
+        variant: attached
+        source: 'HCC ODP 4.3.4.5 b, Figure 4.3.4.5 b: beyond 20 m of the road, 60
+          degrees from 6 m'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        variant: attached
+        source: 'HCC ODP 4.3.4.5 b: boundaries adjoining other zones take 4.3.4.5
+          a'
+    ratios:
+      coverage_max:
+        value: 0.5
+        source: HCC ODP 4.3.4.2
+      landscaping_min:
+        value: 0.2
+        source: HCC ODP 4.3.4.3
+      impervious_max:
+        value: 0.7
+        source: HCC ODP 4.3.4.3
+    use:
+      residential: yes
+      business: no
+      source: HCC ODP 4.3.3.1
+    source: HCC ODP 4.3 Medium Density Residential Zone
+  HDZ:
+    label: High Density Residential Zone
+    method: volumetric
+    height:
+      value: 26.0
+      occupiable: 26.0
+      roof_allowance: 1.0
+      source: HCC ODP 4.4.5.4
+    setbacks:
+      - kind: yard
+        distance: 1.0
+        boundaries: road
+        source: 'HCC ODP 4.4.5.6: local and collector transport corridors'
+      - kind: yard
+        distance: 1.0
+        boundaries: side
+        source: HCC ODP 4.4.5.6
+      - kind: yard
+        distance: 1.0
+        boundaries: rear
+        source: HCC ODP 4.4.5.6
+      - kind: upper_level
+        distance: 4.0
+        above_height: 11.0
+        boundaries:
+          - side
+          - rear
+        source: 'HCC ODP 4.4.5.14: parts over 11 m set back 4 m from side and rear
+          boundaries'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        source: 'HCC ODP 4.4.5.5: 45 degrees from 4 m along a General Residential
+          boundary'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 6.0
+        boundaries:
+          - side
+          - rear
+        when:
+          beyond_frontage: 20.0
+          adjacent_zones: MRZ
+        source: 'HCC ODP 4.4.5.5: along a Medium Density boundary beyond 20 m of the
+          road, 60 degrees from 6 m'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - CFZ
+            - MFZ
+        source: 'HCC ODP 4.4.5.5 a: 60 degrees from 4 m along a boundary with any
+          other zone'
+    ratios:
+      coverage_max:
+        value: 0.6
+        source: HCC ODP 4.4.5.2
+      landscaping_min:
+        value: 0.1
+        source: HCC ODP 4.4.5.3
+      impervious_max:
+        value: 0.8
+        source: HCC ODP 4.4.5.3
+    use:
+      residential: yes
+      business: no
+      source: HCC ODP 4.4.3.1
+    source: HCC ODP 4.4 High Density Residential Zone
+  B6G:
+    label: Business 6 Zone, adjacent to the General Residential Zone
+    method: volumetric
+    height:
+      value: 11.0
+      occupiable: 11.0
+      roof_allowance: 1.0
+      source: HCC ODP 6.4.1
+    setbacks:
+      - kind: yard
+        distance: 1.5
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RESIDENTIAL
+        source: 'HCC ODP 6.4.3: Business 6, 1.5 m where the boundary adjoins a Residential
+          Zone'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        source: 'HCC ODP 6.4.2: adjoining General Residential'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: MRZ
+        source: 'HCC ODP 6.4.2: adjoining Medium Density Residential'
+    ratios:
+      far_max:
+        value: 2.0
+        source: HCC ODP 6.4.4
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 1.0
+          source: 'HCC ODP 6.4.7 b: no residential activity at ground floor'
+      source: 'HCC ODP 6.3, 6.4.7: no residential activity at ground floor'
+    source: HCC ODP 6 Business 6 Zone (neighbourhood centre)
+  B6M:
+    label: Business 6 Zone, adjacent to the Medium Density Residential Zone
+    method: volumetric
+    height:
+      value: 18.0
+      occupiable: 18.0
+      source: HCC ODP 6.4.1
+    setbacks:
+      - kind: yard
+        distance: 1.5
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RESIDENTIAL
+        source: HCC ODP 6.4.3
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        source: HCC ODP 6.4.2
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: MRZ
+        source: HCC ODP 6.4.2
+    ratios:
+      far_max:
+        value: 3.0
+        source: HCC ODP 6.4.4
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 1.0
+          source: 'HCC ODP 6.4.7 b: no residential activity at ground floor'
+      source: 'HCC ODP 6.3, 6.4.7: no residential activity at ground floor'
+    source: HCC ODP 6 Business 6 Zone (neighbourhood centre)
+  B2:
+    label: Business 2 Zone (Events Facilities Fringe)
+    method: volumetric
+    height:
+      value: 16.0
+      occupiable: 16.0
+      source: HCC ODP 6.4.1
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RESIDENTIAL
+        source: 'HCC ODP 6.4.3: Business 2, 5 m where the boundary adjoins a Residential
+          Zone'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        source: HCC ODP 6.4.2
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: MRZ
+        source: HCC ODP 6.4.2
+    ratios:
+      far_max:
+        value: 2.0
+        source: HCC ODP 6.4.4
+    use:
+      residential: no
+      business: yes
+      source: 'HCC ODP 6.3: residential units not provided for'
+    source: HCC ODP 6 Business 2 Zone
+  CFZ:
+    label: Community Facilities Zone
+    method: none
+    source: HCC ODP zone
+  MFZ:
+    label: Major Facilities Zone
+    method: none
+    source: HCC ODP zone
+  OSZ:
+    label: Open Space Zones
+    method: none
+    source: HCC ODP zone
+  INZ:
+    label: Industrial Zone
+    method: none
+    source: HCC ODP zone
+  TCZ:
+    label: Transport Corridor Zone
+    method: none
+    source: HCC ODP zone
+unmodelled_rules:
+  - zones:
+      - GRZ
+      - MRZ
+      - HDZ
+      - B6G
+      - B6M
+      - B2
+    rule: Arterial transport corridor setback (5 m)
+    reason: Needs the transport corridor hierarchy; the local and collector setback
+      is applied to every road.
+    likely_effect: overstates
+    source: HCC ODP 4.2.5.6, 4.3.4.6, 4.4.5.6, 6.4.3
+  - zones:
+      - GRZ
+      - MRZ
+    rule: Density within the Three Waters Infrastructure Capacity Overlay
+    reason: The overlay layer is not held; outside it there is no density standard.
+    likely_effect: overstates
+    source: HCC ODP 4.2.5.1, 4.3.4.1
+  - zones:
+      - GRZ
+      - MRZ
+      - HDZ
+    rule: Separation between residential buildings on a site; upper-floor balcony
+      setbacks
+    reason: A single envelope per site does not place separate buildings or balconies.
+    likely_effect: overstates
+    source: HCC ODP 4.2.5.6, 4.3.4.6, 4.4.5.6
+  - zones:
+      - GRZ
+      - MRZ
+      - HDZ
+    rule: Outlook space, outdoor living area, front landscaping, tree canopy, wall
+      articulation
+    reason: Depend on where buildings, windows and planting go, which a blank-slate
+      envelope does not know.
+    likely_effect: overstates
+    source: HCC ODP 4.2.5.3, 4.2.5.9, 4.2.5.10, 4.2.5.13 and equivalents
+  - zones:
+      - GRZ
+      - MRZ
+      - HDZ
+      - B6G
+      - B6M
+      - B2
+    rule: Waikato Riverbank and Gully Hazard Area setback (6 m)
+    reason: The hazard area layer is not held.
+    likely_effect: overstates
+    source: HCC ODP 4.2.5.6, 4.3.4.6, 4.4.5.6, 6.4.3
+  - zones:
+      - MRZ
+      - HDZ
+      - B6G
+      - B6M
+    rule: Maximum average net site area (MRZ, HDZ) and minimum residential density
+      (Business 6)
+    reason: These require a minimum intensity; they do not cap capacity.
+    likely_effect: either
+    source: HCC ODP 4.3.4.1, 4.4.5.1, 6.4.7
+  - zones:
+      - GRZ
+      - MRZ
+    rule: Building coverage of 60% for terraces and apartments with rear-lane parking
+    reason: Needs a rear lane, which the extract does not identify.
+    likely_effect: understates
+    source: HCC ODP 4.2.5.2 b, 4.3.4.2 b
+

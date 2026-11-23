@@ -1,0 +1,139 @@
+---
+title: "Preparing sites"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Preparing sites}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 5, dpi = 96,
+                      out.width = "100%")
+```
+
+Before any rule applies, plancap has to know what each parcel is: which of
+its boundaries front a road and which are side or rear boundaries, whether
+it is a corner, through or rear site, whether it has an access leg, what
+zone lies across each boundary, and how far it is from features rules refer
+to. This is **site preparation**, and most surprises in a capacity run start
+here, so it is worth checking.
+
+```{r setup}
+library(plancap)
+town <- exampleton()
+land <- town$parcels[town$parcels$parcel_type == "land", ]
+roads <- town$parcels[town$parcels$parcel_type == "road", ]
+```
+
+## Two steps, each reused
+
+`prepare_sites()` works in two steps, each stored under a hash of its
+inputs:
+
+1. **Parcel geometry** depends only on parcels, roads, water, road centre
+   lines and the ground: boundary segments and their classes, frontage,
+   corner, through and rear sites, access legs and their widths, road
+   widths, ground levels.
+2. **Plan geometry** adds the zoning, overlays and areas: sites split where
+   zones cross them, the zone across each boundary, overlay and area
+   membership, distances to features.
+
+A scenario that changes only rule values reuses both; one that changes the
+zoning reuses the first.
+
+```{r}
+sc <- scenario("Operative", rulebook_example("exampleton"), parcels = land, roads = roads,
+               zoning = town$zoning, water = town$water, centrelines = town$road_centrelines)
+s <- prepare_sites(sc)
+s
+table(s$segments$boundary_class)
+```
+
+## Classifying boundaries
+
+A boundary segment is a **road** boundary when at least half of it runs
+along a road parcel. The rest are **side** or **rear**: a segment is rear
+when it is within 30 degrees of parallel to the frontage and lies at least
+half the site's depth back from it. Tags add what a rule may care about:
+`reserve` (open space across the boundary), `riparian`, `coastal`,
+`lakeside` (near water), `zone_boundary`. Where a plan says a rear site's
+yards are all rear yards (as the Auckland Unitary Plan does), the morphology
+setting `rear_site_sides_as_rear` makes its side boundaries rear ones.
+
+The `find_*()` helpers return each classification with its evidence:
+
+```{r}
+fr <- find_road_frontages(land[1:200, ], roads)
+head(fr[, c("site_id", "segment_id", "boundary_class", "length", "road_shared_length")])
+corner <- find_corner_sites(land, roads)
+table(corner$is_corner)
+rear <- find_rear_sites(land, roads)
+table(rear$is_rear)
+```
+
+`check_morphology()` compares the shares with the ranges usually seen, and
+`plot_morphology()` draws them:
+
+```{r}
+check_morphology(s)
+```
+
+```{r}
+plot_morphology(s)
+```
+
+## Every assumption can be changed
+
+The thresholds behind these calls are settings, with defaults
+(`morphology_defaults()`), overridable in the rulebook (`set_morphology()`)
+or for one run (`scenario(morphology = )`):
+
+```{r}
+str(morphology_defaults()[c("road_tolerance", "rear_site_max_frontage", "side_rear_angle_tolerance",
+                             "rear_depth_share", "access_leg_max_width")])
+narrow <- scenario_change(sc, "Wider access legs", morphology = list(access_leg_max_width = 9))
+sum(prepare_sites(narrow)$sites$access_leg_area > 0)
+sum(s$sites$access_leg_area > 0)
+```
+
+## Access to rear sites
+
+A rear site (less road frontage than `rear_site_max_frontage`, 7.5 m) is
+reached by its own entrance strip, a right of way over a neighbour, or a
+jointly owned access lot. `find_access_widths()` measures all three, given
+easement areas (`scenario(easements = )`) and the other parcels
+(`scenario(other_parcels = )`). A site where nothing is found has unknown
+access, not none: the access width table does not apply and the site is
+flagged.
+
+## Zones across boundaries
+
+Rules often depend on the zone next door (a plane against a lower density
+zone). The zone across each boundary is found by probing outward from its
+middle: one metre across a side or rear boundary, across the carriageway
+for a road boundary.
+
+```{r}
+head(sf::st_drop_geometry(s$segments)[, c("segment_id", "boundary_class", "adjacent_zone_key")])
+```
+
+## Ground levels
+
+Give a DEM (`scenario(dem = )`) or ground level tables (`scenario(ground = )`)
+for terrain. Each site's ground is a plane fitted to the ground along its
+boundaries; planes are measured from the ground at their own boundary.
+`defaults$terrain = "flat"` stands every building on one floor at the site's
+mean ground instead.
+
+## Pitfalls
+
+- **Overlapping zone polygons** split parcels twice; `check_capacity()`
+  reports it as land out exceeding land in. A council layer may hold
+  overlays or a background polygon among its zones (Hamilton's Transport
+  Corridor Zone covers the whole city): take them out.
+- **Roads missing from the parcels** leave every boundary a side boundary:
+  check the road share in `check_morphology()`.
+- **Parcels held together** (a site on several titles) can be dissolved into
+  one site with `scenario(group_by = )`; pieces of one landholding kept
+  apart share their access with `scenario(landholding = )`.

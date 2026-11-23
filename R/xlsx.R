@@ -320,7 +320,8 @@ rulebook_tables <- function(rb) {
     kv("morphology", rb$morphology)
   )
 
-  families <- data.frame(family = names(rb$zone_families),
+  # An empty template still needs every column, family first.
+  families <- data.frame(family = names(rb$zone_families) %||% character(),
                          zones = vapply(rb$zone_families, function(f) paste(family_zones(f), collapse = ", "), ""),
                          min_area = vapply(rb$zone_families, function(f) if (is.list(f)) f$min_area %||% NA_real_ else NA_real_, 0),
                          max_area = vapply(rb$zone_families, function(f) if (is.list(f)) f$max_area %||% NA_real_ else NA_real_, 0),
