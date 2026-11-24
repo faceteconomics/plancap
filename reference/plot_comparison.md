@@ -119,7 +119,7 @@ base <- scenario("Operative", rulebook_example("exampleton"),
 change <- scenario_change(base, "PC1", rulebook = pc1$rulebook, zoning = pc1$zoning)
 cmp <- compare_scenarios(run_scenarios(scenario_set(base, change)), grid = 200)
 #> Operative: 5.6 s.
-#> PC1: 3.9 s, 575 sites copied from the baseline.
+#> PC1: 3.8 s, 575 sites copied from the baseline.
 plot_comparison(cmp)
 
 plot_change_map(cmp, on = "grid")
