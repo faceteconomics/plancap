@@ -214,3 +214,96 @@ Chapter 4: PC14 (Flooding), PPC21 (Ruakura Inland Port), neither modelled.
   Arterial Road, Minor Arterial Road, Collector Road, Local Road): arterial =
   Major and Minor Arterial and State Highway. Needs road boundaries tagged by
   the class of the road in front (engine feature, morphology road_class_field).
+
+## H2 Centres and business (read 25 Nov 2026)
+
+Activity status convention for H2: new buildings in Business 1 to 7 and the
+Central City are RD* and are counted; residential units are counted where P
+(or RD) above ground floor. Discretionary residential (Business 7 outside the
+Frankton Living Overlay) is not counted. Zones whose building rules hang on
+concept or development plans with no height standard (Rototuna Town Centre,
+University of Waikato precinct) are registered as unmodelled.
+
+### Chapter 6 Business 1 to 7 (ePlan rules/0/59)
+- 6.3 Residential units: at ground floor NC (Business 6 D); above ground floor
+  B1 P, B2 NC, B3 P, B4 NC, B5 P, B6 P, B7 D (P in the Frankton Living
+  Overlay). Ancillary residential units RD* everywhere.
+- 6.4.1 Height: B3 20 m; B4 20 m where adjoining the Industrial Zone, else
+  16 m; B1, B2, B4, B7 16 m; B5 26 m; B6 11 m / 18 m; height overlay
+  (Figure 6.4c, no layer) 26 m.
+- 6.4.2 HIRB: 45 deg from 4 m adjoining GRZ; 60 deg from 4 m adjoining MRZ.
+- 6.4.3 Setbacks: front 0 m (5 m arterial); side and rear B1, B2, B5, B7 5 m
+  adjoining a Residential Zone; B4 5 m (not internal B4 boundaries); B6 1.5 m
+  adjoining residential; gully 6 m; rail 5 m.
+- 6.4.4 FAR: B1, B3, B7 2:1; B5 4:1; B2, B4, B6 (GRZ) 2:1; B6 (MRZ) 3:1;
+  height overlay 4:1.
+- 6.4.7 No residential at ground floor; minimum density 0.003/m2 (not a cap).
+
+### 6A Neighbourhood Centre Zone, Peacocke (rules/0/100)
+- R22 apartments P (not at ground floor); R26 single dwellings NC; R27, R28
+  duplex and terrace D. R46 height 16 m. R47 top storey above 12 m set back 3 m
+  from the transport corridor; 60 deg from 4 m adjoining MRZ. R48 front 0 m,
+  side and rear 1.5 m adjoining MRZ; gully 6 m; bat habitat 5 m. R51 no
+  residential at ground floor.
+
+### 6B Local Centre Zone, Peacocke (rules/0/99)
+- R21 apartments P; R36 single dwellings NC. R40 height 24 m, 16 m within 30 m
+  of any Residential or Open Space Zone. R41 as 6A R47. R42 side and rear 3 m
+  adjoining a Residential Zone; gully 6 m; bat 5 m. R45 no residential at
+  ground floor.
+
+### Chapter 7 Central City (rules/0/58)
+- 7.3 residential units above ground floor P (all precincts); apartments at
+  ground floor P outside the Primary and Secondary Active Frontages. New
+  buildings RD*; over 32 m adds design matters. No maximum height standard.
+- 7.4.1 coverage P1 100%, P2 70%, P3 80%. 7.4.2 permeable P1 nil, P2 20%,
+  P3 20%. 7.4.4 HIRB of the adjoining Residential Zone. 7.4.5 street wall 13 m
+  then 4 m setback on Figure 5-3 streets (no layer). 7.4.6 setbacks P1 0 m;
+  P2 0 m or the adjoining zone's side setback; P3 front 3 m, side 3 m, rear
+  5 m; Riverfront Overlay 5 m; gully 6 m. 7.4.11 Garden Place sunlight plane.
+  7.5.3 minimum density (not a cap).
+- Modelled height: 32 m, an assumption (the threshold for added design
+  matters), flagged; the true limit is the RD assessment.
+
+### Chapter 8 Knowledge (rules/0/57)
+- 8.4.3 coverage 50%; 8.4.4 permeable 20%; 8.4.6 road 5 m, arterial 15 m,
+  rail 10 m, 8 m adjoining Residential, Special Character or Open Space;
+  8.4.7 45 deg from 3 m at any adjoining zone; 8.4.8 15 m (20% of footprint to
+  20 m). University precinct (8.6): no maximum height, coverage 45%, campus
+  concept plan. No residential units provided for.
+
+### Chapter 9 Industrial (rules/0/56)
+- 9.4.1 road 3 m; arterial 5 m and 45 deg from 5 m; 8 m adjoining Residential
+  or Special Character; 3 m adjoining Open Space; gully 6 m. 9.4.2 20 m; 10 m in
+  the Amenity Protection Area; 15 m Rotokauri Employment Area. 9.4.3 45 deg
+  (28 deg southern boundary) from 3 m adjoining Residential, Special Character
+  or Open Space. 9.4.4 coverage 75% in the Amenity Protection Area, else none.
+  9.4.5 permeable 10%.
+
+### Chapter 10 Ruakura Logistics (rules/0/55)
+- 10.4.3 coverage 80%; 10.4.4 permeable 10% (per LDP area); 10.4.5 20 m;
+  10.4.6 road 10 m; expressway 15 m.
+
+### Chapter 11 Ruakura Industrial Park (rules/0/54)
+- 11.4.3 road 5 m, arterial 15 m, 8 m Open Space, 40 m Residential;
+  11.4.4 20 m; 11.4.5 45 deg (28 deg south) from 3 m adjoining Residential,
+  Special Character, Open Space; 11.4.6 coverage 75%; 11.4.7 landscaping 20%.
+
+### Chapter 12 Te Rapa North Industrial (rules/0/53)
+- 12.4.1 10 m from all non-road boundaries; road 5 m, arterial 15 m; 8 m
+  Residential, Special Character, Open Space; river 30 m. 12.4.2 20 m (Stage 1A
+  exceptions). 12.4.3 as 11.4.5. 12.4.4 no coverage maximum; 12.4.5 permeable
+  20%. Deferred Industrial sub-zone: not yet live.
+
+### Chapter 13 Rototuna Town Centre (rules/0/52)
+- 13.4 new buildings D in every precinct; apartments P in Retail 1 and 2,
+  Employment and Residential Mixed Use; no height or coverage standard
+  (deleted under PC12); precincts and development areas from Appendix 7
+  figures (no layer). Registered as unmodelled.
+
+### Layers found for H2
+- Industrial Amenity Protection Area: polygons in DistrictPlan_Zoning.
+- PC5 "Proposed High Density Overlay Area" (PC12_Features/24): the Peacocke
+  Increased Height Overlay (16 m in the PMRZ, 4A R37).
+- No layer for the Business height overlay (Figure 6.4c), the Central City
+  street wall streets, active frontages or the Frankton Living Overlay.

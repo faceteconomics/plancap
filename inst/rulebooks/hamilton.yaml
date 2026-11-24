@@ -47,9 +47,21 @@ zone_families:
     - LLRZ
     - PMRZ
   BUSINESS:
+    - B1
+    - B2
+    - B3
+    - B4
+    - B4I
+    - B5
     - B6G
     - B6M
-    - B2
+    - B7
+    - PNCZ
+    - PLCZ
+    - CC1
+    - CC2
+    - CC3
+    - RTC
   OPEN_SPACE: OSZ
 zone_map:
   General Residential: GRZ
@@ -60,10 +72,29 @@ zone_map:
   Business 6 (General Residential): B6G
   Business 6 (Medium Density Residential): B6M
   Business 2: B2
+  Business 1: B1
+  Business 3: B3
+  Business 4: B4
+  Business 4 (Industrial): B4I
+  Business 5: B5
+  Business 7: B7
+  Peacocke Neighbourhood Centre: PNCZ
+  Peacocke Local Centre: PLCZ
+  Central City Downtown: CC1
+  Central City City Living: CC2
+  Central City Ferrybank: CC3
+  Knowledge: KNZ
+  Industrial: IND
+  Ruakura Logistics: RLZ
+  Ruakura Industrial Park: RIPZ
+  Te Rapa North Industrial: TRNZ
   Community Facilities: CFZ
   Major Facilities: MFZ
   Open Space: OSZ
-  Industrial: INZ
+  Knowledge University: KNU
+  Te Rapa North Deferred: TRND
+  Rototuna Town Centre: RTC
+  Future Urban: FUZ
   Transport Corridor: TCZ
 zones:
   GRZ:
@@ -455,7 +486,8 @@ zones:
               value: 0.0
             - min: 1.0
               value: 1.0
-          source: 'HCC ODP 6.4.7 b: no residential activity at ground floor'
+          source: 'HCC ODP 6.4.7 b, 6A R51, 6B R45: no residential activity at ground
+            floor'
       source: 'HCC ODP 6.3, 6.4.7: no residential activity at ground floor'
     source: HCC ODP 6 Business 6 Zone (neighbourhood centre)
   B6M:
@@ -515,7 +547,8 @@ zones:
               value: 0.0
             - min: 1.0
               value: 1.0
-          source: 'HCC ODP 6.4.7 b: no residential activity at ground floor'
+          source: 'HCC ODP 6.4.7 b, 6A R51, 6B R45: no residential activity at ground
+            floor'
       source: 'HCC ODP 6.3, 6.4.7: no residential activity at ground floor'
     source: HCC ODP 6 Business 6 Zone (neighbourhood centre)
   B2:
@@ -569,6 +602,897 @@ zones:
       business: yes
       source: 'HCC ODP 6.3: residential units not provided for'
     source: HCC ODP 6 Business 2 Zone
+  B1:
+    label: Business 1 Zone (Commercial Fringe)
+    method: volumetric
+    height:
+      value: 16.0
+      occupiable: 16.0
+      source: HCC ODP 6.4.1
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 6.4.3: 5 m fronting an arterial transport corridor'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - GRZ
+            - LLRZ
+        source: 'HCC ODP 6.4.2: adjoining General Residential'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - PMRZ
+            - HDZ
+        source: 'HCC ODP 6.4.2: adjoining Medium Density Residential'
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RESIDENTIAL
+        source: 'HCC ODP 6.4.3: 5 m where the boundary adjoins a Residential Zone'
+    ratios:
+      far_max:
+        value: 2.0
+        source: HCC ODP 6.4.4
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 1.0
+          source: 'HCC ODP 6.4.7 b, 6A R51, 6B R45: no residential activity at ground
+            floor'
+      source: 'HCC ODP 6.3: residential units above ground floor P in Business 1;
+        at ground floor NC'
+    source: HCC ODP 6 Business 1 to 7 Zones
+  B3:
+    label: Business 3 Zone (Sub-Regional Centre)
+    method: volumetric
+    height:
+      value: 20.0
+      occupiable: 20.0
+      source: HCC ODP 6.4.1
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 6.4.3: 5 m fronting an arterial transport corridor'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - GRZ
+            - LLRZ
+        source: 'HCC ODP 6.4.2: adjoining General Residential'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - PMRZ
+            - HDZ
+        source: 'HCC ODP 6.4.2: adjoining Medium Density Residential'
+    ratios:
+      far_max:
+        value: 2.0
+        source: HCC ODP 6.4.4
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 1.0
+          source: 'HCC ODP 6.4.7 b, 6A R51, 6B R45: no residential activity at ground
+            floor'
+      source: 'HCC ODP 6.3: residential units above ground floor P in Business 3;
+        at ground floor NC'
+    source: HCC ODP 6 Business 1 to 7 Zones
+  B4:
+    label: Business 4 Zone (Large Format Retail)
+    method: volumetric
+    height:
+      value: 16.0
+      occupiable: 16.0
+      source: HCC ODP 6.4.1
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 6.4.3: 5 m fronting an arterial transport corridor'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - GRZ
+            - LLRZ
+        source: 'HCC ODP 6.4.2: adjoining General Residential'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - PMRZ
+            - HDZ
+        source: 'HCC ODP 6.4.2: adjoining Medium Density Residential'
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          not_adjacent_zones:
+            - B4
+            - B4I
+        source: 'HCC ODP 6.4.3: Business 4, 5 m except internal Business 4 boundaries'
+    ratios:
+      far_max:
+        value: 2.0
+        source: HCC ODP 6.4.4
+    use:
+      residential: no
+      business: yes
+      source: 'HCC ODP 6.3: residential units NC'
+    source: HCC ODP 6 Business 1 to 7 Zones
+  B4I:
+    label: Business 4 Zone, adjoining the Industrial Zone
+    method: volumetric
+    height:
+      value: 20.0
+      occupiable: 20.0
+      source: 'HCC ODP 6.4.1: 20 m where adjoining the Industrial Zone'
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 6.4.3: 5 m fronting an arterial transport corridor'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - GRZ
+            - LLRZ
+        source: 'HCC ODP 6.4.2: adjoining General Residential'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - PMRZ
+            - HDZ
+        source: 'HCC ODP 6.4.2: adjoining Medium Density Residential'
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          not_adjacent_zones:
+            - B4
+            - B4I
+        source: 'HCC ODP 6.4.3: Business 4, 5 m except internal Business 4 boundaries'
+    ratios:
+      far_max:
+        value: 2.0
+        source: HCC ODP 6.4.4
+    use:
+      residential: no
+      business: yes
+      source: 'HCC ODP 6.3: residential units NC'
+    source: HCC ODP 6 Business 1 to 7 Zones
+  B5:
+    label: Business 5 Zone (Suburban Centre)
+    method: volumetric
+    height:
+      value: 26.0
+      occupiable: 26.0
+      source: HCC ODP 6.4.1
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 6.4.3: 5 m fronting an arterial transport corridor'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - GRZ
+            - LLRZ
+        source: 'HCC ODP 6.4.2: adjoining General Residential'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - PMRZ
+            - HDZ
+        source: 'HCC ODP 6.4.2: adjoining Medium Density Residential'
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RESIDENTIAL
+        source: 'HCC ODP 6.4.3: 5 m where the boundary adjoins a Residential Zone'
+    ratios:
+      far_max:
+        value: 4.0
+        source: HCC ODP 6.4.4
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 1.0
+          source: 'HCC ODP 6.4.7 b, 6A R51, 6B R45: no residential activity at ground
+            floor'
+      source: 'HCC ODP 6.3: residential units above ground floor P in Business 5;
+        at ground floor NC'
+    source: HCC ODP 6 Business 1 to 7 Zones
+  B7:
+    label: Business 7 Zone (Frankton Commercial Fringe)
+    method: volumetric
+    height:
+      value: 16.0
+      occupiable: 16.0
+      source: HCC ODP 6.4.1
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 6.4.3: 5 m fronting an arterial transport corridor'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - GRZ
+            - LLRZ
+        source: 'HCC ODP 6.4.2: adjoining General Residential'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - PMRZ
+            - HDZ
+        source: 'HCC ODP 6.4.2: adjoining Medium Density Residential'
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RESIDENTIAL
+        source: 'HCC ODP 6.4.3: 5 m where the boundary adjoins a Residential Zone'
+    ratios:
+      far_max:
+        value: 2.0
+        source: HCC ODP 6.4.4
+    use:
+      residential: no
+      business: yes
+      source: 'HCC ODP 6.3: residential units D (P above ground floor in the Frankton
+        Living Overlay, not mapped)'
+    source: HCC ODP 6 Business 1 to 7 Zones
+  PNCZ:
+    label: Neighbourhood Centre Zone, Peacocke Precinct
+    method: volumetric
+    height:
+      value: 16.0
+      occupiable: 16.0
+      source: HCC ODP 6A NCZ-PREC1-PSP R46
+    setbacks:
+      - kind: upper_level
+        distance: 3.0
+        above_height: 12.0
+        boundaries: road
+        source: 'HCC ODP 6A R47: top storey above 12 m set back 3 m from the transport
+          corridor'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - PMRZ
+            - MRZ
+        source: HCC ODP 6A R47
+      - kind: yard
+        distance: 1.5
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - PMRZ
+            - MRZ
+        source: HCC ODP 6A R48
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 1.0
+          source: 'HCC ODP 6.4.7 b, 6A R51, 6B R45: no residential activity at ground
+            floor'
+      source: 'HCC ODP 6A R22: apartments P, not at ground floor; R26-R28 dwellings
+        NC or D'
+    source: HCC ODP 6A Neighbourhood Centre Zone, Peacocke Precinct
+  PLCZ:
+    label: Local Centre Zone, Peacocke Precinct
+    method: volumetric
+    height:
+      value: 24.0
+      occupiable: 24.0
+      source: 'HCC ODP 6B LCZ-PREC1-PSP R40: 24 m (16 m within 30 m of a Residential
+        or Open Space Zone)'
+    setbacks:
+      - kind: upper_level
+        distance: 3.0
+        above_height: 12.0
+        boundaries: road
+        source: HCC ODP 6B R41
+      - kind: upper_level
+        distance: 30.0
+        above_height: 16.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RESIDENTIAL
+            - OPEN_SPACE
+        source: 'HCC ODP 6B R40: 16 m within 30 m of a Residential or Open Space Zone
+          (as a 30 m setback above 16 m from those boundaries)'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - PMRZ
+            - MRZ
+        source: HCC ODP 6B R41
+      - kind: yard
+        distance: 3.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RESIDENTIAL
+        source: HCC ODP 6B R42
+    use:
+      residential: yes
+      business: yes
+      residential_share:
+        bands:
+          by: storey
+          bands:
+            - min: 0.0
+              max: 1.0
+              value: 0.0
+            - min: 1.0
+              value: 1.0
+          source: 'HCC ODP 6.4.7 b, 6A R51, 6B R45: no residential activity at ground
+            floor'
+      source: 'HCC ODP 6B R21: apartments P, not at ground floor; R36 single dwellings
+        NC'
+    source: HCC ODP 6B Local Centre Zone, Peacocke Precinct
+  CC1:
+    label: Central City Zone, Precinct 1 (Downtown)
+    method: volumetric
+    height:
+      value: 32.0
+      occupiable: 32.0
+      source: 'Assumption: Chapter 7 sets no maximum height; 32 m is the height above
+        which new buildings (RD*) take added design matters (7.3)'
+    setbacks:
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        source: 'HCC ODP 7.4.4: the General Residential plane (4.2.5.5)'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - HDZ
+        source: 'HCC ODP 7.4.4: the Medium and High Density plane (4.3.4.5, 4.4.5.5)'
+    ratios:
+      coverage_max:
+        value: 1.0
+        source: HCC ODP 7.4.1
+    use:
+      residential: yes
+      business: yes
+      source: 'HCC ODP 7.3: residential units above ground floor P; apartments at
+        ground floor P outside active frontages'
+    source: HCC ODP 7 Central City Zone
+  CC2:
+    label: Central City Zone, Precinct 2 (City Living)
+    method: volumetric
+    height:
+      value: 32.0
+      occupiable: 32.0
+      source: 'Assumption: no maximum height in Chapter 7; 32 m (7.3 design matters
+        threshold)'
+    setbacks:
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        source: 'HCC ODP 7.4.4: the General Residential plane (4.2.5.5)'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - HDZ
+        source: 'HCC ODP 7.4.4: the Medium and High Density plane (4.3.4.5, 4.4.5.5)'
+      - kind: yard
+        distance: 1.5
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        source: 'HCC ODP 7.4.6: the adjoining zone''s side setback'
+      - kind: yard
+        distance: 1.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - HDZ
+        source: 'HCC ODP 7.4.6: the adjoining zone''s side setback'
+    ratios:
+      coverage_max:
+        value: 0.7
+        source: HCC ODP 7.4.1
+      landscaping_min:
+        value: 0.2
+        source: 'HCC ODP 7.4.2: permeable surface 20%'
+    use:
+      residential: yes
+      business: yes
+      source: HCC ODP 7.3
+    source: HCC ODP 7 Central City Zone
+  CC3:
+    label: Central City Zone, Precinct 3 (Ferrybank)
+    method: volumetric
+    height:
+      value: 32.0
+      occupiable: 32.0
+      source: 'Assumption: no maximum height in Chapter 7; 32 m (7.3 design matters
+        threshold)'
+    setbacks:
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: GRZ
+        source: 'HCC ODP 7.4.4: the General Residential plane (4.2.5.5)'
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - MRZ
+            - HDZ
+        source: 'HCC ODP 7.4.4: the Medium and High Density plane (4.3.4.5, 4.4.5.5)'
+      - kind: yard
+        distance: 3.0
+        boundaries: road
+        source: HCC ODP 7.4.6
+      - kind: yard
+        distance: 3.0
+        boundaries: side
+        source: HCC ODP 7.4.6
+      - kind: yard
+        distance: 5.0
+        boundaries: rear
+        source: HCC ODP 7.4.6
+    ratios:
+      coverage_max:
+        value: 0.8
+        source: HCC ODP 7.4.1
+      landscaping_min:
+        value: 0.2
+        source: 'HCC ODP 7.4.2: permeable surface 20%'
+    use:
+      residential: yes
+      business: yes
+      source: HCC ODP 7.3
+    source: HCC ODP 7 Central City Zone
+  KNZ:
+    label: Knowledge Zone
+    method: volumetric
+    height:
+      value: 15.0
+      occupiable: 15.0
+      source: 'HCC ODP 8.4.8: 15 m (20% of a footprint may reach 20 m)'
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries: road
+        source: 'HCC ODP 8.4.6: local and collector transport corridors'
+      - kind: yard
+        distance: 15.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 8.4.6: arterial transport corridors'
+      - kind: yard
+        distance: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RESIDENTIAL
+            - OPEN_SPACE
+        source: HCC ODP 8.4.6
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 3.0
+        boundaries:
+          - side
+          - rear
+        when:
+          not_adjacent_zones:
+            - KNZ
+            - KNU
+        source: 'HCC ODP 8.4.7: 45 degrees from 3 m at the boundary of any adjoining
+          zone'
+    ratios:
+      coverage_max:
+        value: 0.5
+        source: HCC ODP 8.4.3
+      landscaping_min:
+        value: 0.2
+        source: 'HCC ODP 8.4.4: permeable 20%'
+    use:
+      residential: no
+      business: yes
+      source: 'HCC ODP 8.3: residential units not provided for'
+    source: HCC ODP 8 Knowledge Zone
+  IND:
+    label: Industrial Zone
+    method: volumetric
+    storey_height: 7.0
+    height:
+      value: 20.0
+      occupiable: 20.0
+      source: HCC ODP 9.4.2
+    setbacks:
+      - kind: yard
+        distance: 3.0
+        boundaries: road
+        source: 'HCC ODP 9.4.1: local and collector transport corridors'
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 9.4.1: arterial transport corridors'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 9.4.1, Figure 9.4.1b: 45 degrees from 5 m on an arterial
+          boundary'
+      - kind: yard
+        distance: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RESIDENTIAL
+        source: HCC ODP 9.4.1
+      - kind: yard
+        distance: 3.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: OPEN_SPACE
+        source: HCC ODP 9.4.1
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 3.0
+        angle_by_bearing:
+          - angle_deg: 28.0
+            from_deg: 135.0
+            to_deg: 225.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RESIDENTIAL
+            - OPEN_SPACE
+        source: 'HCC ODP 9.4.3: 45 degrees (28 degrees on the southern boundary) from
+          3 m'
+    ratios:
+      landscaping_min:
+        value: 0.1
+        source: 'HCC ODP 9.4.5: permeable 10%'
+    use:
+      residential: no
+      business: yes
+      source: 'HCC ODP 9.3: residential activity not provided for'
+    source: HCC ODP 9 Industrial Zone
+  RLZ:
+    label: Ruakura Logistics Zone
+    method: volumetric
+    storey_height: 7.0
+    height:
+      value: 20.0
+      occupiable: 20.0
+      source: HCC ODP 10.4.5
+    setbacks:
+      - kind: yard
+        distance: 10.0
+        boundaries: road
+        source: HCC ODP 10.4.6
+    ratios:
+      coverage_max:
+        value: 0.8
+        source: HCC ODP 10.4.3
+      landscaping_min:
+        value: 0.1
+        source: 'HCC ODP 10.4.4: permeable 10%'
+    use:
+      residential: no
+      business: yes
+      source: HCC ODP 10.3
+    source: HCC ODP 10 Ruakura Logistics Zone
+  RIPZ:
+    label: Ruakura Industrial Park Zone
+    method: volumetric
+    storey_height: 7.0
+    height:
+      value: 20.0
+      occupiable: 20.0
+      source: HCC ODP 11.4.4
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries: road
+        source: HCC ODP 11.4.3
+      - kind: yard
+        distance: 15.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: HCC ODP 11.4.3
+      - kind: yard
+        distance: 8.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: OPEN_SPACE
+        source: HCC ODP 11.4.3
+      - kind: yard
+        distance: 40.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones: RESIDENTIAL
+        source: HCC ODP 11.4.3
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 3.0
+        angle_by_bearing:
+          - angle_deg: 28.0
+            from_deg: 135.0
+            to_deg: 225.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RESIDENTIAL
+            - OPEN_SPACE
+        source: 'HCC ODP 11.4.5: 45 degrees (28 degrees on the southern boundary)
+          from 3 m'
+    ratios:
+      coverage_max:
+        value: 0.75
+        source: HCC ODP 11.4.6
+      landscaping_min:
+        value: 0.2
+        source: HCC ODP 11.4.7
+    use:
+      residential: no
+      business: yes
+      source: HCC ODP 11.3
+    source: HCC ODP 11 Ruakura Industrial Park Zone
+  TRNZ:
+    label: Te Rapa North Industrial Zone
+    method: volumetric
+    storey_height: 7.0
+    height:
+      value: 20.0
+      occupiable: 20.0
+      source: HCC ODP 12.4.2 (Stage 1A exceptions unmodelled)
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries: road
+        source: HCC ODP 12.4.1
+      - kind: yard
+        distance: 15.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: HCC ODP 12.4.1
+      - kind: yard
+        distance: 10.0
+        boundaries:
+          - side
+          - rear
+        source: 'HCC ODP 12.4.1: 10 m from all boundaries other than transport corridors'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 3.0
+        angle_by_bearing:
+          - angle_deg: 28.0
+            from_deg: 135.0
+            to_deg: 225.0
+        boundaries:
+          - side
+          - rear
+        when:
+          adjacent_zones:
+            - RESIDENTIAL
+            - OPEN_SPACE
+        source: 'HCC ODP 12.4.3: 45 degrees (28 degrees on the southern boundary)
+          from 3 m'
+    ratios:
+      landscaping_min:
+        value: 0.2
+        source: 'HCC ODP 12.4.5: permeable 20%'
+    use:
+      residential: no
+      business: yes
+      source: HCC ODP 12.3
+    source: HCC ODP 12 Te Rapa North Industrial Zone
   CFZ:
     label: Community Facilities Zone
     method: none
@@ -581,8 +1505,20 @@ zones:
     label: Open Space Zones
     method: none
     source: HCC ODP zone
-  INZ:
-    label: Industrial Zone
+  KNU:
+    label: Knowledge Zone, University of Waikato Campus (concept plan)
+    method: none
+    source: HCC ODP zone
+  TRND:
+    label: Te Rapa North Industrial Zone, Deferred
+    method: none
+    source: HCC ODP zone
+  RTC:
+    label: Rototuna Town Centre Zone (development plans)
+    method: none
+    source: HCC ODP zone
+  FUZ:
+    label: Future Urban Zone
     method: none
     source: HCC ODP zone
   TCZ:
@@ -624,6 +1560,38 @@ overlays:
     buffer: 6.0
     source: 'HCC ODP 22.3, 22.2.1l: new buildings D and vulnerable use to avoid the
       area; 4.2.5.6, 4.3.4.6, 4.4.5.6, 4A R38, 6.4.3: 6 m setback'
+  amenity_protection:
+    label: Industrial Amenity Protection Area
+    type: parameters
+    layer: amenity_protection
+    combine: replace
+    applies_to_zones: IND
+    parameters:
+      height:
+        value: 10.0
+        occupiable: 10.0
+        source: HCC ODP 9.4.2 b
+      ratios:
+        coverage_max:
+          value: 0.75
+          source: HCC ODP 9.4.4
+    source: 'HCC ODP 9.4.2, 9.4.4: 10 m and 75% coverage in the Amenity Protection
+      Area'
+  peacocke_height:
+    label: Peacocke Increased Height Overlay
+    type: parameters
+    layer: peacocke_height
+    combine: replace
+    applies_to_zones: PMRZ
+    parameters:
+      height:
+        value: 16.0
+        occupiable: 16.0
+        storeys: 5.0
+        source: 'HCC ODP 4A R37: 16 m in the Increased Height Overlay; storeys follow
+          the height'
+    source: 'HCC ODP 4A R37: 16 m in the Increased Height Overlay (PC5 High Density
+      Overlay Area layer)'
 areas:
   rotokauri_north:
     label: Rotokauri North Residential Precinct
@@ -635,6 +1603,7 @@ areas:
     parameters:
       height:
         value: 11.0
+        occupiable: 11.0
         source: 'HCC ODP 4.3.4.4 b: Rotokauri North Residential Precinct 11 m'
       setbacks:
         - kind: upper_level
@@ -708,4 +1677,89 @@ unmodelled_rules:
     reason: Only the 11 m height and the 8 m rear yard above 5 m are entered.
     likely_effect: either
     source: HCC ODP 4.3.4.6 m-o
+  - zones:
+      - B1
+      - B2
+      - B3
+      - B4
+      - B6G
+      - B6M
+      - B7
+    rule: 'Business height overlay (Figure 6.4c): 26 m and 4:1'
+    reason: No layer for the overlay; the zone heights and ratios are used.
+    likely_effect: understates
+    source: HCC ODP 6.4.1, 6.4.4, Figure 6.4c
+  - zones:
+      - CC1
+      - CC2
+      - CC3
+    rule: 'Central City: no maximum height; street wall (13 m then 4 m back), Garden
+      Place sunlight plane, Riverfront Overlay 5 m'
+    reason: 32 m is used as an assumption; the overlays are not mapped. The true limit
+      is the RD assessment of each building.
+    likely_effect: either
+    source: HCC ODP 7.3, 7.4.5, 7.4.6, 7.4.11
+  - zones: RTC
+    rule: Rototuna Town Centre Zone
+    reason: Buildings are D under development plans; precincts are figures in Appendix
+      7 with no layer; no height standard.
+    likely_effect: understates
+    source: HCC ODP 13.4, 13.5
+  - zones:
+      - KNZ
+      - KNU
+    rule: 'Knowledge Zone: University of Waikato precinct; 20% of a footprint to 20
+      m; rail setback'
+    reason: Campus concept plan with no maximum height (method none); the 20 m allowance
+      is small.
+    likely_effect: understates
+    source: HCC ODP 8.4.6, 8.4.8, 8.6
+  - zones: B7
+    rule: 'Business 7: residential above ground floor in the Frankton Living Overlay'
+    reason: The overlay is not mapped; residential activity is D elsewhere in the
+      zone.
+    likely_effect: understates
+    source: HCC ODP 6.3
+  - zones: IND
+    rule: 'Industrial: Rotokauri Employment Area (15 m, 75%); expressway and rail
+      setbacks'
+    reason: The employment area and the designations are not held as layers.
+    likely_effect: overstates
+    source: HCC ODP 9.4.1, 9.4.2, 9.4.4
+  - zones:
+      - TRNZ
+      - TRND
+    rule: 'Te Rapa North: Stage 1A heights, river and stream setbacks; the Deferred
+      Industrial sub-zone'
+    reason: Stage areas and river banks are not held; deferred land is not yet live.
+    likely_effect: either
+    source: HCC ODP 12.4.1, 12.4.2
+  - zones:
+      - PNCZ
+      - PLCZ
+    rule: 'Peacocke centres: bat habitat 5 m setback'
+    reason: No bat habitat layer is used in the centres.
+    likely_effect: overstates
+    source: HCC ODP 6A R48, 6B R42
+  - zones:
+      - B4
+      - B4I
+      - PLCZ
+    rule: Business 4 height by adjacency, Peacocke Local Centre 16 m within 30 m of
+      zones
+    reason: Coded by adjacency in prepare.R (Business 4 within 30 m of the Industrial
+      Zone) and as a 30 m upper-level setback from zone boundaries, which misses zones
+      across a road.
+    likely_effect: either
+    source: HCC ODP 6.4.1, 6B R40
+  - zones:
+      - IND
+      - RLZ
+      - RIPZ
+      - TRNZ
+    rule: Industrial storey height
+    reason: 'Assumption, not a plan rule: industrial, logistics and industrial park
+      zones use a 7 m storey (two storeys under 20 m), not the 3 m default.'
+    likely_effect: either
+    source: Assumption
 

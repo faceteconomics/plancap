@@ -23,6 +23,17 @@ test_that("Hamilton's rulebook, entered through the template, matches its YAML c
   expect_true(length(from_yaml$unmodelled_rules) >= 5)
 })
 
+test_that("Hamilton's rulebook covers the centres, business and industrial zones", {
+  rb <- rulebook_example("hamilton")
+  expect_true(all(c("LLRZ", "PMRZ", "B1", "B3", "B4", "B5", "B7", "PNCZ", "PLCZ", "CC1", "CC2", "CC3",
+                    "KNZ", "IND", "RLZ", "RIPZ", "TRNZ") %in% names(rb$zones)))
+  # The Central City's height is an assumption and says so.
+  expect_match(rb$zones$CC1$height$source, "^Assumption")
+  # Business 4 provides for no dwellings; Business 5 does, above ground floor.
+  expect_identical(rb$zones$B4$use$residential, FALSE)
+  expect_identical(rb$zones$B5$use$residential, TRUE)
+})
+
 test_that("the 3D view builds", {
   skip_if_not_installed("mapgl")
   cap <- estimate_capacity(scenario("3D", set_conversion(fixture_rulebook(), conversion(dwelling_size = 100)),

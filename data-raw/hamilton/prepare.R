@@ -3,37 +3,60 @@
 # lines. Sourced by run.R and the vignette's source (vignettes/hamilton.Rmd.orig).
 
 hamilton_inputs <- function(dir = "data-raw/cache/hamilton") {
-  z <- sf::st_read(file.path(dir, "zoning.gpkg"), quiet = TRUE)
-  # The Industrial Amenity Protection Area is an overlay stored with the zones,
-  # and the Transport Corridor Zone is one polygon under every other zone (it
-  # covers the whole extract); roads come from the road parcels instead.
-  z <- z[!is.na(z$Zone_Description) & !grepl("Amenity Protection|Transport Corridor", z$Zone_Description), ]
+  z0 <- sf::st_read(file.path(dir, "zoning.gpkg"), quiet = TRUE)
+  # The Industrial Amenity Protection Area is an overlay stored with the zones
+  # (a parameters overlay in the rulebook), and the Transport Corridor Zone is
+  # one polygon under every other zone; roads come from the road parcels.
+  apa <- z0[z0$Zone_Description %in% "Industrial Amenity Protection Area", 0]
+  z <- z0[!is.na(z0$Zone_Description) & !grepl("Amenity Protection|Transport Corridor", z0$Zone_Description), ]
   # The council's polygons overlap in slivers (Peacocke); the first keeps each overlap.
   z <- suppressWarnings(sf::st_collection_extract(sf::st_difference(z), "POLYGON"))
   d <- z$Zone_Description
-  # First match wins: Peacocke's zone names contain the general ones.
+  # First match wins: Peacocke's zone names contain the general ones, and the
+  # Knowledge and Te Rapa North sub-zones come before their zones.
   codes <- c("Peacocke Medium Density Residential" = "Peacocke Medium Density Residential",
+             "Peacocke Local Centre" = "Peacocke Local Centre",
+             "Peacocke Neighbourhood" = "Peacocke Neighbourhood Centre",
              "Large Lot Residential" = "Large Lot Residential",
              "General Residential" = "General Residential",
              "Medium Density Residential" = "Medium Density Residential",
              "High Density Residential" = "High Density Residential",
-             "Business 6" = "Business 6",
-             "Business 2" = "Business 2",
+             "Business 1 Zone" = "Business 1",
+             "Business 2 Zone" = "Business 2",
+             "Business 3 Zone" = "Business 3",
+             "Business 4 Zone" = "Business 4",
+             "Business 5 Zone" = "Business 5",
+             "Business 6 Zone" = "Business 6",
+             "Business 7 Zone" = "Business 7",
+             "Downtown Precinct" = "Central City Downtown",
+             "City Living Precinct" = "Central City City Living",
+             "Ferrybank Precinct" = "Central City Ferrybank",
+             "Ruakura Open Space" = "Open Space",
+             "University of Waikato" = "Knowledge University",
+             "^Knowledge" = "Knowledge",
+             "^Logistics" = "Ruakura Logistics",
+             "^Ruakura Industrial Park" = "Ruakura Industrial Park",
+             "Deferred Industrial" = "Te Rapa North Deferred",
+             "^Te Rapa North" = "Te Rapa North Industrial",
+             "^Industrial" = "Industrial",
+             "Rototuna Town Centre" = "Rototuna Town Centre",
+             "Future Urban" = "Future Urban",
              "Community Facilities" = "Community Facilities",
              "Major Facilities" = "Major Facilities",
-             "^Open Space" = "Open Space",
-             "^Industrial" = "Industrial")
+             "^Open Space" = "Open Space")
   z$zone <- NA_character_
   for (k in names(codes)) z$zone[is.na(z$zone) & grepl(k, d)] <- codes[[k]]
-  # Zones the rulebook does not yet hold keep their description (H2 adds them).
-  z$zone[is.na(z$zone)] <- d[is.na(z$zone)]
+  if (anyNA(z$zone)) warning("Zone descriptions with no code: ", paste(unique(d[is.na(z$zone)]), collapse = "; "))
   # Business 6's height and floor area ratio depend on the residential zone it
   # adjoins (6.4.1, 6.4.4): code each centre polygon by its neighbour, Medium
-  # Density where it touches any.
+  # Density where it touches any. Business 4 is 20 m where it adjoins the
+  # Industrial Zone (6.4.1).
+  near <- function(i, to) lengths(sf::st_is_within_distance(z[i, ], z[z$zone %in% to, ], 30)) > 0
   b6 <- which(z$zone %in% "Business 6")
-  mrz <- z[z$zone %in% "Medium Density Residential", ]
-  near_mrz <- lengths(sf::st_is_within_distance(z[b6, ], mrz, 30)) > 0
-  z$zone[b6] <- ifelse(near_mrz, "Business 6 (Medium Density Residential)", "Business 6 (General Residential)")
+  z$zone[b6] <- ifelse(near(b6, "Medium Density Residential"),
+                       "Business 6 (Medium Density Residential)", "Business 6 (General Residential)")
+  b4 <- which(z$zone %in% "Business 4")
+  z$zone[b4] <- ifelse(near(b4, "Industrial"), "Business 4 (Industrial)", "Business 4")
   p <- sf::st_read(file.path(dir, "parcels.gpkg"), quiet = TRUE)
   p$parcel_id <- as.character(p$id)
   land <- p[!p$parcel_intent %in% c("Road", "Hydro", "Railway"), "parcel_id"]
@@ -44,7 +67,9 @@ hamilton_inputs <- function(dir = "data-raw/cache/hamilton") {
   }
   layers <- Filter(Negate(is.null), list(infrastructure_capacity = layer("infrastructure_capacity"),
                                          precincts = layer("precincts"),
-                                         gully_hazard = layer("gully_hazard")))
+                                         gully_hazard = layer("gully_hazard"),
+                                         peacocke_height = layer("peacocke_height"),
+                                         amenity_protection = apa))
   list(zoning = z[, "zone"], parcels = land, roads = roads, layers = layers,
        centrelines = layer("centrelines"))
 }

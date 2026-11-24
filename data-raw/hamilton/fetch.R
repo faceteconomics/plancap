@@ -28,7 +28,15 @@ extracts <- list(
   # Peacocke: the Medium Density Residential Zone (Chapter 4A) and its gullies.
   peacocke = c(175.3120, -37.8260, 900),
   # Ruakura: the Large Lot Residential Zone east of the university.
-  ruakura = c(175.3330, -37.7810, 700)
+  ruakura = c(175.3330, -37.7810, 700),
+  # H2: Frankton and the central city's west (Business 7, City Living, Industrial).
+  frankton = c(175.2686, -37.7870, 900),
+  # The Base (Business 3 and 4) and Te Rapa's Industrial Zone.
+  thebase = c(175.2350, -37.7440, 900),
+  # Te Rapa North Industrial.
+  terapa = c(175.2160, -37.7230, 900),
+  # The Knowledge Zone and the University of Waikato.
+  university = c(175.3139, -37.7809, 900)
 )
 e <- extracts[[name]]
 if (is.null(e)) stop("Unknown extract ", name, "; one of ", paste(names(extracts), collapse = ", "))
@@ -65,6 +73,8 @@ arcgis("eplan_pc12_amendments_data/FeatureServer/130", "OBJECTID", "infrastructu
 pr <- arcgis("eplan_pc12_amendments_data/FeatureServer/141", "Name,Type", "precincts.gpkg")
 print(table(pr$Name))
 arcgis("GEOTECH_AND_HYDRO___DP_Waikato_River_Gully_Hazard_Area/FeatureServer/0", "Hazard_Fac", "gully_hazard.gpkg")
+# Peacocke's Increased Height Overlay (PC5's "High Density Overlay Area").
+arcgis("PC12_Features/FeatureServer/24", "LandUse", "peacocke_height.gpkg")
 # Centre lines a little beyond the extract, so edge sites find their road.
 rd <- arcgis("RoadHierarchy20260623/FeatureServer/0", "FIRST_ROAD_NAME,FIRST_Road_Classification",
              "centrelines.gpkg", pad = 100)

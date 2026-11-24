@@ -42,6 +42,17 @@ height overlays), Rototuna Town Centre, Peacocke centres, Knowledge,
 Industrial, Logistics, Ruakura, Te Rapa North (floor area where no dwellings
 are provided for).
 
+Status 25 Nov 2026: H2 entered and run. New extracts frankton, thebase, terapa,
+university (all seven pass check_capacity). Business 1-7 (B4 coded by
+adjacency to Industrial), Peacocke centres (6A, 6B), Central City precincts
+(height 32 m: an ASSUMPTION, Chapter 7 has no height limit), Knowledge,
+Industrial (+ Amenity Protection Area overlay from the zoning layer), Ruakura
+Logistics and Industrial Park, Te Rapa North; Peacocke Increased Height
+Overlay (PC12_Features/24, 16 m). Method none: University precinct, Te Rapa
+North Deferred, Rototuna Town Centre, Future Urban. Storey height decided by the
+user 25 Nov: industrial, logistics, industrial park and Te Rapa North
+zones now use a 7 m storey (assumption, user choice): FAR about 1.5-1.7.
+
 ## H3 Overlays, PC14 and the city-wide run
 
 Historic heritage (built heritage, heritage areas), significant natural

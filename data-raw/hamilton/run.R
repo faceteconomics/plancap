@@ -6,7 +6,8 @@ suppressPackageStartupMessages(devtools::load_all(quiet = TRUE))
 source("data-raw/hamilton/prepare.R")
 root <- "data-raw/cache/hamilton"
 args <- commandArgs(trailingOnly = TRUE)
-dirs <- c(claudelands = root, setNames(file.path(root, c("peacocke", "ruakura")), c("peacocke", "ruakura")))
+ex <- c("peacocke", "ruakura", "frankton", "thebase", "terapa", "university")
+dirs <- c(claudelands = root, setNames(file.path(root, ex), ex))
 dirs <- dirs[file.exists(file.path(dirs, "zoning.gpkg"))]
 if (length(args)) dirs <- dirs[args]
 rb <- read_rulebook("inst/extdata/hamilton_rulebook.xlsx")
