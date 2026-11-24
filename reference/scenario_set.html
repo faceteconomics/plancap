@@ -105,8 +105,8 @@ sites rebuilds about a tenth of them.</p>
 <span class="r-in"><span>                 zoning <span class="op">=</span> <span class="va">town</span><span class="op">$</span><span class="va">zoning</span>, layers <span class="op">=</span> <span class="va">town</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"height_areas"</span>, <span class="st">"flood_hazard"</span>, <span class="st">"transit"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">change</span> <span class="op">&lt;-</span> <span class="fu"><a href="scenario.html">scenario_change</a></span><span class="op">(</span><span class="va">base</span>, <span class="st">"PC1"</span>, rulebook <span class="op">=</span> <span class="va">pc1</span><span class="op">$</span><span class="va">rulebook</span>, zoning <span class="op">=</span> <span class="va">pc1</span><span class="op">$</span><span class="va">zoning</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">run_scenarios</span><span class="op">(</span><span class="fu">scenario_set</span><span class="op">(</span><span class="va">base</span>, <span class="va">change</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Operative: 3.7 s.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> PC1: 2.8 s, 575 sites copied from the baseline.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Operative: 5.6 s.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> PC1: 4.1 s, 575 sites copied from the baseline.</span>
 <span class="r-in"><span><span class="va">res</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;plancap results&gt; 2 scenarios</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   scenario sites land_area floor_area residential_floor_area dwellings</span>
