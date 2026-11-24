@@ -21,8 +21,9 @@ This vignette adds a real jurisdiction from nothing: Hamilton, New Zealand.
 It follows the route a planner or analyst would take with a plan they have
 not modelled before: read the plan, enter its rules in the Excel template,
 prepare the parcels and the zoning, run capacity, check it, and ask a
-question of it. Everything here was done once, on 23 November 2026, with
-the plan as it then stood.
+question of it. The walkthrough was first done on 23 November 2026 for one
+area and five zones; the rulebook was then built out to the whole plan
+(25 November 2026), and the last section runs it over the whole city.
 
 ## 1. Read the plan
 
@@ -30,10 +31,21 @@ Hamilton's rules are in the **Hamilton City Operative District Plan**, read
 in its online ePlan at the revision of 13 November 2026. Plan Change 12
 (Enabling Housing Supply), Hamilton's response to the National Policy
 Statement on Urban Development, was made operative on 20 December 2024 and
-is part of that text. The walkthrough covers the zones of one area,
+is part of that text. The walkthrough starts with the zones of one area,
 Claudelands and Hamilton East: General, Medium Density and High Density
 Residential (Chapter 4), and the Business 6 (neighbourhood centre) and
-Business 2 zones (Chapter 6).
+Business 2 zones (Chapter 6). The finished rulebook adds the rest in three
+stages:
+
+- **residential**: Large Lot Residential, Peacocke's Medium Density zone
+  (Chapter 4A), the residential precincts, the Three Waters Infrastructure
+  Capacity Overlay's density, the riverbank and gully hazard setback and the
+  5 m setback from arterial roads;
+- **centres and business**: Business 1 to 7, the Peacocke centres, the
+  Central City precincts, the Knowledge, Industrial, Ruakura and Te Rapa
+  North zones;
+- **overlays**: built heritage, Historic Heritage Areas, Significant Natural
+  Areas, and the High Flood Hazard Area of Plan Change 14 (Flooding).
 
 For each zone, the rules that shape a building or count its dwellings were
 written down with their rule numbers (the notes are in
@@ -48,11 +60,22 @@ written down with their rule numbers (the notes are in
 | Landscaping | 20% (4.2.5.3) | 20% (4.3.4.3) | 10% (4.4.5.3) | none at ground floor dwellings: none allowed (6.4.7) |
 | Dwellings | two per site permitted, more restricted discretionary (4.2.3.1) | three per site permitted, more restricted discretionary (4.3.3.1) | three or more restricted discretionary (4.4.3.1) | above ground floor only (6.3, 6.4.7) |
 
-Some rules have no layer to apply them to here (the 5 m setback from
-arterial roads needs the road hierarchy; a density rule applies only inside
-an infrastructure overlay; a riverbank hazard setback). They are not dropped:
+Some rules need more than zoning. The 5 m setback from arterial roads needs
+the road hierarchy: the council's road centre lines carry a class, and the
+rulebook names the column (`morphology: road_class_field`), so each road
+boundary is tagged with the class of the road in front and a setback can
+name `minor_arterial_road`. The density rule applies only inside an
+infrastructure overlay, and the hazard setback only near a gully: both are
+overlays with their own layers. Rules that cannot be applied are not dropped:
 they go in the rulebook's register of rules not modelled, with the direction
 each would move capacity.
+
+Two choices in the full rulebook are assumptions, not rules, and the
+rulebook says so: the Central City has no maximum height, so 32 m (above
+which new buildings take added design matters) is used; and industrial
+zones use a 7 m storey rather than the 3 m default. Plan Change 14
+(Flooding) was decided on 24 December 2025 and is under appeal; its High
+Flood Hazard Area is applied as though in force, marked as proposed.
 
 ## 2. Enter the rules in the template
 
@@ -101,7 +124,12 @@ Claudelands and Hamilton East:
   authoritative source: this is derived work, not Hamilton City Council's
   data. The zoning is not shipped with the package.
 
-The zoning layer needs three changes before plancap can use it, which is
+Overlay layers come from the council's map services: the infrastructure
+overlay and precincts (Plan Change 12), the gully hazard area, Peacocke's
+height overlay, heritage and natural areas (Plan Change 9), the flood hazard
+model, and the road hierarchy.
+
+The zoning layer needs four changes before plancap can use it, which is
 typical of a council layer (`data-raw/hamilton/prepare.R`):
 
 1. Zone names become the codes the rulebook's zone map expects (`codes` in
@@ -109,7 +137,9 @@ typical of a council layer (`data-raw/hamilton/prepare.R`):
 2. Business 6's height and floor area ratio depend on the residential zone
    it adjoins, so each centre polygon is coded by its neighbour.
 3. Two features are not zones: the Industrial Amenity Protection Area (an
-   overlay stored with the zones) and the Transport Corridor Zone.
+   overlay stored with the zones, used as one) and the Transport Corridor
+   Zone.
+4. Some polygons overlap by slivers; each overlap is given to one zone.
 
 The third was found the useful way. The first run left the Transport
 Corridor Zone in, and `check_capacity()` failed its land check: the sites
@@ -127,13 +157,15 @@ nrow(h$parcels)
 ## 4. Run capacity and check it
 
 ```{r}
-sc <- scenario("Hamilton, Claudelands", rb, parcels = h$parcels, roads = h$roads, zoning = h$zoning)
+names(h$layers)
+sc <- scenario("Hamilton, Claudelands", rb, parcels = h$parcels, roads = h$roads, zoning = h$zoning,
+               layers = h$layers, centrelines = h$centrelines)
 cap <- estimate_capacity(sc)
 summary(cap)
 check_capacity(cap)
 ```
 
-The 121 sites with no zone are land parcels inside the transport corridor
+The sites with no zone are land parcels inside the transport corridor
 (once the corridor polygon is dropped, nothing zones them). They are
 flagged, not dropped.
 
@@ -182,6 +214,20 @@ permitted count wherever the envelope holds more.
 
 ```{r}
 unmodelled_report(rb)[, c("rule", "likely_effect")]
+```
+
+## 8. The whole city
+
+The same rulebook and preparation run over every parcel in the city
+(`Rscript data-raw/hamilton/run.R city`, about two and a half hours on one
+core). The result is read back here rather than recomputed:
+
+```{r}
+city <- readRDS("../data-raw/cache/hamilton/city/run.rds")$cap
+summary(city)
+check_capacity(city)
+constraint_breakdown(city, by = "zone")
+plot_capacity_map(city, grid = 250)
 ```
 
 ## A checklist for a new jurisdiction

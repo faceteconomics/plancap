@@ -60,12 +60,25 @@ hamilton_inputs <- function(dir = "data-raw/cache/hamilton") {
   p <- sf::st_read(file.path(dir, "parcels.gpkg"), quiet = TRUE)
   p$parcel_id <- as.character(p$id)
   land <- p[!p$parcel_intent %in% c("Road", "Hydro", "Railway"), "parcel_id"]
+  # Parcels outside the city's zoning (the city-wide extract's box reaches
+  # into Waikato and Waipaa districts) are dropped.
+  inside <- lengths(sf::st_intersects(sf::st_point_on_surface(sf::st_geometry(land)), z0)) > 0
+  land <- land[inside, ]
   roads <- p[p$parcel_intent %in% "Road", 0]
   layer <- function(f) {
     f <- file.path(dir, paste0(f, ".gpkg"))
     if (file.exists(f)) sf::st_read(f, quiet = TRUE) else NULL
   }
+  # Built heritage items are points: the parcels holding them are the
+  # scheduled sites. The PC14 High Flood Hazard Area joins the catchment and
+  # river models.
+  pts <- layer("built_heritage_points")
+  bh <- if (!is.null(pts) && nrow(pts)) land[lengths(sf::st_intersects(land, pts)) > 0, 0] else NULL
+  fl <- Filter(function(x) !is.null(x) && nrow(x), list(layer("flood_high_catchment"), layer("flood_high_river")))
+  flood <- if (length(fl)) do.call(rbind, lapply(fl, function(x) x[, 0])) else NULL
   layers <- Filter(Negate(is.null), list(infrastructure_capacity = layer("infrastructure_capacity"),
+                                         built_heritage = bh, heritage_area = layer("heritage_area"),
+                                         natural_area = layer("natural_area"), flood_high = flood,
                                          precincts = layer("precincts"),
                                          gully_hazard = layer("gully_hazard"),
                                          peacocke_height = layer("peacocke_height"),

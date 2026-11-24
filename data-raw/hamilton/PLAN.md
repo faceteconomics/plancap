@@ -59,3 +59,21 @@ Historic heritage (built heritage, heritage areas), significant natural
 areas, special character, PC14 flood hazard (proposed); a LINZ parcel
 download for the whole city; a city-wide run with check_capacity(); the
 vignette and docs updated.
+
+Status 25 Nov 2026: H3 overlays entered (rules_notes.md "H3 Overlays"):
+built heritage (parcels holding PC9 Schedule 8A points, excluded), Historic
+Heritage Areas (residential zones: 1 dwelling, 8 m, 2 storeys, 35%, 40%
+permeable, 28/45 deg plane), Significant Natural Areas (excluded), PC14 High
+Flood Hazard Area (Floodviewer hazard factor 4, both models; excluded;
+PROPOSED, read from the officer's rebuttal version of 12 Sep 2025, decision
+24 Dec 2025 under appeal). The operative flood maps are not used. City-wide
+extract: `fetch.R city` (zoning extent; prepare.R drops parcels outside the
+zoning); `run.R city` (long; not in the default run).
+
+City run 25 Nov 2026 (141 min, one core): 60,705 land parcels, 61,520 sites
+on 9,170 ha; 104.9 million m2 floor area (82.1m residential, 22.8m
+business), 469,395 dwellings and 130,277 minor dwellings. All
+check_capacity() checks pass; 322 sites have no zone (parcels under the
+dropped Transport Corridor polygon), 2,520 are in no-capacity zones. MRZ
+16.0m m2 enabled floor area, PMRZ 10.5m. Vignette section 8 reads the saved
+run.rds.

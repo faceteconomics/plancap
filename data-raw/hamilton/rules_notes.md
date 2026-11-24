@@ -307,3 +307,50 @@ University of Waikato precinct) are registered as unmodelled.
   Increased Height Overlay (16 m in the PMRZ, 4A R37).
 - No layer for the Business height overlay (Figure 6.4c), the Central City
   street wall streets, active frontages or the Frankton Living Overlay.
+
+## H3 Overlays (read 25 Nov 2026)
+
+### Chapter 19 Historic Heritage (rules/0/46; Plan Change 9 text, parts under appeal)
+- 19.3.1 Built heritage (Schedule 8A): demolition A ranked NC, B ranked D;
+  new buildings on a scheduled site D (A) or RD* (B). Modelled as an
+  exclusion of the parcel holding the scheduled item (layer: PC9 Built
+  Heritage points, eplan_pc9_data/81).
+- 19.3.2 Historic Heritage Areas (Schedule 8D; eplan_pc9_data/94), residential
+  zoned HHAs: 1 single residential unit per site RD; 2 or more D; apartments,
+  terraces, duplexes NC; ancillary unit RD. Demolition of a residential unit D.
+- 19.4.3 700 m2 for a unit plus an ancillary unit. 19.4.4 coverage 35% (40%
+  rear sites). 19.4.5 permeable 40%. 19.4.6 height: front sites the original
+  or neighbouring height (not knowable on a blank slate); rear sites 8 m and
+  two storeys (Frankton Railway Village 5 m, Hayes Paddock 6 m). 19.4.7 28 deg
+  between north-west and north-east, 45 deg otherwise, from 3 m.
+- Modelled: one dwelling plus one minor dwelling per site, 8 m and two
+  storeys (the rear-site limit stands in for the front-site rule), coverage
+  35%, permeable 40%, the 28/45 deg plane. Business-zoned HHAs (Victoria
+  Street, Frankton Commerce Street, Claudelands Commercial): street-front
+  demolition D, fences only; not modelled.
+
+### Chapter 20 Natural Environments (rules/0/45)
+- 20.3: new buildings in a Significant Natural Area are not provided for
+  ("activities not otherwise provided for": D in cSNA, NC in fSNA); only
+  replacement within the existing envelope is P. Modelled as an exclusion
+  (layer: PC9 amendments SNAs, eplan_pc9_amendments_data/135).
+
+### Chapter 22 Natural Hazards and Plan Change 14 (Flooding)
+- Operative 22.3: new buildings High NC, Medium D, Temple View D; residential
+  High and Medium NC.
+- PC14 (notified 21 Jan 2025; decision 24 Dec 2025; under appeal, Fonterra;
+  the user chose to apply it as though in force, flagged as proposed).
+  Text read: the officer's rebuttal version of Chapter 22 (12 Sep 2025); the
+  decisions version was not found. 22.3 h: new buildings High NC, Medium RD,
+  Low P, Depression P, Overland Flow Path P, Flood Extent P, Riverbank and
+  Gully D. 22.3 ff: residential activity High NC, Medium RD, Low P. Minimum
+  floor levels (22.5) do not cap capacity.
+- Mapping: Floodviewer, not the plan maps. Hazard classes: Low (up to 0.5 m
+  and 1 m/s), Medium (0.5-1 m or 1-2 m/s), High (over 1 m or over 2 m/s).
+  Layers: hazards_HCC_OneHundredYear_FloodHazards and
+  hazards_HCC_WaikatoRiverGullyAreaFloodHazard, field Hazard_Factor (2 Low,
+  3 Medium, 4 High); both the existing and the climate change scenarios are
+  held, and the union of High areas is used.
+- Modelled: PC14 High Flood Hazard Area as an exclusion; Medium and Low as
+  permitted or RD (no effect on capacity). The operative flood maps are
+  replaced by PC14's.

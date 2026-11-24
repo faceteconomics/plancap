@@ -227,21 +227,31 @@ sb <- function(target, kind, boundaries, ..., source) {
 
 # ---- overlays: infrastructure capacity, gully hazard ----------------------------------------
 ov <- data.frame(
-  id = c("infrastructure_grz", "infrastructure_mrz", "gully_hazard", "amenity_protection", "peacocke_height"),
+  id = c("infrastructure_grz", "infrastructure_mrz", "gully_hazard", "amenity_protection", "peacocke_height",
+         "built_heritage", "heritage_area", "natural_area", "flood_high"),
   label = c("Three Waters Infrastructure Capacity Overlay (General Residential)",
             "Three Waters Infrastructure Capacity Overlay (Medium Density Residential)",
             "Waikato Riverbank and Gully Hazard Area", "Industrial Amenity Protection Area",
-            "Peacocke Increased Height Overlay"),
-  type = c("parameters", "parameters", "exclusion", "parameters", "parameters"),
-  layer = c("infrastructure_capacity", "infrastructure_capacity", "gully_hazard", "amenity_protection", "peacocke_height"),
-  combine = c("replace", "replace", NA, "replace", "replace"), removes = c(NA, NA, "all", NA, NA),
-  buffer = c(NA, NA, "6", NA, NA),
-  applies_to_zones = c("GRZ", "MRZ", NA, "IND", "PMRZ"),
+            "Peacocke Increased Height Overlay", "Built heritage (Schedule 8A), the scheduled site",
+            "Historic Heritage Area (Schedule 8D)", "Significant Natural Area (Schedule 9C)",
+            "High Flood Hazard Area, PC14 (proposed)"),
+  type = c("parameters", "parameters", "exclusion", "parameters", "parameters",
+           "exclusion", "parameters", "exclusion", "exclusion"),
+  layer = c("infrastructure_capacity", "infrastructure_capacity", "gully_hazard", "amenity_protection", "peacocke_height",
+            "built_heritage", "heritage_area", "natural_area", "flood_high"),
+  combine = c("replace", "replace", NA, "replace", "replace", NA, "replace", NA, NA),
+  removes = c(NA, NA, "all", NA, NA, "all", NA, "all", "all"),
+  buffer = c(NA, NA, "6", NA, NA, NA, NA, NA, NA),
+  applies_to_zones = c("GRZ", "MRZ", NA, "IND", "PMRZ", NA, "GRZ, MRZ, HDZ, LLRZ", NA, NA),
   source = c(src("4.2.5.1: density inside the Three Waters Infrastructure Capacity Overlay"),
              src("4.3.4.1: density inside the Three Waters Infrastructure Capacity Overlay"),
              src("22.3, 22.2.1l: new buildings D and vulnerable use to avoid the area; 4.2.5.6, 4.3.4.6, 4.4.5.6, 4A R38, 6.4.3: 6 m setback"),
              src("9.4.2, 9.4.4: 10 m and 75% coverage in the Amenity Protection Area"),
-             src("4A R37: 16 m in the Increased Height Overlay (PC5 High Density Overlay Area layer)")),
+             src("4A R37: 16 m in the Increased Height Overlay (PC5 High Density Overlay Area layer)"),
+             src("19.3.1: demolition of A ranked items NC, B ranked D; new buildings on the site D or RD (PC9)"),
+             src("19.3.2, 19.4.3-19.4.7: residential zoned Historic Heritage Areas (PC9)"),
+             src("20.3: new buildings in a Significant Natural Area not provided for (D in cSNA, NC in fSNA)"),
+             "HCC ODP 22.3 h, ff as amended by Plan Change 14 (Flooding), PROPOSED: new buildings and residential activity NC in the High Flood Hazard Area (officer's rebuttal version, 12 Sep 2025; decision 24 Dec 2025 under appeal); Floodviewer hazard factor 4"),
   stringsAsFactors = FALSE)
 put("overlays", ov)
 
@@ -251,18 +261,27 @@ ar <- data.frame(id = "rotokauri_north", label = "Rotokauri North Residential Pr
                  source = src("4.3.4.4 b, 4.3.4.6 m-o: Rotokauri North Residential Precinct"), stringsAsFactors = FALSE)
 put("areas", ar)
 ch <- data.frame(target = c("overlay:infrastructure_grz", "overlay:infrastructure_mrz", "area:rotokauri_north",
-                            "overlay:amenity_protection", "overlay:peacocke_height"),
-                 method = c("hybrid", "hybrid", NA, NA, NA),
-                 site_area_per_dwelling = c(200, 150, NA, NA, NA),
-                 density_source = c(src("4.2.5.1: average net site area 200 m2 per unit"), src("4.3.4.1: average net site area 150 m2 per unit"), NA, NA, NA),
-                 height = c(NA, NA, 11, 10, 16), occupiable = c(NA, NA, 11, 10, 16), storeys = c(NA, NA, NA, NA, 5),
+                            "overlay:amenity_protection", "overlay:peacocke_height", "overlay:heritage_area"),
+                 method = c("hybrid", "hybrid", NA, NA, NA, "hybrid"),
+                 site_area_per_dwelling = c(200, 150, NA, NA, NA, NA),
+                 max_dwellings_per_site = c(NA, NA, NA, NA, NA, 1),
+                 minor_dwellings_per_site = c(NA, NA, NA, NA, NA, 1),
+                 density_source = c(src("4.2.5.1: average net site area 200 m2 per unit"), src("4.3.4.1: average net site area 150 m2 per unit"), NA, NA, NA,
+                                    src("19.3.2: one single residential unit per site RD (two or more D; apartments, terraces, duplexes NC); ancillary unit RD")),
+                 height = c(NA, NA, 11, 10, 16, 8), occupiable = c(NA, NA, 11, 10, 16, 8), storeys = c(NA, NA, NA, NA, 5, 2),
                  height_source = c(NA, NA, src("4.3.4.4 b: Rotokauri North Residential Precinct 11 m"), src("9.4.2 b"),
-                                   src("4A R37: 16 m in the Increased Height Overlay; storeys follow the height")),
-                 coverage_max = c(NA, NA, NA, 0.75, NA), coverage_max_source = c(NA, NA, NA, src("9.4.4"), NA),
+                                   src("4A R37: 16 m in the Increased Height Overlay; storeys follow the height"),
+                                   src("19.4.6: rear sites 8 m and two storeys, used for all sites (front sites take the original or neighbouring height)")),
+                 coverage_max = c(NA, NA, NA, 0.75, NA, 0.35), coverage_max_source = c(NA, NA, NA, src("9.4.4"), NA, src("19.4.4")),
+                 landscaping_min = c(NA, NA, NA, NA, NA, 0.4), landscaping_min_source = c(NA, NA, NA, NA, NA, src("19.4.5: permeable 40%")),
                  stringsAsFactors = FALSE)
 put("changes", ch)
 rows2 <- list(sb("area:rotokauri_north", "upper_level", "rear", distance = 8, above_height = 5,
-                 source = src("4.3.4.6 m: rear yard 8 m for a building over 5 m (four or more units)")))
+                 source = src("4.3.4.6 m: rear yard 8 m for a building over 5 m (four or more units)")),
+              sb("overlay:heritage_area", "plane", "side, rear", angle_deg = 45, start_height = 3, angle_by_bearing = "135-225:28",
+                 source = src("19.4.7: 28 degrees between north-west and north-east, 45 degrees otherwise, from 3 m")),
+              sb("overlay:heritage_area", "plane", "road", angle_deg = 45, start_height = 3,
+                 source = src("19.4.7 c: 45 degrees along a transport corridor")))
 
 # ---- setbacks ---------------------------------------------------------------------------
 rows <- list(
@@ -425,7 +444,11 @@ um <- data.frame(
            "Te Rapa North: Stage 1A heights, river and stream setbacks; the Deferred Industrial sub-zone",
            "Peacocke centres: bat habitat 5 m setback",
            "Business 4 height by adjacency, Peacocke Local Centre 16 m within 30 m of zones",
-           "Industrial storey height"),
+           "Industrial storey height",
+           "Historic Heritage Areas: front-site height, rear-site 40% coverage, business-zoned HHAs",
+           "Built heritage: the extent of place",
+           "Operative flood hazard maps; PC14 Medium, Low, Depression and Overland Flow Path areas",
+           "Notable trees and their root protection zones; archaeological and cultural sites"),
   reason = c("A single envelope per site does not place separate buildings or balconies.",
              "Depend on where buildings, windows and planting go, which a blank-slate envelope does not know.",
              "These require a minimum intensity; they do not cap capacity.",
@@ -443,19 +466,25 @@ um <- data.frame(
              "Stage areas and river banks are not held; deferred land is not yet live.",
              "No bat habitat layer is used in the centres.",
              "Coded by adjacency in prepare.R (Business 4 within 30 m of the Industrial Zone) and as a 30 m upper-level setback from zone boundaries, which misses zones across a road.",
-             "Assumption, not a plan rule: industrial, logistics and industrial park zones use a 7 m storey (two storeys under 20 m), not the 3 m default."),
+             "Assumption, not a plan rule: industrial, logistics and industrial park zones use a 7 m storey (two storeys under 20 m), not the 3 m default.",
+             "Front sites take the original or neighbouring building height, which a blank slate does not know; 8 m (the rear-site limit) is used. Business-zoned HHAs only control street-front demolition (D) and fences.",
+             "The whole parcel holding a scheduled item is excluded, not just the extent of place.",
+             "PC14 replaces the operative maps (user's choice to apply it as proposed); Medium is RD and Low, Depression and Overland Flow Path areas are P, with floor level standards that do not cap capacity.",
+             "Points and small areas whose effect on an envelope depends on where the building goes."),
   zones = c("GRZ, MRZ, HDZ", "GRZ, MRZ, HDZ", "MRZ, HDZ, B6G, B6M", "GRZ, MRZ", "PMRZ", "LLRZ",
             "GRZ, MRZ, LLRZ", "MRZ", "B1, B2, B3, B4, B6G, B6M, B7", "CC1, CC2, CC3", "RTC", "KNZ, KNU", "B7",
-            "IND", "TRNZ, TRND", "PNCZ, PLCZ", "B4, B4I, PLCZ", "IND, RLZ, RIPZ, TRNZ"),
+            "IND", "TRNZ, TRND", "PNCZ, PLCZ", "B4, B4I, PLCZ", "IND, RLZ, RIPZ, TRNZ",
+            "GRZ, MRZ, HDZ, LLRZ", NA, NA, NA),
   likely_effect = c("overstates", "overstates", "either", "understates", "either", "overstates", "either", "either",
                     "understates", "either", "understates", "understates", "understates", "overstates", "either",
-                    "overstates", "either", "either"),
+                    "overstates", "either", "either", "either", "understates", "either", "overstates"),
   source = c(src("4.2.5.6, 4.3.4.6, 4.4.5.6"), src("4.2.5.3, 4.2.5.9, 4.2.5.10, 4.2.5.13 and equivalents"),
              src("4.3.4.1, 4.4.5.1, 6.4.7"), src("4.2.5.2 b, 4.3.4.2 b"), src("4A R34, R37, R38"),
              src("4.5.4.1"), src("4.2, 4.3 precinct rules"), src("4.3.4.6 m-o"),
              src("6.4.1, 6.4.4, Figure 6.4c"), src("7.3, 7.4.5, 7.4.6, 7.4.11"), src("13.4, 13.5"),
              src("8.4.6, 8.4.8, 8.6"), src("6.3"), src("9.4.1, 9.4.2, 9.4.4"), src("12.4.1, 12.4.2"),
-             src("6A R48, 6B R42"), src("6.4.1, 6B R40"), "Assumption"))
+             src("6A R48, 6B R42"), src("6.4.1, 6B R40"), "Assumption",
+             src("19.4.4, 19.4.6, 19.3.2"), src("19.3.1"), src("22.3; PC14 (proposed)"), src("19.3.3, 20.3, 25.2")))
 put("unmodelled", um)
 
 openxlsx2::wb_save(wb, xlsx, overwrite = TRUE)

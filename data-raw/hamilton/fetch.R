@@ -36,31 +36,47 @@ extracts <- list(
   # Te Rapa North Industrial.
   terapa = c(175.2160, -37.7230, 900),
   # The Knowledge Zone and the University of Waikato.
-  university = c(175.3139, -37.7809, 900)
+  university = c(175.3139, -37.7809, 900),
+  # H3: the whole city (the District Plan zoning's extent; parcels outside
+  # the zoning are dropped in prepare.R).
+  city = c(NA, NA, NA)
 )
 e <- extracts[[name]]
 if (is.null(e)) stop("Unknown extract ", name, "; one of ", paste(names(extracts), collapse = ", "))
 out <- file.path("../plancap/data-raw/cache/hamilton", if (name == "claudelands") "" else name)
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
-centre <- sf::st_transform(sf::st_sfc(sf::st_point(e[1:2]), crs = 4326), 2193)
-xy <- sf::st_coordinates(centre)
-half <- e[[3]]
-bb <- sf::st_bbox(c(xmin = xy[1] - half, ymin = xy[2] - half, xmax = xy[1] + half, ymax = xy[2] + half),
-                  crs = sf::st_crs(2193))
+if (name == "city") {
+  bb <- sf::st_bbox(c(xmin = 1792450, ymin = 5808750, xmax = 1806460, ymax = 5825265), crs = sf::st_crs(2193))
+} else {
+  centre <- sf::st_transform(sf::st_sfc(sf::st_point(e[1:2]), crs = 4326), 2193)
+  xy <- sf::st_coordinates(centre)
+  half <- e[[3]]
+  bb <- sf::st_bbox(c(xmin = xy[1] - half, ymin = xy[2] - half, xmax = xy[1] + half, ymax = xy[2] + half),
+                    crs = sf::st_crs(2193))
+}
 
 base <- "https://services1.arcgis.com/R6s0QqCMQdwKY6yp/arcgis/rest/services/"
-arcgis <- function(path, fields, file, pad = 0) {
+# One layer over the extract, paged 1,000 features at a time.
+arcgis <- function(path, fields, file, pad = 0, where = "1=1") {
   env <- paste(bb[["xmin"]] - pad, bb[["ymin"]] - pad, bb[["xmax"]] + pad, bb[["ymax"]] + pad, sep = ",")
-  q <- paste0(base, path, "/query?where=1%3D1&geometry=", env,
-              "&geometryType=esriGeometryEnvelope&inSR=2193&spatialRel=esriSpatialRelIntersects",
-              "&outFields=", fields, "&outSR=2193&resultRecordCount=2000&f=geojson")
-  tmp <- tempfile(fileext = ".geojson")
-  utils::download.file(q, tmp, quiet = TRUE, mode = "wb")
-  x <- sf::st_read(tmp, quiet = TRUE)
-  if (!nrow(x)) x <- sf::st_sf(x, geometry = sf::st_sfc(crs = 2193))
-  if (nrow(x) >= 2000) stop(path, ": 2,000 features returned; page the query")
-  sf::st_crs(x) <- 2193
+  pages <- list()
+  offset <- 0
+  repeat {
+    q <- paste0(base, path, "/query?where=", utils::URLencode(where, reserved = TRUE), "&geometry=", env,
+                "&geometryType=esriGeometryEnvelope&inSR=2193&spatialRel=esriSpatialRelIntersects",
+                "&outFields=", fields, "&outSR=2193",
+                "&resultOffset=", offset, "&resultRecordCount=1000&f=geojson")
+    tmp <- tempfile(fileext = ".geojson")
+    utils::download.file(q, tmp, quiet = TRUE, mode = "wb")
+    x <- sf::st_read(tmp, quiet = TRUE)
+    if (!nrow(x)) break
+    sf::st_crs(x) <- 2193
+    pages[[length(pages) + 1]] <- x
+    if (nrow(x) < 1000) break
+    offset <- offset + 1000
+  }
+  x <- if (length(pages)) do.call(rbind, pages) else sf::st_sf(geometry = sf::st_sfc(crs = 2193))
   if (!all(sf::st_geometry_type(x) %in% c("LINESTRING", "MULTILINESTRING"))) x <- sf::st_make_valid(x)
   sf::st_write(x, file.path(out, file), delete_dsn = TRUE, quiet = TRUE)
   cat(file, ":", nrow(x), "features\n")
@@ -79,6 +95,15 @@ arcgis("PC12_Features/FeatureServer/24", "LandUse", "peacocke_height.gpkg")
 rd <- arcgis("RoadHierarchy20260623/FeatureServer/0", "FIRST_ROAD_NAME,FIRST_Road_Classification",
              "centrelines.gpkg", pad = 100)
 print(table(rd$FIRST_Road_Classification))
+# H3: heritage, natural areas (Plan Change 9) and the PC14 High Flood Hazard
+# Area (Floodviewer hazard factor 4, both scenarios and both models).
+arcgis("eplan_pc9_data/FeatureServer/81", "Name,ReferenceNo,Ranking", "built_heritage_points.gpkg")
+arcgis("eplan_pc9_data/FeatureServer/94", "Name", "heritage_area.gpkg")
+arcgis("eplan_pc9_amendments_data/FeatureServer/135", "Site_Id,Sna_Type", "natural_area.gpkg")
+f1 <- arcgis("hazards_HCC_OneHundredYear_FloodHazards/FeatureServer/0", "Hazard_Factor,Climate_Change_Type",
+             "flood_high_catchment.gpkg", where = "Hazard_Factor=4")
+f2 <- arcgis("hazards_HCC_WaikatoRiverGullyAreaFloodHazard/FeatureServer/0", "Hazard_Factor",
+             "flood_high_river.gpkg", where = "Hazard_Factor=4")
 
 parcels <- load_linz_layer("primary_parcels", bb, cache_dir = out)
 parcels <- sf::st_transform(parcels, 2193)

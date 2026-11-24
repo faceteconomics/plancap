@@ -1,15 +1,16 @@
 # Run the Hamilton rulebook on the fetched extracts (data-raw/hamilton/fetch.R).
 #   Rscript data-raw/hamilton/run.R                 # every extract in the cache
 #   Rscript data-raw/hamilton/run.R peacocke        # one
+#   Rscript data-raw/hamilton/run.R city            # the whole city (about 2.5 hours)
 setwd("D:/Projects_cl/plancap")
 suppressPackageStartupMessages(devtools::load_all(quiet = TRUE))
 source("data-raw/hamilton/prepare.R")
 root <- "data-raw/cache/hamilton"
 args <- commandArgs(trailingOnly = TRUE)
-ex <- c("peacocke", "ruakura", "frankton", "thebase", "terapa", "university")
+ex <- c("peacocke", "ruakura", "frankton", "thebase", "terapa", "university", "city")
 dirs <- c(claudelands = root, setNames(file.path(root, ex), ex))
 dirs <- dirs[file.exists(file.path(dirs, "zoning.gpkg"))]
-if (length(args)) dirs <- dirs[args]
+dirs <- if (length(args)) dirs[args] else dirs[names(dirs) != "city"]  # the city run is long: ask for it by name
 rb <- read_rulebook("inst/extdata/hamilton_rulebook.xlsx")
 for (nm in names(dirs)) {
   cat("\n==== ", nm, "\n")

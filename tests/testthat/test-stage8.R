@@ -34,6 +34,14 @@ test_that("Hamilton's rulebook covers the centres, business and industrial zones
   expect_identical(rb$zones$B5$use$residential, TRUE)
 })
 
+test_that("Hamilton's overlays include heritage, natural areas and PC14 flooding, flagged as proposed", {
+  rb <- rulebook_example("hamilton")
+  expect_true(all(c("built_heritage", "heritage_area", "natural_area", "flood_high") %in% names(rb$overlays)))
+  fl <- rb$overlays$flood_high
+  expect_match(fl$source, "PROPOSED")
+  expect_identical(fl$type, "exclusion")
+})
+
 test_that("the 3D view builds", {
   skip_if_not_installed("mapgl")
   cap <- estimate_capacity(scenario("3D", set_conversion(fixture_rulebook(), conversion(dwelling_size = 100)),
