@@ -246,6 +246,13 @@ parcel_geometry <- function(sites, roads = NULL, water = NULL, centrelines = NUL
     seg <- tag_water(seg, water, m$water_boundary_distance)
   }
 
+  # The class of the road in front of each road boundary, as a tag (an
+  # arterial setback names the tag), from a class column of the centrelines.
+  cf <- m$road_class_field %||% ""
+  if (nzchar(cf) && !is.null(centrelines) && cf %in% names(centrelines) && any(seg$boundary_class %in% "road")) {
+    seg <- tag_road_class(seg, ob, centrelines, cf)
+  }
+
   # Road width in front of each site.
   out$road_width <- NA_real_
   out$road_width_method <- NA_character_
@@ -426,6 +433,23 @@ tag_water <- function(seg, water, max_distance) {
   hit_f <- f[o][first]
   seg$water_distance[hit_s] <- d[o][first]
   seg$tags[hit_s] <- paste0(seg$tags[hit_s], tag[hit_f], "|")
+  seg
+}
+
+# Tag each road segment with the class of the nearest centreline in front of
+# it (normalised: "Minor Arterial Road" becomes "minor_arterial_road").
+tag_road_class <- function(seg, ob, centrelines, field, ahead = 6, max_dist = 40) {
+  r <- which(seg$boundary_class %in% "road")
+  cg <- as_geos(centrelines)
+  pt <- points_like(ob$mx[r] + ob$ox[r] * ahead, ob$my[r] + ob$oy[r] * ahead, cg)
+  near <- geos::geos_nearest(pt, cg)
+  d <- geos::geos_distance(pt, cg[near])
+  ok <- !is.na(near) & d <= max_dist
+  cls <- as.character(centrelines[[field]])[near[ok]]
+  tag <- gsub("^_|_$", "", gsub("[^a-z0-9]+", "_", tolower(cls)))
+  keep <- !is.na(tag) & nzchar(tag)
+  i <- r[ok][keep]
+  seg$tags[i] <- paste0(seg$tags[i], tag[keep], "|")
   seg
 }
 

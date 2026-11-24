@@ -1,39 +1,74 @@
-# Fetch the Hamilton extract for the "Adding a new jurisdiction" walkthrough.
+# Fetch a Hamilton extract for plancap.
 #
 # Run FROM THE capacityengine FOLDER (its LINZ downloader and settings):
-#   Rscript ../plancap/data-raw/hamilton/fetch.R
+#   Rscript ../plancap/data-raw/hamilton/fetch.R            # the Claudelands walkthrough extract
+#   Rscript ../plancap/data-raw/hamilton/fetch.R peacocke   # another named extract (see `extracts`)
 #
-# Writes ../plancap/data-raw/cache/hamilton/ (git-ignored):
+# Writes ../plancap/data-raw/cache/hamilton/ (the walkthrough extract) or
+# ../plancap/data-raw/cache/hamilton/<name>/ (git-ignored):
 #   * zoning.gpkg: Hamilton City Council's District Plan Zones
 #     (DistrictPlan_Zoning FeatureServer, the Operative District Plan with
-#     Plan Change 12) over the extract;
+#     Plan Change 12);
+#   * infrastructure_capacity.gpkg, precincts.gpkg: the PC12 Three Waters
+#     Infrastructure Capacity Overlay and Precincts (eplan_pc12_amendments_data);
+#   * gully_hazard.gpkg: the Waikato Riverbank and Gully Hazard Area;
+#   * centrelines.gpkg: the road hierarchy (RoadHierarchy20260623), for the
+#     arterial setback;
 #   * parcels.gpkg: LINZ NZ Primary Parcels (layer 50772, CC BY 4.0).
-# The council's zoning is not redistributed with the package: its open data
-# entry states no licence ("check with source agency").
+# The council's layers are not redistributed with the package: its open data
+# entries state no licence ("check with source agency").
 
 suppressPackageStartupMessages(devtools::load_all(quiet = TRUE))
-out <- "../plancap/data-raw/cache/hamilton"
+args <- commandArgs(trailingOnly = TRUE)
+name <- if (length(args)) args[[1]] else "claudelands"
+extracts <- list(
+  # About 1.4 km square over Claudelands and Hamilton East, between the
+  # central city's high density ring and the Five Cross Roads medium density area.
+  claudelands = c(175.2897, -37.7815, 700),
+  # Peacocke: the Medium Density Residential Zone (Chapter 4A) and its gullies.
+  peacocke = c(175.3120, -37.8260, 900),
+  # Ruakura: the Large Lot Residential Zone east of the university.
+  ruakura = c(175.3330, -37.7810, 700)
+)
+e <- extracts[[name]]
+if (is.null(e)) stop("Unknown extract ", name, "; one of ", paste(names(extracts), collapse = ", "))
+out <- file.path("../plancap/data-raw/cache/hamilton", if (name == "claudelands") "" else name)
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
-# About 1.4 km square over Claudelands and Hamilton East, between the
-# central city's high density ring and the Five Cross Roads medium density
-# area.
-centre <- sf::st_transform(sf::st_sfc(sf::st_point(c(175.2897, -37.7815)), crs = 4326), 2193)
+centre <- sf::st_transform(sf::st_sfc(sf::st_point(e[1:2]), crs = 4326), 2193)
 xy <- sf::st_coordinates(centre)
-half <- 700
+half <- e[[3]]
 bb <- sf::st_bbox(c(xmin = xy[1] - half, ymin = xy[2] - half, xmax = xy[1] + half, ymax = xy[2] + half),
                   crs = sf::st_crs(2193))
-env <- paste(bb[["xmin"]], bb[["ymin"]], bb[["xmax"]], bb[["ymax"]], sep = ",")
-q <- paste0("https://services1.arcgis.com/R6s0QqCMQdwKY6yp/arcgis/rest/services/DistrictPlan_Zoning/FeatureServer/0/query",
-            "?where=1%3D1&geometry=", env,
-            "&geometryType=esriGeometryEnvelope&inSR=2193&spatialRel=esriSpatialRelIntersects",
-            "&outFields=Zoning_1,Sub_Zone,Zone_Description&outSR=2193&f=geojson")
-zones <- sf::st_read(q, quiet = TRUE)
-sf::st_crs(zones) <- 2193
-zones <- sf::st_make_valid(zones)
-sf::st_write(zones, file.path(out, "zoning.gpkg"), delete_dsn = TRUE, quiet = TRUE)
-cat(nrow(zones), "zone polygons\n")
+
+base <- "https://services1.arcgis.com/R6s0QqCMQdwKY6yp/arcgis/rest/services/"
+arcgis <- function(path, fields, file, pad = 0) {
+  env <- paste(bb[["xmin"]] - pad, bb[["ymin"]] - pad, bb[["xmax"]] + pad, bb[["ymax"]] + pad, sep = ",")
+  q <- paste0(base, path, "/query?where=1%3D1&geometry=", env,
+              "&geometryType=esriGeometryEnvelope&inSR=2193&spatialRel=esriSpatialRelIntersects",
+              "&outFields=", fields, "&outSR=2193&resultRecordCount=2000&f=geojson")
+  tmp <- tempfile(fileext = ".geojson")
+  utils::download.file(q, tmp, quiet = TRUE, mode = "wb")
+  x <- sf::st_read(tmp, quiet = TRUE)
+  if (!nrow(x)) x <- sf::st_sf(x, geometry = sf::st_sfc(crs = 2193))
+  if (nrow(x) >= 2000) stop(path, ": 2,000 features returned; page the query")
+  sf::st_crs(x) <- 2193
+  if (!all(sf::st_geometry_type(x) %in% c("LINESTRING", "MULTILINESTRING"))) x <- sf::st_make_valid(x)
+  sf::st_write(x, file.path(out, file), delete_dsn = TRUE, quiet = TRUE)
+  cat(file, ":", nrow(x), "features\n")
+  invisible(x)
+}
+
+zones <- arcgis("DistrictPlan_Zoning/FeatureServer/0", "Zoning_1,Sub_Zone,Zone_Description", "zoning.gpkg")
 print(table(zones$Zone_Description))
+arcgis("eplan_pc12_amendments_data/FeatureServer/130", "OBJECTID", "infrastructure_capacity.gpkg")
+pr <- arcgis("eplan_pc12_amendments_data/FeatureServer/141", "Name,Type", "precincts.gpkg")
+print(table(pr$Name))
+arcgis("GEOTECH_AND_HYDRO___DP_Waikato_River_Gully_Hazard_Area/FeatureServer/0", "Hazard_Fac", "gully_hazard.gpkg")
+# Centre lines a little beyond the extract, so edge sites find their road.
+rd <- arcgis("RoadHierarchy20260623/FeatureServer/0", "FIRST_ROAD_NAME,FIRST_Road_Classification",
+             "centrelines.gpkg", pad = 100)
+print(table(rd$FIRST_Road_Classification))
 
 parcels <- load_linz_layer("primary_parcels", bb, cache_dir = out)
 parcels <- sf::st_transform(parcels, 2193)

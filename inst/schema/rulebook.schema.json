@@ -234,6 +234,9 @@
         },
         "rear_site_sides_as_rear": {
           "type": "boolean"
+        },
+        "road_class_field": {
+          "type": "string"
         }
       }
     },

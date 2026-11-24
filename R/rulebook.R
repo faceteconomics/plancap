@@ -153,6 +153,11 @@ rulebook_defaults <- function() {
 #'     as a dwelling there, so a garage or shed is not. 50.}
 #'   \item{`front_setback_max_offset`}{A parcel further than this (m) from
 #'     the street line is not taken to front it. 60.}
+#'   \item{`road_class_field`}{Column of the scenario's road centre lines
+#'     holding a road class (such as arterial or local). Each road boundary is
+#'     tagged with the class of the road in front of it, normalised to lower
+#'     case with underscores (`"minor_arterial_road"`), so a rule can name it
+#'     in `boundaries`. `""` for none.}
 #'   \item{`rear_site_sides_as_rear`}{Whether a rear site's side boundaries
 #'     are rear boundaries, where a plan defines a rear site's yards as all
 #'     rear yards (Auckland Unitary Plan J1: a rear yard "Includes: all yards
@@ -172,7 +177,7 @@ morphology_defaults <- function() {
        min_sliver_area = 1, access_touch_distance = 0.5, access_contact_tolerance = 0.05,
        access_max_strip_width = 10, access_lot_max_area = 800, front_setback_neighbours = 3,
        front_setback_min_dwelling_area = 50, front_setback_max_offset = 60,
-       rear_site_sides_as_rear = FALSE)
+       rear_site_sides_as_rear = FALSE, road_class_field = "")
 }
 
 #' Floor area to dwellings conversion

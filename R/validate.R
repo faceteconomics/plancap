@@ -99,8 +99,12 @@ validate_rulebook <- function(rb) {
       s <- z$setbacks[[i]]
       sp <- paste0(path, "/setbacks/", i - 1)
       bad <- setdiff(s$boundaries, classes)
-      if (length(bad)) add("warning", sp, paste0("boundary class not built in: ", paste(bad, collapse = ", "),
-                                                 " (needs its own layer)"))
+      # With a road class field, other names are expected to be road classes
+      # tagged from the centre lines: a note, not a warning.
+      road_tags <- nzchar(rb$morphology$road_class_field %||% "")
+      if (length(bad)) add(if (road_tags) "note" else "warning", sp,
+                           paste0("boundary class not built in: ", paste(bad, collapse = ", "),
+                                  if (road_tags) " (a road class tagged from the centre lines?)" else " (needs its own layer)"))
       for (k in c("adjacent_zones", "not_adjacent_zones")) {
         badz <- setdiff(s$when[[k]], zone_or_family)
         if (length(badz)) add("error", paste0(sp, "/when/", k),

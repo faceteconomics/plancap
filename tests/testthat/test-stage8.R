@@ -33,3 +33,55 @@ test_that("the 3D view builds", {
   expect_s3_class(view_capacity_3d(cap, footprints = TRUE), "htmlwidget")
   expect_identical(basemap_credit(TRUE), "Basemap: Esri, World Gray Canvas.")
 })
+
+# ---- Road classes from centre lines (Hamilton's arterial setback) -----------
+
+class_lines <- function() {
+  sf::st_sf(cls = c("Minor Arterial Road", "Local Road"),
+            geometry = sf::st_sfc(sf::st_linestring(rbind(c(-200, -10), c(50, -10))),
+                                  sf::st_linestring(rbind(c(50, -10), c(300, -10))), crs = NZTM))
+}
+class_rulebook <- function(field = "cls") {
+  rb <- rulebook("Classes") |>
+    add_zone(zone("A", height = height_limit(8, source = "h"),
+                  setbacks = list(yard(1, "road", source = "y1"),
+                                  yard(5, "minor_arterial_road", source = "y5"))),
+             zone("B", height = height_limit(8, source = "h")),
+             zone("OS", method = "none", source = "OS")) |>
+    set_zone_families(OPEN_SPACE = "OS") |>
+    set_conversion(conversion(dwelling_size = 100))
+  rb$morphology$road_class_field <- field
+  rb
+}
+
+test_that("road boundaries are tagged with the class of the road in front", {
+  sc <- scenario("C", class_rulebook(), parcels = fixture_parcels(), roads = fixture_road(),
+                 zoning = fixture_zoning(), centrelines = class_lines())
+  seg <- prepare_sites(sc)$segments
+  road <- seg[seg$boundary_class == "road", ]
+  west <- road$site_id[grepl("minor_arterial_road", road$tags)]
+  east <- road$site_id[grepl("local_road", road$tags)]
+  expect_true(length(west) > 0 && length(east) > 0)
+  expect_length(intersect(west, east), 0)
+  # Without the field, nothing is tagged.
+  sc0 <- scenario("C0", class_rulebook(""), parcels = fixture_parcels(), roads = fixture_road(),
+                  zoning = fixture_zoning(), centrelines = class_lines())
+  expect_false(any(grepl("arterial", prepare_sites(sc0)$segments$tags)))
+})
+
+test_that("a setback naming a road class applies only along that class", {
+  rb <- class_rulebook()
+  expect_true(validate_rulebook(rb)$valid)
+  run <- function(rb) {
+    cap <- estimate_capacity(scenario("C", rb, parcels = fixture_parcels(), roads = fixture_road(),
+                                      zoning = fixture_zoning(), centrelines = class_lines()))
+    s <- sf::st_drop_geometry(cap$sites)
+    stats::setNames(s$footprint, s$parcel_id %||% s$site_id)
+  }
+  with_class <- run(rb)
+  rb$morphology$road_class_field <- ""
+  without <- run(rb)
+  # Zone A sites (west of x = 40) front the arterial and lose a deeper front strip.
+  expect_true(any(with_class < without - 1e-6))
+  expect_true(all(with_class <= without + 1e-6))
+})

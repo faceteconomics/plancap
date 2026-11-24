@@ -2,15 +2,14 @@
 #
 # Entered through the Excel template (inst/extdata/hamilton_rulebook.xlsx) by
 # data-raw/hamilton/fill_template.R from the ePlan revision of 13 November 2026.
-# General, Medium and High Density Residential, Business 6 and Business 2 only;
+# Built out in stages (data-raw/hamilton/PLAN.md); PC14 rules are proposed;
 # check the plan itself before relying on any value.
 
 # plancap rulebook (schema 0.1)
-# Hamilton City Operative District Plan (residential zones and Business 6, walkthrough extract)
+# Hamilton City Operative District Plan
 schema_version: '0.1'
 plan:
-  name: Hamilton City Operative District Plan (residential zones and Business 6, walkthrough
-    extract)
+  name: Hamilton City Operative District Plan
   id: hamilton-odp-2026
   jurisdiction: Hamilton
   country: NZ
@@ -18,8 +17,8 @@ plan:
   units: m
   source: Hamilton City Operative District Plan, ePlan revision 13 November 2026 (Plan
     Change 12 operative 20 December 2024)
-  notes: 'Entered through the Excel template for the Adding a new jurisdiction vignette:
-    General, Medium and High Density Residential, Business 6 and Business 2 only.'
+  notes: Entered through the Excel template from the ePlan; built out in stages (data-raw/hamilton/PLAN.md).
+    Plan Change 14 (Flooding) rules are proposed, flagged where used.
 defaults:
   storey_height: 3.0
   min_floorplate: 30.0
@@ -32,6 +31,7 @@ defaults:
     deduction: 0.25
 morphology:
   reserve_families: OPEN_SPACE
+  road_class_field: FIRST_Road_Classification
 conversion:
   dwelling_size: 100.0
   efficiency: 0.85
@@ -44,6 +44,8 @@ zone_families:
     - GRZ
     - MRZ
     - HDZ
+    - LLRZ
+    - PMRZ
   BUSINESS:
     - B6G
     - B6M
@@ -53,6 +55,8 @@ zone_map:
   General Residential: GRZ
   Medium Density Residential: MRZ
   High Density Residential: HDZ
+  Large Lot Residential: LLRZ
+  Peacocke Medium Density Residential: PMRZ
   Business 6 (General Residential): B6G
   Business 6 (Medium Density Residential): B6M
   Business 2: B2
@@ -90,6 +94,13 @@ zones:
           - side
           - rear
         source: 'HCC ODP 4.2.5.5: 45 degrees from 4 m, all boundaries except a road'
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 4.2.5.6 a: arterial transport corridors'
     ratios:
       coverage_max:
         value: 0.45
@@ -184,6 +195,13 @@ zones:
         variant: attached
         source: 'HCC ODP 4.3.4.5 b: boundaries adjoining other zones take 4.3.4.5
           a'
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 4.3.4.6 a iii: arterial transport corridors'
     ratios:
       coverage_max:
         value: 0.5
@@ -208,6 +226,13 @@ zones:
       roof_allowance: 1.0
       source: HCC ODP 4.4.5.4
     setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 4.4.5.6: arterial transport corridors'
       - kind: yard
         distance: 1.0
         boundaries: road
@@ -276,6 +301,101 @@ zones:
       business: no
       source: HCC ODP 4.4.3.1
     source: HCC ODP 4.4 High Density Residential Zone
+  LLRZ:
+    label: Large Lot Residential Zone
+    method: hybrid
+    height:
+      value: 10.0
+      occupiable: 10.0
+      source: HCC ODP 4.5.4.4
+    setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries: road
+        source: HCC ODP 4.5.4.6 a
+      - kind: yard
+        distance: 1.5
+        boundaries: side
+        source: HCC ODP 4.5.4.6 b
+      - kind: yard
+        distance: 1.5
+        boundaries: rear
+        source: HCC ODP 4.5.4.6 d
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 3.0
+        angle_by_bearing:
+          - angle_deg: 28.0
+            from_deg: 135.0
+            to_deg: 225.0
+        boundaries:
+          - side
+          - rear
+        source: 'HCC ODP 4.5.4.5: 28 degrees between north-west and north-east (Figure
+          4.5.4.5 b: the line into the site), 45 degrees otherwise, from 3 m'
+      - kind: plane
+        angle_deg: 45.0
+        start_height: 3.0
+        boundaries: road
+        source: 'HCC ODP 4.5.4.5: 45 degrees from 3 m along a transport corridor'
+    ratios:
+      coverage_max:
+        value: 0.2
+        source: HCC ODP 4.5.4.2
+      landscaping_min:
+        value: 0.7
+        source: 'HCC ODP 4.5.4.3 b: permeable surface 70%'
+    density:
+      site_area_per_dwelling: 2500.0
+      minor_dwellings_per_site: 1.0
+      source: 'HCC ODP 4.5.4.1: 2,500 m2 per residential unit (SH26 Ruakura Structure
+        Plan area); 4.5.3.1 ancillary unit P'
+    use:
+      residential: yes
+      business: no
+      source: HCC ODP 4.5.3.1
+    source: HCC ODP 4.5 Large Lot Residential Zone
+  PMRZ:
+    label: Medium Density Residential Zone, Peacocke Precinct
+    method: volumetric
+    height:
+      value: 12.0
+      occupiable: 12.0
+      storeys: 3.0
+      source: 'HCC ODP 4A MRZ-PREC1-PSP R37: 12 m, 3 storeys'
+    setbacks:
+      - kind: yard
+        distance: 1.5
+        boundaries: road
+        source: HCC ODP 4A R38
+      - kind: yard
+        distance: 1.0
+        boundaries: side
+        source: HCC ODP 4A R38
+      - kind: yard
+        distance: 1.0
+        boundaries: rear
+        source: HCC ODP 4A R38
+      - kind: plane
+        angle_deg: 60.0
+        start_height: 4.0
+        boundaries:
+          - side
+          - rear
+        source: 'HCC ODP 4A R39: 60 degrees from 4 m, not a road boundary'
+    ratios:
+      coverage_max:
+        value: 0.6
+        source: 'HCC ODP 4A R34: 60% for terraced houses and apartments (50% single
+          and duplex)'
+      landscaping_min:
+        value: 0.2
+        source: 'HCC ODP 4A R35, R36: permeable and landscaped 20%'
+    use:
+      residential: yes
+      business: no
+      source: HCC ODP 4A R1-R4
+    source: HCC ODP Chapter 4A Medium Density Residential Zone, Peacocke Precinct
   B6G:
     label: Business 6 Zone, adjacent to the General Residential Zone
     method: volumetric
@@ -285,6 +405,13 @@ zones:
       roof_allowance: 1.0
       source: HCC ODP 6.4.1
     setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: 'HCC ODP 6.4.3: 5 m when fronting an arterial transport corridor'
       - kind: yard
         distance: 1.5
         boundaries:
@@ -339,6 +466,13 @@ zones:
       occupiable: 18.0
       source: HCC ODP 6.4.1
     setbacks:
+      - kind: yard
+        distance: 5.0
+        boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: HCC ODP 6.4.3
       - kind: yard
         distance: 1.5
         boundaries:
@@ -395,6 +529,13 @@ zones:
       - kind: yard
         distance: 5.0
         boundaries:
+          - state_highway
+          - major_arterial_road
+          - minor_arterial_road
+        source: HCC ODP 6.4.3
+      - kind: yard
+        distance: 5.0
+        boundaries:
           - side
           - rear
         when:
@@ -448,26 +589,62 @@ zones:
     label: Transport Corridor Zone
     method: none
     source: HCC ODP zone
+overlays:
+  infrastructure_grz:
+    label: Three Waters Infrastructure Capacity Overlay (General Residential)
+    type: parameters
+    layer: infrastructure_capacity
+    combine: replace
+    applies_to_zones: GRZ
+    parameters:
+      method: hybrid
+      density:
+        site_area_per_dwelling: 200.0
+        source: 'HCC ODP 4.2.5.1: average net site area 200 m2 per unit'
+    source: 'HCC ODP 4.2.5.1: density inside the Three Waters Infrastructure Capacity
+      Overlay'
+  infrastructure_mrz:
+    label: Three Waters Infrastructure Capacity Overlay (Medium Density Residential)
+    type: parameters
+    layer: infrastructure_capacity
+    combine: replace
+    applies_to_zones: MRZ
+    parameters:
+      method: hybrid
+      density:
+        site_area_per_dwelling: 150.0
+        source: 'HCC ODP 4.3.4.1: average net site area 150 m2 per unit'
+    source: 'HCC ODP 4.3.4.1: density inside the Three Waters Infrastructure Capacity
+      Overlay'
+  gully_hazard:
+    label: Waikato Riverbank and Gully Hazard Area
+    type: exclusion
+    layer: gully_hazard
+    removes: all
+    buffer: 6.0
+    source: 'HCC ODP 22.3, 22.2.1l: new buildings D and vulnerable use to avoid the
+      area; 4.2.5.6, 4.3.4.6, 4.4.5.6, 4A R38, 6.4.3: 6 m setback'
+areas:
+  rotokauri_north:
+    label: Rotokauri North Residential Precinct
+    layer: precincts
+    combine: replace
+    filter:
+      Name: Rotokauri North Residential Precinct
+    applies_to_zones: MRZ
+    parameters:
+      height:
+        value: 11.0
+        source: 'HCC ODP 4.3.4.4 b: Rotokauri North Residential Precinct 11 m'
+      setbacks:
+        - kind: upper_level
+          distance: 8.0
+          above_height: 5.0
+          boundaries: rear
+          source: 'HCC ODP 4.3.4.6 m: rear yard 8 m for a building over 5 m (four
+            or more units)'
+    source: 'HCC ODP 4.3.4.4 b, 4.3.4.6 m-o: Rotokauri North Residential Precinct'
 unmodelled_rules:
-  - zones:
-      - GRZ
-      - MRZ
-      - HDZ
-      - B6G
-      - B6M
-      - B2
-    rule: Arterial transport corridor setback (5 m)
-    reason: Needs the transport corridor hierarchy; the local and collector setback
-      is applied to every road.
-    likely_effect: overstates
-    source: HCC ODP 4.2.5.6, 4.3.4.6, 4.4.5.6, 6.4.3
-  - zones:
-      - GRZ
-      - MRZ
-    rule: Density within the Three Waters Infrastructure Capacity Overlay
-    reason: The overlay layer is not held; outside it there is no density standard.
-    likely_effect: overstates
-    source: HCC ODP 4.2.5.1, 4.3.4.1
   - zones:
       - GRZ
       - MRZ
@@ -488,17 +665,6 @@ unmodelled_rules:
     likely_effect: overstates
     source: HCC ODP 4.2.5.3, 4.2.5.9, 4.2.5.10, 4.2.5.13 and equivalents
   - zones:
-      - GRZ
-      - MRZ
-      - HDZ
-      - B6G
-      - B6M
-      - B2
-    rule: Waikato Riverbank and Gully Hazard Area setback (6 m)
-    reason: The hazard area layer is not held.
-    likely_effect: overstates
-    source: HCC ODP 4.2.5.6, 4.3.4.6, 4.4.5.6, 6.4.3
-  - zones:
       - MRZ
       - HDZ
       - B6G
@@ -515,4 +681,31 @@ unmodelled_rules:
     reason: Needs a rear lane, which the extract does not identify.
     likely_effect: understates
     source: HCC ODP 4.2.5.2 b, 4.3.4.2 b
+  - zones: PMRZ
+    rule: 'Peacocke: 50% coverage for single and duplex units; Increased Height Overlay
+      (16 m); bat habitat setback'
+    reason: The 60% terrace and apartment coverage is used; the height overlay and
+      bat habitat layers are not held.
+    likely_effect: either
+    source: HCC ODP 4A R34, R37, R38
+  - zones: LLRZ
+    rule: 'Large Lot: 2 ha density in the Percival and Ryburn Road area'
+    reason: The area is not mapped as a layer.
+    likely_effect: overstates
+    source: HCC ODP 4.5.4.1
+  - zones:
+      - GRZ
+      - MRZ
+      - LLRZ
+    rule: Te Rapa Racecourse, Ruakura, Te Awa Lakes and Rototuna North East precinct
+      rules
+    reason: Staging, structure plan and expressway rules that depend on infrastructure
+      delivery or on layers not held.
+    likely_effect: either
+    source: HCC ODP 4.2, 4.3 precinct rules
+  - zones: MRZ
+    rule: 'Rotokauri North: other precinct standards (front yard, site-wide density)'
+    reason: Only the 11 m height and the 8 m rear yard above 5 m are entered.
+    likely_effect: either
+    source: HCC ODP 4.3.4.6 m-o
 
