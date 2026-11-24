@@ -146,8 +146,8 @@ inputs differ are rebuilt.
 ``` r
 
 res <- run_scenarios(set)
-#> Operative: 6 s.
-#> PC1 as notified: 5.2 s, 154 sites copied from the baseline.
+#> Operative: 4.3 s.
+#> PC1 as notified: 3.7 s, 154 sites copied from the baseline.
 cmp <- compare_scenarios(res)
 cmp
 #> <plancap comparison> baseline "Operative"

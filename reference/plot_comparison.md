@@ -118,8 +118,8 @@ base <- scenario("Operative", rulebook_example("exampleton"),
                  zoning = town$zoning, layers = town[c("height_areas", "flood_hazard", "transit")])
 change <- scenario_change(base, "PC1", rulebook = pc1$rulebook, zoning = pc1$zoning)
 cmp <- compare_scenarios(run_scenarios(scenario_set(base, change)), grid = 200)
-#> Operative: 5.6 s.
-#> PC1: 3.8 s, 575 sites copied from the baseline.
+#> Operative: 3.9 s.
+#> PC1: 3.3 s, 575 sites copied from the baseline.
 plot_comparison(cmp)
 
 plot_change_map(cmp, on = "grid")
