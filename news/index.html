@@ -51,6 +51,13 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="plancap-0009000">plancap 0.0.0.9000<a class="anchor" aria-label="anchor" href="#plancap-0009000"></a></h2>
 <div class="section level3">
+<h3 id="hamilton-built-out-0-0-0-9000">Hamilton built out<a class="anchor" aria-label="anchor" href="#hamilton-built-out-0-0-0-9000"></a></h3>
+<ul><li>Hamilton’s rulebook covers the whole plan: residential, centres, business and industrial zones, precincts, heritage, natural areas and the High Flood Hazard Area of Plan Change 14 (proposed, flagged), and runs city-wide.</li>
+<li>New morphology settings <code>density_area</code> and <code>far_area</code> (<code>"gross"</code> or <code>"net"</code>): the land a density rule and a floor area ratio are measured on. The default, the whole site, keeps capacityengine’s results; Hamilton measures both on net site area, as its definitions say.</li>
+<li>
+<code>morphology$road_class_field</code>: road boundaries are tagged with the class of the road in front, from the scenario’s centre lines, so a setback can name a road class.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="a-new-jurisdiction-maps-ind-documentation-stage-0-0-0-9000">A new jurisdiction, maps in 3D, documentation (stage 8)<a class="anchor" aria-label="anchor" href="#a-new-jurisdiction-maps-ind-documentation-stage-0-0-0-9000"></a></h3>
 <ul><li>Hamilton, New Zealand, entered through the Excel template from the Operative District Plan (revision of 13 November 2026, with Plan Change 12): General, Medium and High Density Residential, Business 6 and Business 2, every value cited, with seven rules registered as not modelled (<code>rulebook_example("hamilton")</code>, <code>inst/extdata/hamilton_rulebook.xlsx</code>). The vignette “Adding a new jurisdiction: Hamilton” follows it from the plan text to results, including a “permitted activities only” scenario.</li>
 <li>

@@ -134,12 +134,33 @@ A named list:
   A parcel further than this (m) from the street line is not taken to
   front it. 60.
 
+- `road_class_field`:
+
+  Column of the scenario's road centre lines holding a road class (such
+  as arterial or local). Each road boundary is tagged with the class of
+  the road in front of it, normalised to lower case with underscores
+  (`"minor_arterial_road"`), so a rule can name it in `boundaries`. `""`
+  for none.
+
 - `rear_site_sides_as_rear`:
 
   Whether a rear site's side boundaries are rear boundaries, where a
   plan defines a rear site's yards as all rear yards (Auckland Unitary
   Plan J1: a rear yard "Includes: all yards on a rear site"). They are
   tagged `rear_site_side`. `FALSE`.
+
+- `density_area`:
+
+  The land a density rule (land per dwelling, dwellings per hectare,
+  large-site subdivision) is measured on: `"gross"`, the whole site less
+  excluded land (as capacityengine), or `"net"`, net site area (without
+  access legs, when `exclude_access_legs` is `TRUE`) less excluded land.
+  `"gross"`.
+
+- `far_area`:
+
+  The land a floor area ratio is measured on: `"gross"` (the whole site)
+  or `"net"` (net site area). `"gross"`.
 
 ## Examples
 

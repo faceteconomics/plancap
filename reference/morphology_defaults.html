@@ -171,11 +171,29 @@ as a dwelling there, so a garage or shed is not. 50.</p></dd>
 <dd><p>A parcel further than this (m) from
 the street line is not taken to front it. 60.</p></dd>
 
+<dt><code>road_class_field</code></dt>
+<dd><p>Column of the scenario's road centre lines
+holding a road class (such as arterial or local). Each road boundary is
+tagged with the class of the road in front of it, normalised to lower
+case with underscores (<code>"minor_arterial_road"</code>), so a rule can name it
+in <code>boundaries</code>. <code>""</code> for none.</p></dd>
+
 <dt><code>rear_site_sides_as_rear</code></dt>
 <dd><p>Whether a rear site's side boundaries
 are rear boundaries, where a plan defines a rear site's yards as all
 rear yards (Auckland Unitary Plan J1: a rear yard "Includes: all yards
 on a rear site"). They are tagged <code>rear_site_side</code>. <code>FALSE</code>.</p></dd>
+
+<dt><code>density_area</code></dt>
+<dd><p>The land a density rule (land per dwelling,
+dwellings per hectare, large-site subdivision) is measured on:
+<code>"gross"</code>, the whole site less excluded land (as capacityengine), or
+<code>"net"</code>, net site area (without access legs, when
+<code>exclude_access_legs</code> is <code>TRUE</code>) less excluded land. <code>"gross"</code>.</p></dd>
+
+<dt><code>far_area</code></dt>
+<dd><p>The land a floor area ratio is measured on: <code>"gross"</code>
+(the whole site) or <code>"net"</code> (net site area). <code>"gross"</code>.</p></dd>
 
 
 </dl></div>

@@ -62,6 +62,14 @@ zones use a 7 m storey rather than the 3 m default. Plan Change 14
 (Flooding) was decided on 24 December 2025 and is under appeal; its High
 Flood Hazard Area is applied as though in force, marked as proposed.
 
+The plan’s definitions matter too. Hamilton’s density rules are “average
+net site area” per unit, and net site area leaves out any entrance strip
+or private way; its floor area ratio is also over the net area of the
+site. By default plancap measures both on the whole site, as
+capacityengine does, so the rulebook says otherwise
+(`morphology: density_area: net`, `far_area: net`). On a rear site the
+access leg then gives no dwellings.
+
 ## 2. Enter the rules in the template
 
 [`rulebook_template()`](https://faceteconomics.github.io/plancap/reference/rulebook_template.md)
@@ -473,8 +481,8 @@ summary(cap)
 #> 
 #> ── Capacity: Hamilton, Claudelands ──
 #> 
-#> 1,493 sites on 187.5 ha: 1,926,295 m2 of floor area (1,868,430 m2 residential,
-#> 57,866 m2 business), 11,872 dwellings and 1,221 minor dwellings.
+#> 1,493 sites on 187.5 ha: 1,926,038 m2 of floor area (1,868,430 m2 residential,
+#> 57,608 m2 business), 11,848 dwellings and 1,210 minor dwellings.
 #> Plan-enabled, gross, blank-slate capacity; dwellings at 100 m2 and 85%
 #> efficiency.
 #> 
@@ -482,26 +490,26 @@ summary(cap)
 #>  zone_key sites land_area floor_area dwellings  far floor_area_share
 #>    (none)    11    14,277          0         0 0.00             0.0%
 #>        B1     2     1,903      3,805        15 2.00             0.2%
-#>        B2    20    23,245     46,491         0 2.00             2.4%
+#>        B2    20    23,245     46,233         0 1.99             2.4%
 #>       B6G    18    10,256     16,951        74 1.65             0.9%
 #>       B6M    12     2,591      7,318        40 2.82             0.4%
 #>       CC1   108    70,941    608,683     5,125 8.58            31.6%
 #>       CFZ    35   305,192          0         0 0.00             0.0%
-#>       GRZ   970   721,053    558,535     1,726 0.77            29.0%
+#>       GRZ   970   721,053    558,535     1,706 0.77            29.0%
 #>       HDZ    91    86,529    351,442     2,950 4.06            18.2%
 #>       MFZ     2   163,624          0         0 0.00             0.0%
-#>       MRZ   162   160,558    333,069     1,942 2.07            17.3%
+#>       MRZ   162   160,558    333,069     1,938 2.07            17.3%
 #>       OSZ    62   314,655          0         0 0.00             0.0%
 #> 
 #> ── Flags
 #> no_capacity 99, no_capacity_zone 99, no_zone 11, ok 1,284
 #> 
 #> ── What limits dwellings
-#> floor_area 557, max_dwellings_per_site 443, density 383
+#> floor_area 555, max_dwellings_per_site 443, density 385
 check_capacity(cap)
 #> ✔ parcels accounted for: 1474 of 1474 (every input parcel is in a site)
 #> ✔ land in equals land out: 1874825 of 1874825 m2 (site areas add to parcel areas (overlaps aside))
-#> ✔ storeys add to sites: 1926295 m2 (floor area by storey equals floor area by site)
+#> ✔ storeys add to sites: 1926038 m2 (floor area by storey equals floor area by site)
 #> ✔ uses add to floor area:  (residential plus business equals floor area)
 #> ✔ no missing or negative values: 0 (floor area and dwellings)
 #> ✔ within the height's storeys: 0 (no site above its area times its storeys)
@@ -602,13 +610,13 @@ permitted <- rb |>
   set_rule("zones.MRZ.density.max_dwellings_per_site", 3)
 sc_p <- scenario_change(sc, "Permitted activities only", rulebook = permitted)
 cmp <- compare_scenarios(run_scenarios(scenario_set(sc, sc_p)))
-#> Hamilton, Claudelands: 72.2 s.
-#> Permitted activities only: 64.4 s, 350 sites copied from the baseline.
+#> Hamilton, Claudelands: 72.8 s.
+#> Permitted activities only: 63.9 s, 350 sites copied from the baseline.
 cmp$pairs[[1]]$totals
 #>                  measure baseline scenario change change_pct
-#> 1             floor_area  1926295  1926295      0    0.00000
+#> 1             floor_area  1926038  1926038      0    0.00000
 #> 2 residential_floor_area  1868430  1868430      0    0.00000
-#> 3              dwellings    11872     9822  -2050  -17.26752
+#> 3              dwellings    11848     9814  -2034  -17.16745
 plot_comparison(cmp, measure = "dwellings", type = "bars")
 ```
 
@@ -685,8 +693,8 @@ summary(city)
 #> 
 #> ── Capacity: Hamilton, city ──
 #> 
-#> 61,520 sites on 9170.2 ha: 104,944,724 m2 of floor area (82,133,055 m2
-#> residential, 22,811,669 m2 business), 469,395 dwellings and 130,277 minor
+#> 61,520 sites on 9170.2 ha: 104,935,632 m2 of floor area (82,125,382 m2
+#> residential, 22,810,251 m2 business), 466,970 dwellings and 128,546 minor
 #> dwellings.
 #> Plan-enabled, gross, blank-slate capacity; dwellings at 100 m2 and 85%
 #> efficiency.
@@ -694,28 +702,28 @@ summary(city)
 #> ── By zone
 #>  zone_key  sites  land_area floor_area dwellings  far floor_area_share
 #>    (none)    322    479,880          0         0 0.00             0.0%
-#>        B1    113    176,161    351,022     1,528 1.99             0.3%
-#>        B2     25     49,922     99,844         0 2.00             0.1%
+#>        B1    113    176,161    347,432     1,496 1.97             0.3%
+#>        B2     25     49,922     99,586         0 1.99             0.1%
 #>        B3     34    351,402    702,707     3,045 2.00             0.7%
 #>        B4     24     54,028    107,882         0 2.00             0.1%
 #>       B4I     35    161,047    321,272         0 1.99             0.3%
-#>        B5    253    422,370  1,657,593    10,756 3.92             1.6%
-#>       B6G    177    159,792    309,127     1,362 1.93             0.3%
-#>       B6M    139    126,097    373,580     2,151 2.96             0.4%
-#>        B7    207    200,831    397,176         0 1.98             0.4%
+#>        B5    253    422,370  1,654,048    10,725 3.92             1.6%
+#>       B6G    177    159,792    308,655     1,358 1.93             0.3%
+#>       B6M    139    126,097    373,513     2,150 2.96             0.4%
+#>        B7    207    200,831    396,015         0 1.97             0.4%
 #>       CC1    416    341,020  2,941,737    24,821 8.63             2.8%
 #>       CC2    476    465,788  3,187,263    26,882 6.84             3.0%
 #>       CC3     67     99,393    483,071     4,086 4.86             0.5%
 #>       CFZ    370  3,191,467          0         0 0.00             0.0%
 #>       FUZ    192  5,195,166          0         0 0.00             0.0%
-#>       GRZ 44,587 34,927,902 40,038,010   159,391 1.15            38.2%
+#>       GRZ 44,587 34,927,902 40,038,010   157,381 1.15            38.2%
 #>       HDZ  1,747  1,389,903  5,590,804    46,678 4.02             5.3%
 #>       IND  2,334  8,156,951 13,991,848         0 1.72            13.3%
 #>       KNU     22    642,231          0         0 0.00             0.0%
 #>       KNZ     16    898,550  1,075,966         0 1.20             1.0%
 #>      LLRZ    131    863,834    513,851       294 0.59             0.5%
 #>       MFZ     61  1,355,493          0         0 0.00             0.0%
-#>       MRZ  7,217  7,624,987 16,047,012    94,505 2.10            15.3%
+#>       MRZ  7,217  7,624,987 16,047,012    94,158 2.10            15.3%
 #>       OSZ  1,750 13,831,290          0         0 0.00             0.0%
 #>      PLCZ      3     85,563    572,147     4,155 6.69             0.5%
 #>      PMRZ    548  4,451,878 10,519,880    89,165 2.36            10.0%
@@ -730,11 +738,11 @@ summary(city)
 #> no_capacity 2,052, no_capacity_zone 2,520, no_zone 322, ok 56,626
 #> 
 #> ── What limits dwellings
-#> density 41,452, floor_area 15,407, max_dwellings_per_site 1,819
+#> density 41,570, floor_area 15,289, max_dwellings_per_site 1,819
 check_capacity(city)
 #> ✔ parcels accounted for: 60705 of 60705 (every input parcel is in a site)
 #> ✔ land in equals land out: 91702258 of 91702274 m2 (site areas add to parcel areas (overlaps aside))
-#> ✔ storeys add to sites: 104944724 m2 (floor area by storey equals floor area by site)
+#> ✔ storeys add to sites: 104935632 m2 (floor area by storey equals floor area by site)
 #> ✔ uses add to floor area:  (residential plus business equals floor area)
 #> ✔ no missing or negative values: 0 (floor area and dwellings)
 #> ✔ within the height's storeys: 0 (no site above its area times its storeys)
@@ -749,13 +757,13 @@ constraint_breakdown(city, by = "zone")
 #>        B1         theoretical     880,804     880,804
 #>        B1 storeys_not_reached       3,250     877,554
 #>        B1   setbacks_and_land      51,030     826,524
-#>        B1                 far     475,503     351,022
-#>        B1             enabled     351,022     351,022
+#>        B1                 far     479,093     347,432
+#>        B1             enabled     347,432     347,432
 #>        B2         theoretical     249,610     249,610
 #>        B2 storeys_not_reached           0     249,610
 #>        B2   setbacks_and_land      19,909     229,701
-#>        B2                 far     129,857      99,844
-#>        B2             enabled      99,844      99,844
+#>        B2                 far     130,115      99,586
+#>        B2             enabled      99,586      99,586
 #>        B3         theoretical   2,108,414   2,108,414
 #>        B3 storeys_not_reached         294   2,108,120
 #>        B3   setbacks_and_land      52,311   2,055,809
@@ -774,23 +782,23 @@ constraint_breakdown(city, by = "zone")
 #>        B5         theoretical   3,378,961   3,378,961
 #>        B5 storeys_not_reached      56,011   3,322,951
 #>        B5   setbacks_and_land     414,398   2,908,553
-#>        B5                 far   1,250,960   1,657,593
-#>        B5             enabled   1,657,593   1,657,593
+#>        B5                 far   1,254,505   1,654,048
+#>        B5             enabled   1,654,048   1,654,048
 #>       B6G         theoretical     479,375     479,375
 #>       B6G storeys_not_reached      10,882     468,493
 #>       B6G   setbacks_and_land      77,417     391,076
-#>       B6G                 far      81,949     309,127
-#>       B6G             enabled     309,127     309,127
+#>       B6G                 far      82,421     308,655
+#>       B6G             enabled     308,655     308,655
 #>       B6M         theoretical     756,584     756,584
 #>       B6M storeys_not_reached       9,676     746,908
 #>       B6M   setbacks_and_land     113,715     633,193
-#>       B6M                 far     259,613     373,580
-#>       B6M             enabled     373,580     373,580
+#>       B6M                 far     259,680     373,513
+#>       B6M             enabled     373,513     373,513
 #>        B7         theoretical   1,004,155   1,004,155
 #>        B7 storeys_not_reached      11,215     992,940
 #>        B7   setbacks_and_land      25,393     967,547
-#>        B7                 far     570,371     397,176
-#>        B7             enabled     397,176     397,176
+#>        B7                 far     571,532     396,015
+#>        B7             enabled     396,015     396,015
 #>       CC1         theoretical   3,410,200   3,410,200
 #>       CC1 storeys_not_reached     434,575   2,975,625
 #>       CC1   setbacks_and_land      33,888   2,941,737
