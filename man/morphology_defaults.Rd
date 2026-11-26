@@ -63,10 +63,22 @@ dwellings set a measured front yard (\code{\link[=find_existing_front_setbacks]{
 as a dwelling there, so a garage or shed is not. 50.}
 \item{\code{front_setback_max_offset}}{A parcel further than this (m) from
 the street line is not taken to front it. 60.}
+\item{\code{road_class_field}}{Column of the scenario's road centre lines
+holding a road class (such as arterial or local). Each road boundary is
+tagged with the class of the road in front of it, normalised to lower
+case with underscores (\code{"minor_arterial_road"}), so a rule can name it
+in \code{boundaries}. \code{""} for none.}
 \item{\code{rear_site_sides_as_rear}}{Whether a rear site's side boundaries
 are rear boundaries, where a plan defines a rear site's yards as all
 rear yards (Auckland Unitary Plan J1: a rear yard "Includes: all yards
 on a rear site"). They are tagged \code{rear_site_side}. \code{FALSE}.}
+\item{\code{density_area}}{The land a density rule (land per dwelling,
+dwellings per hectare, large-site subdivision) is measured on:
+\code{"gross"}, the whole site less excluded land (as capacityengine), or
+\code{"net"}, net site area (without access legs, when
+\code{exclude_access_legs} is \code{TRUE}) less excluded land. \code{"gross"}.}
+\item{\code{far_area}}{The land a floor area ratio is measured on: \code{"gross"}
+(the whole site) or \code{"net"} (net site area). \code{"gross"}.}
 }
 }
 \description{

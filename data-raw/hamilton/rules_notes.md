@@ -6,6 +6,23 @@ read 23 Nov 2026 in a browser. Plan Change 12 (Enabling Housing Supply)
 operative 20 Dec 2024 and incorporated. Pending plan changes noted on
 Chapter 4: PC14 (Flooding), PPC21 (Ruakura Inland Port), neither modelled.
 
+## 1.1 Definitions (as amended by PC12; read 27 Nov 2026)
+
+Source: PC12 Appendix 1, 1.1 Definitions and Terms, IHP recommendations clean
+version, November 2024 (hamilton.govt.nz, PC12 IHP recommendation appendices;
+PC12 made operative 20 Dec 2024).
+
+- Net site area: the area of the site (with any unit site area), excluding
+  any entrance strip, internal vehicle access or private way.
+- Floor area ratio: gross floor area of a building over the net area of the
+  site.
+- Site coverage is calculated on net site area.
+
+So density (4.2.5.1, 4.3.4.1: "average net site area") and the floor area
+ratio are measured on net site area: rulebook `morphology: density_area: net,
+far_area: net` (verified 27 Nov 2026: the earlier runs used the whole site,
+adding 2,101 dwellings on 2,030 rear sites city-wide).
+
 ## 4.2 General Residential Zone (GRZ)
 
 - 4.2.3.1 Activity status: up to 2 residential units on a site (excluding

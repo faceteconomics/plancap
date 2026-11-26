@@ -72,10 +72,16 @@ estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = 
   pz <- lapply(res$param_id, function(p) if (is.na(p)) NULL else params[[p]])
   method <- vapply(pz, function(z) z$method %||% NA_character_, "")
   report <- list()
+  # The land a floor area ratio and a density are measured on: the whole site
+  # (as capacityengine), or the net site area, without access legs.
+  morph <- prep$morphology %||% morphology_defaults()
+  net_area <- s$net_area %||% s$area
+  net_area[is.na(net_area)] <- s$area[is.na(net_area)]
+  far_land <- if (identical(morph$far_area, "net")) net_area else s$area
 
   # ---- Floor area: caps on the whole stack, then the use split ---------------
   st <- envelope$stack
-  st <- cap_stack_total(st, s, pz, envelope)
+  st <- cap_stack_total(st, s, pz, envelope, far_land)
   st <- split_use(st, s, pz)
   f <- factor(st$site_id, levels = s$site_id)
   sum_by <- function(v) {
@@ -91,7 +97,9 @@ estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = 
   area <- s$area
   removed <- ev$removed_area %||% rep(0, nrow(s))
   removed[is.na(removed)] <- 0
-  land <- pmax(0, area - removed)
+  # Excluded land is measured after access legs come off, so it comes off
+  # either basis.
+  land <- pmax(0, (if (identical(morph$density_area, "net")) net_area else area) - removed)
   ls_d <- dflt$large_site
   threshold <- ls_d$threshold %||% Inf
   deduction <- ls_d$deduction %||% 0
@@ -246,7 +254,7 @@ estimate_capacity <- function(x, envelope = NULL, baseline = NULL, conversion = 
 
 # Floor area ratio and maximum site floorspace cap the stack's total from the
 # ground up: lower storeys keep their area, the top ones give it up.
-cap_stack_total <- function(st, s, pz, envelope) {
+cap_stack_total <- function(st, s, pz, envelope, land = s$area) {
   if (!nrow(st)) return(st)
   st <- st[order(st$site_id, st$storey), , drop = FALSE]
   i <- match(st$site_id, s$site_id)
@@ -255,11 +263,11 @@ cap_stack_total <- function(st, s, pz, envelope) {
     if (is.null(r)) NA_real_ else if (is.numeric(r)) r else if (is.numeric(r$value)) r$value else NA_real_
   }, 0)
   msf <- vapply(pz, function(z) z$form$max_site_floorspace %||% NA_real_, 0)
-  cap <- pmin(far * s$area, msf, na.rm = TRUE)
+  cap <- pmin(far * land, msf, na.rm = TRUE)
   cum_before <- stats::ave(st$enabled_area, st$site_id, FUN = function(v) c(0, utils::head(cumsum(v), -1)))
   allowed <- pmax(0, cap[i] - cum_before)
   bind <- !is.na(allowed) & allowed < st$enabled_area - 1e-9
-  st$binding[bind] <- ifelse(!is.na(far[i][bind]) & far[i][bind] * s$area[i][bind] <= msf[i][bind] %|NA|% Inf,
+  st$binding[bind] <- ifelse(!is.na(far[i][bind]) & far[i][bind] * land[i][bind] <= msf[i][bind] %|NA|% Inf,
                              "far", "max_site_floorspace")
   st$enabled_area[bind] <- allowed[bind]
   st[st$enabled_area > 0 | !bind, , drop = FALSE]

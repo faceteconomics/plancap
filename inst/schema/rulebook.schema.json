@@ -237,6 +237,12 @@
         },
         "road_class_field": {
           "type": "string"
+        },
+        "density_area": {
+          "enum": ["gross", "net"]
+        },
+        "far_area": {
+          "enum": ["gross", "net"]
         }
       }
     },

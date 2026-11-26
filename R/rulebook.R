@@ -162,6 +162,13 @@ rulebook_defaults <- function() {
 #'     are rear boundaries, where a plan defines a rear site's yards as all
 #'     rear yards (Auckland Unitary Plan J1: a rear yard "Includes: all yards
 #'     on a rear site"). They are tagged `rear_site_side`. `FALSE`.}
+#'   \item{`density_area`}{The land a density rule (land per dwelling,
+#'     dwellings per hectare, large-site subdivision) is measured on:
+#'     `"gross"`, the whole site less excluded land (as capacityengine), or
+#'     `"net"`, net site area (without access legs, when
+#'     `exclude_access_legs` is `TRUE`) less excluded land. `"gross"`.}
+#'   \item{`far_area`}{The land a floor area ratio is measured on: `"gross"`
+#'     (the whole site) or `"net"` (net site area). `"gross"`.}
 #' }
 #' @export
 #' @examples
@@ -177,7 +184,8 @@ morphology_defaults <- function() {
        min_sliver_area = 1, access_touch_distance = 0.5, access_contact_tolerance = 0.05,
        access_max_strip_width = 10, access_lot_max_area = 800, front_setback_neighbours = 3,
        front_setback_min_dwelling_area = 50, front_setback_max_offset = 60,
-       rear_site_sides_as_rear = FALSE, road_class_field = "")
+       rear_site_sides_as_rear = FALSE, road_class_field = "", density_area = "gross",
+       far_area = "gross")
 }
 
 #' Floor area to dwellings conversion

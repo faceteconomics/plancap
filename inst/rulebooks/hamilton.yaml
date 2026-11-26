@@ -17,8 +17,11 @@ plan:
   units: m
   source: Hamilton City Operative District Plan, ePlan revision 13 November 2026 (Plan
     Change 12 operative 20 December 2024)
-  notes: Entered through the Excel template from the ePlan; built out in stages (data-raw/hamilton/PLAN.md).
-    Plan Change 14 (Flooding) rules are proposed, flagged where used.
+  notes: 'Entered through the Excel template from the ePlan; built out in stages (data-raw/hamilton/PLAN.md).
+    Plan Change 14 (Flooding) rules are proposed, flagged where used. Density and
+    floor area ratio are measured on net site area (1.1 Definitions as amended by
+    PC12: net site area excludes any entrance strip, internal vehicle access or private
+    way; floor area ratio is gross floor area over the net area of the site).'
 defaults:
   storey_height: 3.0
   min_floorplate: 30.0
@@ -32,6 +35,8 @@ defaults:
 morphology:
   reserve_families: OPEN_SPACE
   road_class_field: FIRST_Road_Classification
+  density_area: net
+  far_area: net
 conversion:
   dwelling_size: 100.0
   efficiency: 0.85

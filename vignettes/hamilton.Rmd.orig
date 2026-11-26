@@ -77,6 +77,13 @@ zones use a 7 m storey rather than the 3 m default. Plan Change 14
 (Flooding) was decided on 24 December 2025 and is under appeal; its High
 Flood Hazard Area is applied as though in force, marked as proposed.
 
+The plan's definitions matter too. Hamilton's density rules are "average
+net site area" per unit, and net site area leaves out any entrance strip or
+private way; its floor area ratio is also over the net area of the site. By
+default plancap measures both on the whole site, as capacityengine does, so
+the rulebook says otherwise (`morphology: density_area: net`,
+`far_area: net`). On a rear site the access leg then gives no dwellings.
+
 ## 2. Enter the rules in the template
 
 `rulebook_template()` writes an empty workbook with one sheet per kind of

@@ -77,3 +77,24 @@ check_capacity() checks pass; 322 sites have no zone (parcels under the
 dropped Transport Corridor polygon), 2,520 are in no-capacity zones. MRZ
 16.0m m2 enabled floor area, PMRZ 10.5m. Vignette section 8 reads the saved
 run.rds.
+
+Net site area (27 Nov 2026). Hamilton's 1.1 definitions (as amended by PC12)
+measure density and floor area ratio on net site area, without entrance
+strips, internal vehicle access and private ways. The engine now has
+`morphology: density_area` and `far_area` ("gross", the default, as
+capacityengine, or "net"); Hamilton's rulebook sets both to "net". City
+re-run (160 min): 104.9m m2 floor area, 466,970 dwellings (-2,425 against the
+gross basis) and 128,546 minor dwellings; all check_capacity() checks pass.
+
+Verification (27 Nov 2026): `verify.R [extract|city]` checks saved runs
+against rules rebuilt independently from the zone and overlay layers (15
+checks: storeys, height, coverage, landscaping, FAR, floor within footprint
+times storeys, dwellings, site area per dwelling, minor dwellings, uses,
+method none, wholly excluded sites, removed area against the exclusion
+layers). Every check passes on the six extracts and the city (55,975 sites
+checked; precinct sites left out of the bounds). `compare.R` runs five
+scenarios on Claudelands (same, no PC14, no heritage areas, GRZ to MRZ,
+combined): check_comparison 53/53, Shapley consistent, incremental equals
+full. Open engine issues found: toggling an exclusion or changing zoning
+rebuilds every site; sites losing a PC14 exclusion are labelled
+neighbour_effect; 19 changed sites have no reason code.

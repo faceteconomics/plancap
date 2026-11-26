@@ -35,7 +35,7 @@ plan,country,NZ
 plan,effective_date,2026-11-13
 plan,units,m
 plan,source,"Hamilton City Operative District Plan, ePlan revision 13 November 2026 (Plan Change 12 operative 20 December 2024)"
-plan,notes,"Entered through the Excel template from the ePlan; built out in stages (data-raw/hamilton/PLAN.md). Plan Change 14 (Flooding) rules are proposed, flagged where used."
+plan,notes,"Entered through the Excel template from the ePlan; built out in stages (data-raw/hamilton/PLAN.md). Plan Change 14 (Flooding) rules are proposed, flagged where used. Density and floor area ratio are measured on net site area (1.1 Definitions as amended by PC12: net site area excludes any entrance strip, internal vehicle access or private way; floor area ratio is gross floor area over the net area of the site)."
 plan,variant_choice,max
 defaults,storey_height,3
 defaults,min_floorplate,30
@@ -51,6 +51,8 @@ conversion,min_one_dwelling,TRUE
 conversion,source,"Assumption for the walkthrough: 100 m2 gross per dwelling, 85% of floor area in dwellings"
 morphology,reserve_families,OPEN_SPACE
 morphology,road_class_field,FIRST_Road_Classification
+morphology,density_area,net
+morphology,far_area,net
 ', stringsAsFactors = FALSE, strip.white = TRUE)
 wb <- openxlsx2::wb_clean_sheet(wb, sheet = "plan", dims = "A2:C200")
 wb <- openxlsx2::wb_add_data(wb, sheet = "plan", x = plan, start_row = 2, col_names = FALSE)

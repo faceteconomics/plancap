@@ -42,6 +42,45 @@ test_that("Hamilton's overlays include heritage, natural areas and PC14 flooding
   expect_identical(fl$type, "exclusion")
 })
 
+test_that("density and floor area ratio can be measured on net site area", {
+  # A rear site: a 4 m wide access leg 30 m long (120 m2) to a 30 m x 30 m lot.
+  flag <- sf::st_sf(parcel_id = "F1", geometry = sf::st_sfc(sf::st_polygon(list(rbind(
+    c(0, 0), c(4, 0), c(4, 30), c(30, 30), c(30, 60), c(0, 60), c(0, 0)))), crs = NZTM))
+  zn <- sf::st_sf(zone = c("D", "F"), geometry = sf::st_sfc(rect(-200, -100, 300, 300), rect(1000, 1000, 1001, 1001), crs = NZTM))
+  rb <- rulebook("Net") |>
+    add_zone(zone("D", method = "density", height = height_limit(8, source = "h"),
+                  density = density(site_area_per_dwelling = 100, source = "d")),
+             zone("F", method = "volumetric", height = height_limit(30, source = "h"))) |>
+    set_conversion(conversion(dwelling_size = 100))
+  run <- function(rb, zone = "D") {
+    z <- zn; z$zone <- c(zone, "D")
+    s <- estimate_capacity(scenario("N", rb, parcels = flag, roads = fixture_road(), zoning = z))$sites
+    sf::st_drop_geometry(s)
+  }
+  g <- run(rb)
+  expect_gt(g$area - g$net_area, 100)
+  expect_identical(g$dwellings, 10L)               # 1,020 m2 / 100
+  rb_net <- rb
+  rb_net$morphology$density_area <- "net"
+  expect_true(validate_rulebook(rb_net)$valid)
+  expect_identical(run(rb_net)$dwellings, 9L)      # 900 m2 / 100
+  # Floor area ratio 0.5 on the whole site, then on the net site area.
+  rf <- set_rule(rb, "zones.F.ratios.far_max", list(value = 0.5, source = "f"))
+  f_gross <- run(rf, "F")
+  expect_equal(f_gross$floor_area, 0.5 * f_gross$area, tolerance = 1e-6)
+  rf$morphology$far_area <- "net"
+  f_net <- run(rf, "F")
+  expect_equal(f_net$floor_area, 0.5 * f_net$net_area, tolerance = 1e-6)
+  rf$morphology$far_area <- "neither"
+  expect_false(validate_rulebook(rf)$valid)
+})
+
+test_that("Hamilton measures density and floor area ratio on net site area", {
+  rb <- rulebook_example("hamilton")
+  expect_identical(rb$morphology$density_area, "net")
+  expect_identical(rb$morphology$far_area, "net")
+})
+
 test_that("the 3D view builds", {
   skip_if_not_installed("mapgl")
   cap <- estimate_capacity(scenario("3D", set_conversion(fixture_rulebook(), conversion(dwelling_size = 100)),

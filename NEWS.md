@@ -1,5 +1,18 @@
 # plancap 0.0.0.9000
 
+## Hamilton built out
+
+* Hamilton's rulebook covers the whole plan: residential, centres, business
+  and industrial zones, precincts, heritage, natural areas and the High Flood
+  Hazard Area of Plan Change 14 (proposed, flagged), and runs city-wide.
+* New morphology settings `density_area` and `far_area` (`"gross"` or
+  `"net"`): the land a density rule and a floor area ratio are measured on.
+  The default, the whole site, keeps capacityengine's results; Hamilton
+  measures both on net site area, as its definitions say.
+* `morphology$road_class_field`: road boundaries are tagged with the class of
+  the road in front, from the scenario's centre lines, so a setback can name
+  a road class.
+
 ## A new jurisdiction, maps in 3D, documentation (stage 8)
 
 * Hamilton, New Zealand, entered through the Excel template from the
